@@ -1,0 +1,130 @@
+﻿@model IEnumerable<Cf_Viewmodels.PriceProductebytypesVM>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = $"{Model.Sum(i => i.totalprice)}   فاتوره رقم";
+
+}
+
+<!-- Styling -->
+<style>
+    /* Add your custom CSS styles here */
+    .table-striped {
+        /* Add styling for striped table */
+    }
+
+    .custom-table {
+        width: 50%; /* Set table width to 50% */
+    }
+</style>
+<p>@DateTime.Now</p>
+
+<table class="table table-striped custom-table">
+    <thead>
+        <tr>
+            <th>اسم المنتج</th>
+            <th>السعر</th>
+            <th>الكمية</th> <!-- Corrected spelling -->
+            <th>النوع</th>
+            <th>العميل</th>
+            <th class="Save">تعديل الكميه </th>
+            <th class="Save"> الحذف من الفاتوره </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.ProductName</td>
+                <td>@item.ShopingCaterQantity</td> <!-- Corrected typo in Quantity -->
+                <td>@Servess.DescriptionEnum.GetDescription(item.Catid)</td> <!-- Ensure GetDescription works properly -->
+                <td>@item.totalprice</td>
+                 <td class="col-4">
+                    <form method="post" asp-controller="PriceProductebytypes" asp-action="UpdateShopingCaterCashHistory" asp-area="Admin" class="form-inline Save">
+                        <input type="hidden" id="ShopingCaterId" name="ShopingCaterId" value="@item.ShopingCaterId" asp-for="@item.ShopingCaterId" />
+                        <input type="hidden" id="Id" name="Id" value="@item.Id" asp-for="@item.Id" />
+                        <div class="form-group d-flex align-items-center Save">
+                            <input type="number" min="1" class="form-control mr-2 Save" id="ShopingCaterQantity" name="ShopingCaterQantity" placeholder="الكميه" style="width:150px;" />
+                            <button class="btn btn-success creditButton" type="submit">تعديل  </button>
+                        </div>
+                    </form>
+                </td>
+                <td>
+                    <a class="btn btn-success flex-grow-1 ml-1 Save" asp-area="Admin" asp-action="DeleteCash" asp-route-Id="@item.ShopingCaterId">حذف</a>
+                </td>
+
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="3">الإجمالي:</td>
+
+                        <td>@(Model?.Sum(i => i.totalprice) ?? 0) جنيه</td>
+           
+            <td colspan="3"> </td>
+
+
+        </tr>
+    </tfoot>
+</table>
+
+
+
+<div id="buttonprint">
+    <button id="printButton" class="btn btn-primary">طباعة الفاتوره</button> <!-- Print button with an id -->
+
+    <a class="btn btn-success flex-grow-1 ml-1 Save" asp-area="Admin" asp-action="FreeShopingCaterCashHistoryToNotpayed" asp-route-CustomerType="@ViewBag.CustomerType">حفظ الفاتوره</a>
+    <a class="btn btn-success flex-grow-1 ml-1 Save" asp-area="Admin" asp-action="FreeFinancialUserCash" asp-route-CustomerType="@ViewBag.CustomerType">تعديل  الفاتوره</a>
+    <a class="btn btn-success flex-grow-1 ml-1 Save" asp-area="Admin" asp-action="FreeFinancialUserCash" asp-route-CustomerType="@ViewBag.CustomerType">انها  الفاتوره</a>
+
+
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("printButton").addEventListener("click", function () {
+            // Hide the header
+            var headerElement = document.getElementsByTagName('header')[0];
+            headerElement.style.display = 'none';
+            document.querySelectorAll('.Save').forEach(function (element) {
+                element.style.display = 'none';
+            });
+            // Hide elements with class 'save'
+            var saveColumnIndex = $('table th:contains("Save")').index();
+            $('table tr').each(function () {
+                $(this).find('td').eq(saveColumnIndex).hide();
+                $(this).find('th').eq(saveColumnIndex).hide();
+            });
+            // Hide the print button itself
+            var buttonprint = document.getElementById("buttonprint");
+            buttonprint.style.display = 'none';
+
+            // Print the page
+            window.print();
+
+            // Restore the visibility of the header and the print button
+            headerElement.style.display = 'block';
+            buttonprint.style.display = 'block';
+
+            // Restore the visibility of elements with class 'save'
+            $('table tr').each(function () {
+                $(this).find('td').eq(saveColumnIndex).show();
+                $(this).find('th').eq(saveColumnIndex).show();
+            });
+        });
+    });
+</script>
+
+@* <script>
+    // JavaScript to handle printing functionality
+    document.getElementById("printButton").addEventListener("click", function () {
+        var headerElement = document.getElementsByTagName('header')[0];
+              headerElement.style.display = 'none';
+        buttonprint.style.display = 'none';
+        window.print(); // Print the table
+        headerElement.style.display = 'block';
+        buttonprint.style.display = 'block';
+     });
+</script>
+ *@

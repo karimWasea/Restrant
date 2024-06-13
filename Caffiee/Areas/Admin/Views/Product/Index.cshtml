@@ -1,0 +1,125 @@
+﻿@model X.PagedList.IPagedList<Cf_Viewmodels.productVM >
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{ 
+    Layout = "_Layout";
+        ViewData["Title"] = " Products  ";
+}
+<partial name="_AlertMessage" />
+
+<form id="search-form" method="get" action="@Url.Action("Index")">
+    <input type="text" name="search" value="@ViewBag.Search" placeholder="Search..." id="search-input">
+</form>
+ 
+<p>
+    <a asp-area="Admin" asp-controller="Product" asp-action="Save" class="btn btn-primary">Create New</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.First().ProductName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Price)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Qantity)
+            </th>
+            
+            <th>
+                @Html.DisplayNameFor(model => model.First().Description)
+            </th><th>
+                @Html.DisplayNameFor(model => model.First().CategoryName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Discount)
+            </th>
+            <th>خيارات</th>
+            <th>اضافه اسعار المنجات للعمل</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ProductName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Qantity)
+                </td>
+               
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>    <td>
+                    @Servess.DescriptionEnum.GetDescription(item.CategoryTyPe)
+                 </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Discount)
+                </td>
+                <td>
+                     <a asp-action="Save" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a href="javascript:void(0);" class="delete-link" data-id="@item.Id">Delete</a>
+                </td> <td>
+                    <a asp-area="Admin" asp-controller="PriceProductebytypes" asp-action="Save" asp-route-ProductId="@item.Id">اضافه اسعار المنجات  </a> 
+                    
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<partial name="_AlertMessage"  />
+
+<partial name="_PaginationPartial" model="Model" />
+@section Scripts {
+    <script src="~/js/devicindex.js"></script>
+}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+@* @Html.AntiForgeryToken()
+ *@
+<script>
+    $(document).ready(function () {
+        // Set up the AJAX request to include the anti-forgery token
+        $.ajaxSetup({
+            headers: {
+                'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+            }
+        });
+
+        // Handle the click event for the delete link
+        $('.delete-link').click(function (event) {
+            event.preventDefault(); // Prevent the default link behavior
+
+            var id = $(this).data('id'); // Get the id from the data-id attribute
+            var url = '@Url.Action("Delete", "Product", new { area =  "Admin" })'; // URL to the Delete action
+
+            // Confirm before deleting
+            if (confirm("Are you sure you want to delete this item?")) {
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: { id: id },
+                    success: function (response) {
+                        if (response.success) {
+                            alert(response.message);
+                            location.reload(); // Reload the page or remove the item from the DOM
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        alert("An error occurred: " + xhr.responseText);
+                    }
+                });
+            }
+        });
+    });
+</script>

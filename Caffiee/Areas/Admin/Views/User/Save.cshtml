@@ -1,0 +1,71 @@
+﻿@model Cf_Viewmodels.ApplicaionuserVM
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = "_Layout";
+    ViewBag.Title = "Save Product";
+}
+
+
+    <h2>Create Product</h2>
+
+    <h4>Product</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-action="Save" method="post"  >
+                <div class="form-group">
+                    <label asp-for="UserNme" class="control-label"></label>
+                <input asp-for="UserNme" class="form-control" />
+                <span asp-validation-for="UserNme" class="text-danger"></span>
+                </div>
+             
+               
+                <div class="col">
+                <label asp-for="CustomerType" class="form-label" style="font-weight: bold;">CategoryId:</label>
+                <select class="form-select glass-select same-width" asp-for="CustomerType" asp-items="Model.CustomerTypeList"
+                        data-placeholder="Select CustomerType" style="z-index: 1;">
+                        <option value=""></option>
+                    </select>
+                <span asp-validation-for="CustomerType" class="text-danger"></span>
+                </div>
+                <div class="col">
+                <label asp-for="Gender" class="form-label" style="font-weight: bold;">CategoryId:</label>
+                <select class="form-select glass-select same-width" asp-for="Gender" asp-items="Model.GenderList"
+                        data-placeholder="Select Gender" style="z-index: 1;">
+                        <option value=""></option>
+                    </select>
+                <span asp-validation-for="CustomerType" class="text-danger"></span>
+                </div>
+                
+               
+                <div class="form-group">
+                    <div id="imagePreview" class="row"></div>
+                </div>
+                <div class="form-group">
+                    <div class="button-group">
+                        <button type="submit" id="savedata" class="btn btn-primary">
+                            @if (Model.Id!= null)
+                            {
+                                @:Update
+                            }
+                            else
+                            {
+                                @:Add New
+                            }
+                        </button>
+                    </div>
+                    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                </div>
+            </form>
+        </div>
+    </div>
+<partial name="_AlertMessage"   />
+
+    @section Scripts {
+        
+
+         @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+    }
