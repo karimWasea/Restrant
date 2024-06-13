@@ -22,15 +22,12 @@ namespace Servess
     public class NotPayedmoneyHistoryServess : PaginationHelper<NotPayedmoneyHistoryVM>, INotPayedmoneyHistoryServess
     {
         public readonly ApplicationDBcontext _context; 
-        Imgoperation _Imgoperation;
-        private object forech;
+    
         private readonly IMapper _mapper;
 
-        public NotPayedmoneyHistoryServess(ApplicationDBcontext context, IMapper mapper    ,     Imgoperation imgoperation
-)
+        public NotPayedmoneyHistoryServess(ApplicationDBcontext context, IMapper mapper    )
         {
-            _Imgoperation = imgoperation;
-            _context = context;
+             _context = context;
             _mapper = mapper;
 
         }
@@ -51,8 +48,8 @@ namespace Servess
 
             }
 
-            //queryable.TotalNotpayedAmount -= criteria.payedAmount;
-            //queryable.TotalPayedAmount += criteria.payedAmount;
+            queryable.TotalNotpayedAmount -= criteria.payedAmount;
+            queryable.TotalPayedAmount += criteria.payedAmount;
             if (queryable.TotalNotpayedAmount == queryable.TotalPayedAmount)
             {
                 queryable.PaymentStatus = (int)Enumes.PaymentStatus.Paid;
@@ -118,11 +115,11 @@ namespace Servess
                  Id = i.Id,
                  HospitalaoOrprationtyp = i.HospitalaoOrprationtyp
                   ,
-                 //UserNotPayedmoneyName = i.UserNotPayedmoney.UserName,
-                 //ChangeDate = i.ChangeDate,
-                 //ChangedByUserId = i.ChangedByUserId,
-                 //CreationTime = i.CreationTime,
-                  NotpayedAmount = i.NotpayedAmount,
+                 UserNotPayedmoneyName = i.UserNotPayedmoney.UserName,
+                  CreationTime = i.CreationTime,
+                 NotpayedAmount = i.NotpayedAmount,
+                 ChangedByUserId = i.ChangedByUserId,
+
                  ishospital = i.ishospital,
                  NotPayedmoneyId = i.NotPayedmoneyId,
                  PaymentStatus = i.PaymentStatus,
@@ -158,12 +155,10 @@ namespace Servess
                             Id = i.Id,
                             HospitalaoOrprationtyp = i.HospitalaoOrprationtyp
                              ,
-                            //UserNotPayedmoneyName = i.UserNotPayedmoney.UserName,
-                            //ChangeDate = i.ChangeDate,
-                            //ChangedByUserId = i.ChangedByUserId,
-                            //CreationTime = i.CreationTime,
-                            //Description = i.Description,
-                            NotpayedAmount = i.NotpayedAmount,
+                            UserNotPayedmoneyName = i.UserNotPayedmoney.UserName,
+                             ChangedByUserId = i.ChangedByUserId,
+                            CreationTime = i.CreationTime,
+                             NotpayedAmount = i.NotpayedAmount,
                             ishospital = i.ishospital,
                             NotPayedmoneyId = i.NotPayedmoneyId,
                             PaymentStatus = i.PaymentStatus,
@@ -208,12 +203,42 @@ namespace Servess
 
         public bool SaveNotPayedmoneyHistory(NotPayedmoneyHistoryVM criteria)
         {
-            throw new NotImplementedException();
+            _context.NotPayedmoneyHistory.Find(criteria.Id);
+            _context.SaveChanges();
+             return true;   
         }
 
-        public IPagedList<NotPayedmoneyHistoryVM> PrintforHospitallDay(int id)
+        public IPagedList<NotPayedmoneyHistoryVM> PrintforHospitallDay(int id, int? pageNumber)
         {
-            throw new NotImplementedException();
+            var queryable = _context.NotPayedmoneyHistory.Include(i => i.UserNotPayedmoney).Include(i=>i.NotPayedmoneys).Where(i => i.NotPayedmoneyId == id &&i.HospitalaoOrprationtyp== (int) Enumes.HospitalOroprationtyp.Hospital
+
+
+
+                                    ).Select(i => new NotPayedmoneyHistoryVM
+                                    {
+
+                                        Id = i.Id,
+                                        HospitalaoOrprationtyp = i.HospitalaoOrprationtyp
+                                         ,
+                                        UserNotPayedmoneyName = i.UserNotPayedmoney.UserName,
+                                        ChangedByUserId = i.ChangedByUserId,
+                                        CreationTime = i.CreationTime,
+                                        NotpayedAmount = i.NotpayedAmount,
+                                        ishospital = i.ishospital,
+                                        NotPayedmoneyId = i.NotPayedmoneyId,
+                                        PaymentStatus = i.PaymentStatus,
+
+                                        UserNotPayedmoneyId = i.UserNotPayedmoneyId,
+
+                                    }
+                                   ).OrderBy(g => g.Id);
+
+            // Provide a default value for PageNumber if it's null
+            int pageNum=pageNumber?? 1;
+
+            var pagedList = GetPagedData(queryable, pageNum);
+
+            return pagedList;
         }
     }
 }

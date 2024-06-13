@@ -20,8 +20,8 @@ namespace Interfaces
 
         public IPagedList<NotPayedmoneyHistoryVM> SaveNotPayedmoneyHistoryDetails(int id, int? pageNuber);
         bool DeleteNotPayedmoneyHistory(int id);
-        IPagedList<NotPayedmoneyHistoryVM> PrintforHospitallDay(int id);
-        bool SaveNotPayedmoneyHistory(NotPayedmoneyHistoryVM criteria);
+        public IPagedList<NotPayedmoneyHistoryVM> PrintforHospitallDay(int id, int? pageNumber);  
+            bool SaveNotPayedmoneyHistory(NotPayedmoneyHistoryVM criteria);
 
     }
 

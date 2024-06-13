@@ -19,9 +19,15 @@ namespace Cf_Viewmodels
 
             public decimal? TotalPayedAmount { get; set; }
             public decimal? TotalNotpayedAmount { get; set; }
-            public string? ChangedByUserId { get; set; }
+            public decimal? payedAmount { get; set; }
+      
+        public string? ChangedByUserId { get; set; }
 
+            public string UserNotPayedmoneyName { get; set; }
             public string? SystemUserId { get; set; }
+            public string? UserName { get; set; }
+            public DateTime CreationTime { get; set; }
+            public DateTime ChangeDate { get; set; }
             public string? SystemUserName { get; set; }
 
             public bool ishospital { get; set; } = false;
