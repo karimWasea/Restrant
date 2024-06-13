@@ -1,0 +1,294 @@
+﻿@* @model IEnumerable<Cf_Viewmodels.NotPayedmoneyHistoryVM>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = $"     ";
+
+}
+<form method="NotPayedmoneyHistory" asp-controller="NotPayedmoneyHistory" asp-action="Index" asp-area="Admin" class="form-inline Save">
+
+<div class="input-group mt-4">
+    <input type="text" class="form-control" name="UserNotPayedmoneyName" placeholder="Search..." aria-label="Search" aria-describedby="button-addon2" id="UserNotPayedmoneyName">
+    <div class="input-group-append">
+        <button class="btn btn-primary" type="button" id="button-addon2">
+            بحث
+        </button>
+    </div>
+
+    
+
+    <div class="col  ">
+        <label  for="PaymentStatus">ابحث ب تم الدفع </label>
+        <select value="PaymentStatus" name="PaymentStatus" class="form-select glass-select same-width PaymentStatus" asp-items="@ViewBag.GetPaymentStatus"
+                aria-required="true" data-placeholder="Select PaymentStatus" style="z-index: 1;">
+            <option value="">  الدفع  </option>
+        </select>
+     </div>
+
+
+</div>
+</form>
+
+<!-- Styling -->
+<style>
+    /* Add your custom CSS styles here */
+    .table-striped {
+        /* Add styling for striped table */
+    }
+
+    .custom-table {
+        width: 50%; /* Set table width to 50% */
+    }
+</style>
+ 
+<table class="table table-striped custom-table">
+    <thead>
+        <tr>
+            <th>اسم  العميل </th>
+            <th>الدين</th>
+            <th>المدفوع</th> <!-- Corrected spelling -->
+            <th>الدفع</th>
+            <th> وقت عمل الفاتوره </th>
+            <th class="Save">تعديل الكميه </th>
+            <th class="Save"> الحذف من الفاتوره </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.UserNotPayedmoneyName</td>
+                <td>@item.NotpayedAmount</td> <!-- Corrected typo in Quantity -->
+                <td>@item.payedAmount</td> <!-- Corrected typo in Quantity -->
+                <td>@Servess.DescriptionEnum.GetDescription(item.PaymentStatus)</td> <!-- Ensure GetDescription works properly -->
+                <td>@item.CreationTime</td>
+
+                 <td class="col-4">
+                    @if (item.NotpayedAmount != item.payedAmount)
+                    {
+                        <form method="post" asp-controller="NotPayedmoneyHistory" asp-action="Save" asp-area="Admin" class="form-inline Save">
+                            <input type="hidden" id="NotpayedAmount" name="NotpayedAmount" value="@item.NotpayedAmount" asp-for="@item.NotpayedAmount" />
+                            <input type="hidden" id="Id" name="Id" value="@item.Id" asp-for="@item.Id" />
+                            <div class="form-group d-flex align-items-center Save">
+                                <input type="number" min="1" class="form-control mr-2 Save" id="payedAmount" name="payedAmount" placeholder="ادخل الدين  " style="width:150px;" />
+                                <button class="btn btn-success creditButton" type="submit">تعديل  </button>
+                            </div>
+                        </form>
+
+                    }
+                </td>
+                <td>
+                    <a class="btn btn-success flex-grow-1 ml-1 Save" asp-area="Admin" asp-action="DeleteNopayed" asp-route-Id="@item.Id">حذف</a>
+                    <a class="btn btn-success flex-grow-1 ml-1 Save" asp-area="Admin" asp-controller="NotPayedmoneyHistory" asp-action="SearchNotPayedmoneyHistoryDetails" asp-route-id="@item.Id">تفاصيل</a>
+                </td>
+
+            </tr>
+        }
+    </tbody>
+    
+</table>
+
+
+
+<div id="buttonprint">
+    <button id="printButton" class="btn btn-primary"   style="display :none;" >طباعة الفاتوره</button> <!-- Print button with an id -->
+
+    
+
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById('UserNotPayedmoneyName').addEventListener('keyup', function () {
+            var searchText = this.value.toLowerCase();
+            document.querySelectorAll('.product-card').forEach(function (card) {
+                var titleText = card.querySelector('.card-title').textContent.toLowerCase();
+                card.style.display = titleText.includes(searchText) ? '' : 'none';
+            });
+        });
+            // Hide elements with class 'save'
+            var saveColumnIndex = $('table th:contains("Save")').index();
+            $('table tr').each(function () {
+                $(this).find('td').eq(saveColumnIndex).hide();
+                $(this).find('th').eq(saveColumnIndex).hide();
+            });
+            // Hide the print button itself
+            var buttonprint = document.getElementById("buttonprint");
+            buttonprint.style.display = 'none';
+
+            // Print the page
+            window.print();
+
+            // Restore the visibility of the header and the print button
+            headerElement.style.display = 'block';
+            buttonprint.style.display = 'block';
+
+            // Restore the visibility of elements with class 'save'
+            $('table tr').each(function () {
+                $(this).find('td').eq(saveColumnIndex).show();
+                $(this).find('th').eq(saveColumnIndex).show();
+            });
+        });
+    });
+</script>
+
+  *@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  @model IEnumerable<Cf_Viewmodels.NotPayedmoneyHistoryVM>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Not Paid Money History";
+}
+
+<form method="get" asp-controller="NotPayedmoneyHistory" asp-action="Index" asp-area="Admin" class="mt-4">
+    <div class="form-row justify-content-center">
+        <div>
+            <div class="form-group col-md-4">
+                <label for="UserNotPayedmoneyName">بحث</label>
+                <input type="text" class="form-control" name="UserNotPayedmoneyName" placeholder="Search..." aria-label="Search" id="UserNotPayedmoneyName">
+            </div>
+            <div class="form-group col-md-4">
+                <label for="PaymentStatus">ابحث ب تم الدفع</label>
+                <select name="PaymentStatus" class="form-select" asp-items="@ViewBag.GetPaymentStatus" aria-required="true">
+                    <option value="">الدفع</option>
+                </select>
+            </div>
+        </div>
+    
+        <br />
+        <div class="form-group col-md-4 align-self-end">
+            <button class="btn btn-primary w-100" type="submit">بحث</button>
+        </div>
+    </div>
+</form>
+
+<table class="table table-striped table-bordered w-100 mx-auto mt-4">
+    <thead class="thead-dark">
+        <tr>
+            <th>اسم العميل</th>
+            <th>الدين</th>
+            <th>المدفوع</th>
+            <th>الدفع</th>
+            <th>وقت عمل الفاتوره</th>
+            <th class="Save">تعديل الكميه</th>
+            <th class="Save">الحذف من الفاتوره</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                
+                <td>@item.UserNotPayedmoneyName</td>
+                <td>@item.TotalNotpayedAmount</td>
+                <td>@item.TotalPayedAmount</td>
+                <td>@Servess.DescriptionEnum.GetDescription(item.PaymentStatus)</td>
+                <td>@item.CreationTime</td>
+                <td class="Save">
+                    @if (item. TotalNotpayedAmount != item.TotalPayedAmount)
+                    {
+                        <form method="post" asp-controller="NotPayedmoneyHistory" asp-action="Save" asp-area="Admin" class="form-inline">
+                            <input type="hidden" name="NotpayedAmount" value="@item.NotpayedAmount" />
+                            <input type="hidden" name="Id" value="@item.Id" />
+                                 <input type="number" min="1" class="form-control mr-2" name="payedAmount" placeholder="ادخل الدين" style="width:100px;" />
+                                <button class="btn btn-success" type="submit">تعديل</button>
+                         </form>
+                    }
+                </td>
+                <td class="Save">
+                    <a class="btn btn-danger ml-1" asp-area="Admin" asp-action="DeleteNopayed" asp-route-Id="@item.Id">حذف</a>
+                    <a class="btn btn-info ml-1" asp-area="Admin" asp-controller="NotPayedmoneyHistory" asp-action="SearchNotPayedmoneyHistoryDetails" asp-route-id="@item.Id">تفاصيل</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div id="buttonprint" class="text-center mt-4">
+    <button id="printButton" class="btn btn-primary" style="display: none;">طباعة الفاتوره</button>
+</div>
+<partial name="_AlertMessage" />
+
+<partial name="_PaginationPartial" model="Model" />
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById('UserNotPayedmoneyName').addEventListener('keyup', function () {
+            var searchText = this.value.toLowerCase();
+            document.querySelectorAll('.product-card').forEach(function (card) {
+                var titleText = card.querySelector('.card-title').textContent.toLowerCase();
+                card.style.display = titleText.includes(searchText) ? '' : 'none';
+            });
+        });
+
+        // Hide elements with class 'Save'
+        // var saveColumnIndex = $('table th:contains("Save")').index();
+        // $('table tr').each(function () {
+        //     $(this).find('td').eq(saveColumnIndex).hide();
+        //     $(this).find('th').eq(saveColumnIndex).hide();
+        // });
+
+        // Hide the print button itself
+        // var buttonprint = document.getElementById("buttonprint");
+        // buttonprint.style.display = 'none';
+
+        // Print the page
+        // window.print();
+
+        // Restore the visibility of the header and the print button
+        // headerElement.style.display = 'block';
+        // buttonprint.style.display = 'block';
+
+        // Restore the visibility of elements with class 'Save'
+        // $('table tr').each(function () {
+        //     $(this).find('td').eq(saveColumnIndex).show();
+        //     $(this).find('th').eq(saveColumnIndex).show();
+        // });
+    });
+</script>
+
+<style>
+    .form-inline {
+        display: flex;
+        flex-flow: row wrap;
+        align-items: center;
+    }
+
+        .form-inline .form-group {
+            margin-right: 10px;
+        }
+
+    .input-group {
+        width: 100%;
+    }
+
+    .table {
+        width: 100%;
+    }
+
+        .table thead {
+            background-color: #343a40;
+            color: white;
+        }
+
+        .table td, .table th {
+            text-align: center;
+            vertical-align: middle;
+        }
+</style>

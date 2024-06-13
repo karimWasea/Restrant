@@ -120,7 +120,7 @@ namespace Servess
                    (searchCriteria.ProductName == null || product.Product.ProductName.Contains(searchCriteria.ProductName)))
                .Select(i => new PriceProductebytypesVM
                {
-                   ProductName = i.Product.ProductName,
+                   ProductName = i.Product.ProductName??"",
                    CustomerType = searchCriteria.CustomerType,
                    ProductId = i.ProductId,
                    Id = i.Id,
@@ -321,7 +321,9 @@ namespace Servess
                         PayedTotalAmount = totalAmount,
                         SystemUserId = SystemUserId,
                         SystemUserName = SystemUserName,
-                        PaymentStatus = (int)PaymentStatus.Paid
+                        PaymentStatus = (int)PaymentStatus.Paid ,
+                        CreationTime = DateTime.Now,
+
                     };
 
                     var addFinancialUserCash = _context.Add(financialUserCash);
@@ -338,7 +340,9 @@ namespace Servess
                             SystemUserId = SystemUserId ?? "",
                             SystemUserName = SystemUserName ?? "",
                             PaymentStatus = (int)PaymentStatus.Paid,
-                            PayedAmount = item.TotalAmount
+                            PayedAmount = item.TotalAmount,
+                            CreationTime = DateTime.Now,
+
                         };
 
                         var addedHistoryCash = _context.Add(historyCash);
@@ -454,6 +458,7 @@ namespace Servess
                         SystemUserId = SystemUserId,
                         SystemUserName = SystemUserName,
                         ChangedByUserId = SystemUserId,
+                         CreationTime = DateTime.Now,
                         PaymentStatus = (int)PaymentStatus.NotPaid
                         
                     };
@@ -474,6 +479,7 @@ namespace Servess
                              UserNotPayedmoneyId= item.NotpayedUserid??"",
                             PaymentStatus = (int)PaymentStatus.NotPaid,
                             ishospital = item.ishospital,
+                             Qantity= item.Qantity,
                          };
 
                         var ADDNotPayedmoneyIdHistoryCash = _context.Add(historyCash);

@@ -15,6 +15,8 @@ namespace Interfaces
           List<SelectListItem> GetCategoryType();
           List<SelectListItem> HospitalOroprationtyp();
         public IQueryable<SelectListItem> Users(CustomerType CustomerType);
+        public IQueryable<SelectListItem> Users();
+        public List<SelectListItem> GetPaymentStatus();
         public List<SelectListItem> GetGenderType();
 
  

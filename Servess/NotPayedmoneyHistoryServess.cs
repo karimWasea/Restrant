@@ -32,10 +32,7 @@ namespace Servess
 
         }
 
-        public bool CheckIfExisit(productVM entity)
-        {
-            return _context.products.Any(i => i.Id != entity.Id && i.ProductName == entity.ProductName &&i.Price==entity.Price);
-        }
+       
 
         public bool SaveNotPayedmoney(NotPayedmoneyHistoryVM criteria)
         {
@@ -56,6 +53,7 @@ namespace Servess
 
             }
             queryable.PaymentStatus = (int)Enumes.PaymentStatus.NotPaid;
+            _context.Update(queryable);
             _context.SaveChanges();
             return ispayed;    
 
@@ -105,9 +103,10 @@ namespace Servess
 
         public IPagedList<NotPayedmoneyHistoryVM> SearchNotPayedmoney(NotPayedmoneyHistoryVM criteria)
         {
-           var queryable =  _context.NotPayedmoneyHistory.Include(i => i.UserNotPayedmoney).Include(i => i.NotPayedmoneys).Where(i => (i.PaymentStatus == criteria.PaymentStatus || criteria.PaymentStatus == 0)
+           var queryable =  _context.NotPayedmoneyHistory.Include(i => i.NotPayedmoneys).Include(i => i.UserNotPayedmoney).Where(i => (i.PaymentStatus == (int)criteria.PaymentStatus || criteria.PaymentStatus == 0)
 
-             //&& (criteria.UserNotPayedmoneyName == null || i.UserNotPayedmoney.UserName.Contains(criteria.UserNotPayedmoneyName)) && (i.HospitalaoOrprationtyp == criteria.HospitalaoOrprationtyp || criteria.HospitalaoOrprationtyp == 0)
+             && (criteria.UserNotPayedmoneyName == null || i.UserNotPayedmoney.UserName.Contains(criteria.UserNotPayedmoneyName)) && 
+             (i.PaymentStatus == (int)criteria.PaymentStatus || criteria.PaymentStatus == 0)
 
              ).Select(i => new NotPayedmoneyHistoryVM
              {
@@ -115,16 +114,19 @@ namespace Servess
                  Id = i.Id,
                  HospitalaoOrprationtyp = i.HospitalaoOrprationtyp
                   ,
-                 UserNotPayedmoneyName = i.UserNotPayedmoney.UserName,
+                 UserNotPayedmoneyName = i.UserNotPayedmoney.UserName ??"",
                   CreationTime = i.CreationTime,
                  NotpayedAmount = i.NotpayedAmount,
                  ChangedByUserId = i.ChangedByUserId,
+                 payedAmount = i.payedAmount,
 
                  ishospital = i.ishospital,
                  NotPayedmoneyId = i.NotPayedmoneyId,
-                 PaymentStatus = i.PaymentStatus,
-                 TotalNotpayedAmount = i.NotPayedmoneys.TotalPayedAmount,
-                 TotalPayedAmount = i.NotPayedmoneys.TotalPayedAmount,
+                 PaymentStatus = (Enumes.PaymentStatus)i.PaymentStatus,
+                 TotalNotpayedAmount = _context.NotPayedmoney.FirstOrDefault(p=>p.Id==i.NotPayedmoneyId).TotalNotpayedAmount??0,
+                 TotalPayedAmount = _context.NotPayedmoney.FirstOrDefault(p=>p.Id==i.NotPayedmoneyId).TotalPayedAmount??0,
+                 
+               
                  UserNotPayedmoneyId = i.UserNotPayedmoneyId,
 
              }
@@ -143,11 +145,11 @@ namespace Servess
 
 
 
-        public IPagedList<NotPayedmoneyHistoryVM> SaveNotPayedmoneyHistoryDetails(int id , int? pageNuber )
+        public IPagedList<NotPayedmoneyHistoryVM> SearchNotPayedmoneyHistoryDetails(int id , int? pageNuber )
         {
-            var queryable = _context.NotPayedmoneyHistory   .Include(i => i.UserNotPayedmoney).Where(i =>  i.NotPayedmoneyId==id
+            var queryable = _context.NotPayedmoneyHistory.Include(i => i.UserNotPayedmoney).Where(i => i.NotPayedmoneyId == id
 
-                       
+
 
                         ).Select(i => new NotPayedmoneyHistoryVM
                         {
@@ -155,14 +157,19 @@ namespace Servess
                             Id = i.Id,
                             HospitalaoOrprationtyp = i.HospitalaoOrprationtyp
                              ,
-                            UserNotPayedmoneyName = i.UserNotPayedmoney.UserName,
-                             ChangedByUserId = i.ChangedByUserId,
+                            UserNotPayedmoneyName = i.UserNotPayedmoney.UserName ?? "",
+                            ChangedByUserId = i.ChangedByUserId,
                             CreationTime = i.CreationTime,
-                             NotpayedAmount = i.NotpayedAmount,
+                            NotpayedAmount = i.NotpayedAmount,
                             ishospital = i.ishospital,
                             NotPayedmoneyId = i.NotPayedmoneyId,
-                            PaymentStatus = i.PaymentStatus,
-                            
+                            Qantity = i.Qantity,
+                            totalpricforanyproduct = (_context.NotPayedmoneyHistoryPriceProductebytypes
+                .Where(pp => pp.NotPayedmoneyHistoryid == i.Id)
+                .Select(pp => (decimal?)pp.PriceProductebytypes.price)
+                .FirstOrDefault() ?? 0) * i.Qantity,
+                            PaymentStatus = (Enumes.PaymentStatus)i.PaymentStatus,
+
                             UserNotPayedmoneyId = i.UserNotPayedmoneyId,
 
                         }
@@ -203,14 +210,15 @@ namespace Servess
 
         public bool SaveNotPayedmoneyHistory(NotPayedmoneyHistoryVM criteria)
         {
-            _context.NotPayedmoneyHistory.Find(criteria.Id);
+          var updated=  _context.NotPayedmoneyHistory.Find(criteria.Id);
+            updated.Qantity= criteria.Qantity;
             _context.SaveChanges();
              return true;   
         }
 
-        public IPagedList<NotPayedmoneyHistoryVM> PrintforHospitallDay(int id, int? pageNumber)
+        public IPagedList<NotPayedmoneyHistoryVM> PrintforHospitallDay(NotPayedmoneyHistoryVM criteria)
         {
-            var queryable = _context.NotPayedmoneyHistory.Include(i => i.UserNotPayedmoney).Include(i=>i.NotPayedmoneys).Where(i => i.NotPayedmoneyId == id &&i.HospitalaoOrprationtyp== (int) Enumes.HospitalOroprationtyp.Hospital
+            var queryable = _context.NotPayedmoneyHistory.Include(i => i.UserNotPayedmoney).Include(i=>i.NotPayedmoneys).Where(i => i.NotPayedmoneyId == criteria. Id &&i.HospitalaoOrprationtyp== (int) Enumes.HospitalOroprationtyp.Hospital
 
 
 
@@ -224,9 +232,10 @@ namespace Servess
                                         ChangedByUserId = i.ChangedByUserId,
                                         CreationTime = i.CreationTime,
                                         NotpayedAmount = i.NotpayedAmount,
+                                        payedAmount = i.NotpayedAmount,
                                         ishospital = i.ishospital,
                                         NotPayedmoneyId = i.NotPayedmoneyId,
-                                        PaymentStatus = i.PaymentStatus,
+                                        PaymentStatus = (Enumes.PaymentStatus)i.PaymentStatus,
 
                                         UserNotPayedmoneyId = i.UserNotPayedmoneyId,
 
@@ -234,11 +243,22 @@ namespace Servess
                                    ).OrderBy(g => g.Id);
 
             // Provide a default value for PageNumber if it's null
-            int pageNum=pageNumber?? 1;
+            int pageNum= criteria.pageNumber ?? 1;
 
             var pagedList = GetPagedData(queryable, pageNum);
 
             return pagedList;
+        }
+
+        public bool CheckIfExisitNotPayedmoney(int id)
+        {
+            return _context.NotPayedmoney.Any(i => i.Id ==id );
+        }
+
+        public bool CheckIfExisitNotPayedmoneyDetails(int id)
+        {
+            return _context.NotPayedmoneyHistory.Any(i => i.Id == id);
+
         }
     }
 }

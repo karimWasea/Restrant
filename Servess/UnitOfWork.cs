@@ -15,6 +15,7 @@ namespace Servess
         public Ilookup _Ilookup { get; }
         public IUserService _userService { get; }
         public IPriceProductebytypes _PriceProductebytypes { get; }
+        public INotPayedmoneyHistoryServess _NotPayedmoneyHistoryServess { get; }
 
         public readonly ApplicationDBcontext _context;
 
@@ -22,9 +23,9 @@ namespace Servess
 
             CategoryServess categoryServess,
 
-            ApplicationDBcontext context, ProductService productService,  lookupServess lookupServess , PriceProductebytypesServess priceProductebytypesServess , ApplicationUserService applicationUserService
+            ApplicationDBcontext context, ProductService productService,  lookupServess lookupServess , PriceProductebytypesServess priceProductebytypesServess , ApplicationUserService applicationUserService , NotPayedmoneyHistoryServess notPayedmoneyHistoryServess
             )
-        {
+        {_NotPayedmoneyHistoryServess = notPayedmoneyHistoryServess;    
             _PriceProductebytypes= priceProductebytypesServess; 
              _context = context;
             _Category = categoryServess;

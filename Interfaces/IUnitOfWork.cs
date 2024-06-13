@@ -8,6 +8,7 @@
         Ilookup _Ilookup { get; }
           IProduct _Product { get;   }
           IPriceProductebytypes _PriceProductebytypes { get;   }
+        INotPayedmoneyHistoryServess _NotPayedmoneyHistoryServess { get;   }
         public IUserService _userService { get; }
 
     }

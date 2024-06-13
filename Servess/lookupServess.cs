@@ -41,11 +41,30 @@ namespace Servess
 
             IQueryable<SelectListItem>? applicationuser = _user.Users.Where(i=>i.CustomerType== CustomerType).Select(x => new SelectListItem { Value = x.Id, Text = x.UserName });
             return applicationuser;
-        }
+        }    public IQueryable<SelectListItem> Users ()
+        {
+
+            IQueryable<SelectListItem>? applicationuser = _user.Users .Select(x => new SelectListItem { Value = x.Id, Text = x.UserName });
+            return applicationuser;
+        } 
         public List<SelectListItem> GetCustomerType()
         {
             var CustomerType = Enum.GetValues(typeof(CustomerType))
                                .Cast<C_Utilities.Enumes.CustomerType>()
+                               .Select(d => new SelectListItem
+                               {
+                                   Value = ((int)d).ToString(),
+                                   Text = DescriptionEnum.GetDescription(d)
+                               })
+                               .ToList();
+
+            return CustomerType;
+        }
+        
+        public List<SelectListItem> GetPaymentStatus()
+        {
+            var CustomerType = Enum.GetValues(typeof(PaymentStatus))
+                               .Cast<C_Utilities.Enumes.PaymentStatus>()
                                .Select(d => new SelectListItem
                                {
                                    Value = ((int)d).ToString(),
@@ -134,6 +153,8 @@ namespace Servess
 
             return HospitalOroprationtypd;
         }
+
+       
     }
 
 
@@ -142,7 +163,12 @@ namespace Servess
 
   public static   class DescriptionEnum{
 
-        public  static string GetDescription(Gender categoryType)
+        public  static string GetDescription(PaymentStatus categoryType)
+        {
+            var fieldInfo = typeof(PaymentStatus).GetField(categoryType.ToString());
+            var descriptionAttribute = fieldInfo?.GetCustomAttribute<DescriptionAttribute>();
+            return descriptionAttribute?.Description ?? categoryType.ToString();
+        }   public  static string GetDescription(Gender categoryType)
         {
             var fieldInfo = typeof(Gender).GetField(categoryType.ToString());
             var descriptionAttribute = fieldInfo?.GetCustomAttribute<DescriptionAttribute>();

@@ -15,13 +15,17 @@ namespace Interfaces
 
         bool SaveNotPayedmoney(NotPayedmoneyHistoryVM criteria);
         bool DeleteNotPayedmoney(int id);
+        bool CheckIfExisitNotPayedmoney(int id);
         IPagedList<NotPayedmoneyHistoryVM> SearchNotPayedmoney(NotPayedmoneyHistoryVM criteria);
 
 
-        public IPagedList<NotPayedmoneyHistoryVM> SaveNotPayedmoneyHistoryDetails(int id, int? pageNuber);
+        public IPagedList<NotPayedmoneyHistoryVM> SearchNotPayedmoneyHistoryDetails(int id, int? pageNuber);
         bool DeleteNotPayedmoneyHistory(int id);
-        public IPagedList<NotPayedmoneyHistoryVM> PrintforHospitallDay(int id, int? pageNumber);  
+        public IPagedList<NotPayedmoneyHistoryVM> PrintforHospitallDay(NotPayedmoneyHistoryVM criteria);  
             bool SaveNotPayedmoneyHistory(NotPayedmoneyHistoryVM criteria);
+
+        bool CheckIfExisitNotPayedmoneyDetails(int id);
+
 
     }
 
