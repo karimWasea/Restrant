@@ -36,14 +36,13 @@ namespace Interfaces
     {
 
 
-        void SaveNotPayedmoney(FinancialUserCashHistoryVM criteria);
-        void DeleteNotPayedmoney(FinancialUserCashHistoryVM criteria);
-        IPagedList<FinancialUserCashHistoryVM> SearchNotPayedmoney(FinancialUserCashHistoryVM criteria);
+         bool DeleteFinancialUserCash(int id);
+        IPagedList<FinancialUserCashHistoryVM> SearchFinancialUserCashH(FinancialUserCashHistoryVM criteria);
 
 
-        void SaveNotPayedmoneyHistoryDetails(int id);
-        void DeleteNotPayedmoneyHistory(int id);
-        IPagedList<FinancialUserCashHistoryVM> SearchNotPayedmoneyHistory(FinancialUserCashHistoryVM criteria);
+        public IPagedList<FinancialUserCashHistoryVM> SearchFinancialUserCashHistoryDetails(int id, int? pageNuber);
+        public bool DeleteFinancialUserCashHistories(int id);
+       
     }
 
 

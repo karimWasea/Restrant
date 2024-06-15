@@ -21,10 +21,9 @@ builder.Services.AddIdentity<Applicaionuser, IdentityRole>(options => options.Si
 .AddEntityFrameworkStores<ApplicationDBcontext>().AddDefaultTokenProviders();
 
 builder.Services.AddTransient<UnitOfWork>();
-//builder.Services.AddTransient<ICustomerTypeServess>();
-builder.Services.AddTransient<lookupServess>();
-//builder.Services.AddTransient<CustomerType>();
-//builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationDBcontext>();
+ builder.Services.AddTransient<lookupServess>();
+builder.Services.AddTransient<FinancialUserCashHistoryServess>();
+ 
 builder.Services.AddScoped<UnitOfWork>();
 builder.Services.AddScoped<NotPayedmoneyHistoryServess>();
 builder.Services.AddTransient<CategoryServess>();

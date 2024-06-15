@@ -35,67 +35,141 @@ namespace Servess
 
         }
 
-        public void SaveNotPayedmoney(FinancialUserCashHistoryVM criteria)
+
+
+        public bool DeleteFinancialUserCash( int id)
         {
-            throw new NotImplementedException();
+            // Find the NotPayedmoney entity by id
+            var notPayedmoney = _context.FinancialUserCash.Find(id);
+            if (notPayedmoney == null)
+            {
+                return false; // or throw an exception
+            }
+
+            // Find the associated NotPayedmoneyHistory entities
+            var notPayedmoneyHistoryItems = _context.FinancialUserCashHistories
+                .Where(i => i. FinancialUserCashId == id)
+                .ToList();
+
+            // Find the associated NotPayedmoneyHistoryPriceProductebytypes entities
+            var notPayedmoneyHistoryPriceProductebytypesItems = _context.FinancialUserCashHistoryPriceProductebytypes
+                .Where(i => notPayedmoneyHistoryItems.Select(h => h.Id).Contains(i.financialUserCashHistoryid))
+                .ToList();
+
+            // Remove associated NotPayedmoneyHistoryPriceProductebytypes entities
+            if (notPayedmoneyHistoryPriceProductebytypesItems.Any())
+            {
+                _context.FinancialUserCashHistoryPriceProductebytypes.RemoveRange(notPayedmoneyHistoryPriceProductebytypesItems);
+            }
+
+            // Remove associated NotPayedmoneyHistory entities
+            if (notPayedmoneyHistoryItems.Any())
+            {
+                _context.FinancialUserCashHistories.RemoveRange(notPayedmoneyHistoryItems);
+            }
+
+            // Remove the NotPayedmoney entity
+            _context.FinancialUserCash.Remove(notPayedmoney);
+
+            // Save all changes
+            _context.SaveChanges();
+
+            return true;
         }
 
-        public void DeleteNotPayedmoney(FinancialUserCashHistoryVM criteria)
+        public IPagedList<FinancialUserCashHistoryVM> SearchFinancialUserCashH(FinancialUserCashHistoryVM criteria)
         {
-            throw new NotImplementedException();
+            var queryable = _context.FinancialUserCashHistories
+                .Include(i => i.FinancialUserCash).Where(i =>         (i.CreationTime == criteria.CreationTime || criteria.CreationTime == DateTime.MinValue)
+
+
+                         
+                       
+                         ).Select(i => new FinancialUserCashHistoryVM
+                         {
+
+
+                             Id = i.Id,
+                             HospitalaoOrprationtyp = (Enumes.HospitalOroprationtyp)i.HospitalOroprationtyp
+                  ,
+                              CreationTime = i.CreationTime,
+                          
+ 
+                              PaymentStatus = (Enumes.PaymentStatus)i.PaymentStatus,
+                             PayedTotalAmount = _context.FinancialUserCash.FirstOrDefault(p => p.Id == i.FinancialUserCashId).PayedTotalAmount ?? 0,
+
+                  
+
+                         }
+            ).OrderBy(g => g.Id);
+
+            // Provide a default value for PageNumber if it's null
+            int pageNumber = criteria.PageNumber ?? 1;
+
+            var pagedList = GetPagedData(queryable, pageNumber);
+
+            return pagedList;
+
+
         }
 
-        public IPagedList<FinancialUserCashHistoryVM> SearchNotPayedmoney(FinancialUserCashHistoryVM criteria)
+        public bool DeleteFinancialUserCashHistories(int id)
         {
-            throw new NotImplementedException();
+            var queryable = _context.FinancialUserCashHistories.Find(id);
+            var itemsToRemove = _context. FinancialUserCashHistoryPriceProductebytypes
+         .Where(i => i.financialUserCashHistoryid == id)
+         .ToList();
+
+            if (itemsToRemove.Any())
+            {
+                _context.FinancialUserCashHistoryPriceProductebytypes.RemoveRange(itemsToRemove);
+                _context.SaveChanges();
+            }
+
+
+
+            _context.FinancialUserCashHistories.Remove(queryable);
+
+
+            return true;
+
         }
 
-        public void SaveNotPayedmoneyHistoryDetails(int id)
-        {
-            throw new NotImplementedException();
+        public IPagedList<FinancialUserCashHistoryVM> SearchFinancialUserCashHistoryDetails(int id,int  ?pageNuber)
+            {
+                var queryable = _context.FinancialUserCashHistories.Where(i => i.FinancialUserCashId == id
+
+
+
+                            ).Select(i => new FinancialUserCashHistoryVM
+                            {
+                                
+                                Id = i.Id,
+                                HospitalaoOrprationtyp = (Enumes.HospitalOroprationtyp)i.HospitalOroprationtyp
+                                 ,
+                                 CreationTime = i.CreationTime,
+                                   Qantity = i.Qantity,
+                                PayedTotalAmount = (_context. FinancialUserCashHistoryPriceProductebytypes
+                    .Where(pp => pp.financialUserCashHistoryid == i.Id)
+                    .Select(pp => (
+                    decimal?)pp.PriceProductebytypes.price)
+                    .FirstOrDefault() ?? 0) * i.Qantity,
+                                PaymentStatus = (Enumes.PaymentStatus)i.PaymentStatus,
+
+ 
+                            }
+                           ).OrderBy(g => g.Id);
+
+                // Provide a default value for PageNumber if it's null
+                int pageNumber = pageNuber ?? 1;
+
+                var pagedList = GetPagedData(queryable, pageNumber);
+
+                return pagedList;
+            }
+
+
+
+
         }
-
-        public void DeleteNotPayedmoneyHistory(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IPagedList<FinancialUserCashHistoryVM> SearchNotPayedmoneyHistory(FinancialUserCashHistoryVM criteria)
-        {
-            throw new NotImplementedException();
-        }
-
-
-        //public IPagedList<productVM> Search(productVM criteria)
-        //{
-        //    var queryable = _context.products.Where(
-        //        product =>
-        //            (criteria.ProductName == null || product.ProductName.Contains(criteria.ProductName))
-        //            && (criteria.Description == null || product.Description.Contains(criteria.Description)))
-        //        .Select(i => new productVM
-        //        {
-        //            Id = i.Id,
-        //            ProductName = i.ProductName,
-        //            Description = i.Description,
-        //            Discount = i.Discount,
-        //            CategoryTyPe = (Enumes.CategoryType)i.CategoryTyPe,
-        //            Price = i.Price,
-        //            Qantity = i.Qantity,
-        //             //, CategoryName= i.Category.CategoryName,
-        //             CoverString= _context.ProductAttachments.Where(p=>p.ProductId==i.Id).OrderByDescending(i=>i.ProductId).FirstOrDefault().FilePath,
-        //        })
-        //        .OrderBy(g => g.Id);
-
-        //    // Provide a default value for PageNumber if it's null
-        //    int pageNumber = criteria.PageNumber ?? 1;
-
-        //    var pagedList = GetPagedData(queryable, pageNumber);
-
-        //    return pagedList;
-        //}
-
-
-
-
-    }
 }

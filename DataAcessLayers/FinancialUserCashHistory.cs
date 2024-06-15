@@ -16,6 +16,7 @@
         public int? Qantity { get; set; }
         public decimal? PayedAmount { get; set; }
         public int PaymentStatus { get; set; }
+        public int HospitalOroprationtyp { get; set; }
         public DateTime CreationTime { get; set; } = DateTime.Now;
 
         public string? SystemUserId { get; set; }

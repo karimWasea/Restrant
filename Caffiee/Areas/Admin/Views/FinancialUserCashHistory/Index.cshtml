@@ -1,0 +1,96 @@
+﻿  @model IEnumerable<Cf_Viewmodels.FinancialUserCashHistoryVM>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Not Paid Money History";
+}
+
+<form method="get" asp-controller="FinancialUserCashHistory" asp-action="Index" asp-area="Admin" class="mt-4">
+    <div class="form-row justify-content-center">
+        <div class="form-group col-md-4">
+            <label for="CreationTime">بحث</label>
+            <input type="datetime-local" class="form-control" name="CreationTime" placeholder="Search..." aria-label="Search" id="CreationTime">
+        </div>
+        <div class="form-group col-md-4 align-self-end">
+            <button class="btn btn-primary w-100" type="submit">بحث</button>
+        </div>
+    </div>
+</form>
+
+<table class="table table-striped table-bordered w-100 mx-auto mt-4">
+    <thead class="thead-dark">
+        <tr>
+             <th>المدفوع</th>
+            <th>الدفع</th>
+            <th>وقت الشراء    </th>
+             <th class="Save">الحذف    </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                
+               
+                <td>@item.PayedTotalAmount</td>
+                <td>@Servess.DescriptionEnum.GetDescription(item.PaymentStatus)</td>
+                <td>@item.CreationTime</td>
+                 
+                <td class="Save">
+                    <a class="btn btn-danger ml-1" asp-area="Admin" asp-action="Delete" asp-route-Id="@item.Id">حذف</a>
+                    <a class="btn btn-info ml-1" asp-area="Admin" asp-controller="FinancialUserCashHistory" asp-action="SearchFinancialUserCashHistoryDetails" asp-route-Id="@item.Id">تفاصيل</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div id="buttonprint" class="text-center mt-4">
+    <button id="printButton" class="btn btn-primary" style="display: none;">طباعة الفاتوره</button>
+</div>
+<partial name="_AlertMessage" />
+
+<partial name="_PaginationPartial" model="Model" />
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById('UserNotPayedmoneyName').addEventListener('keyup', function () {
+            var searchText = this.value.toLowerCase();
+            document.querySelectorAll('.product-card').forEach(function (card) {
+                var titleText = card.querySelector('.card-title').textContent.toLowerCase();
+                card.style.display = titleText.includes(searchText) ? '' : 'none';
+            });
+        });
+ 
+    });
+</script>
+
+<style>
+    .form-inline {
+        display: flex;
+        flex-flow: row wrap;
+        align-items: center;
+    }
+
+        .form-inline .form-group {
+            margin-right: 10px;
+        }
+
+    .input-group {
+        width: 100%;
+    }
+
+    .table {
+        width: 100%;
+    }
+
+        .table thead {
+            background-color: #343a40;
+            color: white;
+        }
+
+        .table td, .table th {
+            text-align: center;
+            vertical-align: middle;
+        }
+</style>

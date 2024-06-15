@@ -17,18 +17,21 @@ namespace Cf_Viewmodels
     {
          public string? ProductName { get; set; }
         public decimal? Price { get; set; }
+        public decimal? payedAmount { get; set; }
+        public decimal? PayedTotalAmount { get; set; }
         public decimal? Qantity { get; set; }
+        public HospitalOroprationtyp HospitalaoOrprationtyp { get; set; }
         public CategoryType CategoryTyPe { get; set; }
 
          public string CategoryName { get; set; }
+         public DateTime CreationTime { get; set; }
         public IEnumerable<SelectListItem>? CategoryIdList { get; set; } = Enumerable.Empty<SelectListItem>();
-        //public List<IFormFile> Files { get; set; }
-
-        //[AllowedExtensions(FileSettings.AllowedExtensions),
-        //    MaxFileSize(FileSettings.MaxFileSizeInBytes)]
+        
         public IFormFile ? Cover { get; set; } = default!;
         public string  CoverString { get; set; } = string.Empty;
+        public string UserName { get; set; } = string.Empty;
          public string? Description { get; set; }
+         public PaymentStatus PaymentStatus { get; set; }
         public int? Discount { get; set; } // Nullable discount property
 
      }

@@ -65,11 +65,7 @@ namespace Caffiee.Areas.Admin.Controllers
          [HttpPost]
          public IActionResult Save(NotPayedmoneyHistoryVM productVm)
         { 
-            //productVm.CategoryIdList = _unitOfWork._Ilookup.GetCategoryType();
-            //ModelState.Remove("CategoryName");
-
-            //productVm.SystemUserId= GetCurrentUserInfo().Result.UserId;
-            //productVm.SystemUserName= GetCurrentUserInfo().Result.UserName;
+             
            
        
             if (!ModelState.IsValid)

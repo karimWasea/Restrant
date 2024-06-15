@@ -10,22 +10,23 @@ namespace Servess
         private bool disposed = false;
         public ICategory _Category { get; set; }
         public IProduct _Product { get; set; }
- 
-        //public ICustomerType _CustomerType { get; }
         public Ilookup _Ilookup { get; }
         public IUserService _userService { get; }
         public IPriceProductebytypes _PriceProductebytypes { get; }
         public INotPayedmoneyHistoryServess _NotPayedmoneyHistoryServess { get; }
+        public IFinancialUserCashHistoryServess _iFinancialUserCashHistoryServess { get; }
 
         public readonly ApplicationDBcontext _context;
 
-        public UnitOfWork(
+        public UnitOfWork(FinancialUserCashHistoryServess financialUserCashHistoryServess,
 
             CategoryServess categoryServess,
 
             ApplicationDBcontext context, ProductService productService,  lookupServess lookupServess , PriceProductebytypesServess priceProductebytypesServess , ApplicationUserService applicationUserService , NotPayedmoneyHistoryServess notPayedmoneyHistoryServess
             )
-        {_NotPayedmoneyHistoryServess = notPayedmoneyHistoryServess;    
+        {
+            _iFinancialUserCashHistoryServess = financialUserCashHistoryServess;
+             _NotPayedmoneyHistoryServess = notPayedmoneyHistoryServess;    
             _PriceProductebytypes= priceProductebytypesServess; 
              _context = context;
             _Category = categoryServess;

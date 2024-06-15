@@ -46,13 +46,13 @@ public enum CustomerType
 
         public enum PaymentStatus
         {
-            [Description("Paid")]
+            [Description("تم الدفع")]
             Paid = 1,
 
-            [Description("Not Paid")]
+            [Description("  لم يتم الدفع")]
             NotPaid = 2,
 
-            [Description("Partial Payment")]
+            [Description(" دفع جزء من المبلغ  ")]
             PartialPaid = 3
         }
 
