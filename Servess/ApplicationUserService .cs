@@ -33,11 +33,12 @@ namespace Servess
      
         public async Task<IPagedList<ApplicaionuserVM>> Search(ApplicaionuserVM applicationUserVM)
         {
-            var queryable = _userManager.Users.Select(u => new ApplicaionuserVM
+            var queryable = _userManager.Users.Where(i=>i.IsAdmin==false).Select(u => new ApplicaionuserVM
             {
                 Id = u.Id,
                 CustomerType = u.CustomerType,
                 Gender = u.Gender
+                 , UserNme=u.UserName??"",
             });
 
             int pageNumber = applicationUserVM.PageNumber ?? 1;

@@ -1,66 +1,57 @@
 ﻿@model Cf_Viewmodels.PriceProductebytypesVM
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
-
 @{
     Layout = "_Layout";
-
     ViewBag.Title = "Save PriceProductebytypes";
 }
 
-<h2>Create PriceProductebytypes</h2>
- 
-<h4>     productName:@Model.ProductName</h4>
-<h4>    orginal productName:@Model.ProductOldPrice</h4>
+<h2>الاسعار  </h2>
+
+<h4>اسم المنتج: @Model.ProductName</h4>
+<h4>   السعر : @Model.ProductOldPrice</h4>
 <hr />
-<div class="row">
-    <div class="col-md-6">
-        <form asp-action="Save">
-            <div class="form-group">
-                 <input asp-for="ProductId" class="form-control"  hidden/>
-             </div>
-            <div class="form-group">
-                <label asp-for="price" class="control-label"></label>
-                <input asp-for="price" class="form-control" />
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <form asp-action="Save" method="post" class="form-horizontal p-4 border rounded bg-light shadow-sm">
+            <div class="form-group mb-3">
+                <input asp-for="ProductId" class="form-control" hidden />
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="price" class="form-label">Price</label>
+                <input asp-for="price" class="form-control" placeholder="Enter price" />
                 <span asp-validation-for="price" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Qantity" class="control-label"></label>
-                <input asp-for="Qantity" class="form-control" />
+            <div class="form-group mb-3">
+                <label asp-for="Qantity" class="form-label">Quantity</label>
+                <input asp-for="Qantity" class="form-control" placeholder="Enter quantity" />
                 <span asp-validation-for="Qantity" class="text-danger"></span>
             </div>
-            <div class="col">
-                <label asp-for="CustomerType" class="form-label" style="font-weight: bold;">CustomerTypeId:</label>
-                <select class="form-select  glass-select same-width" asp-for="CustomerType" asp-items="Model.CustomerTypeIdList"
-                        data-placeholder="Select CategoryId" style="z-index: 1;">
-                            <option value=""></option>
-                        </select>
+            <div class="form-group mb-3">
+                <label asp-for="CustomerType" class="form-label" style="font-weight: bold;">Customer Type</label>
+                <select class="form-select" asp-for="CustomerType" asp-items="Model.CustomerTypeIdList" data-placeholder="Select customer type">
+                    <option value=""></option>
+                </select>
                 <span asp-validation-for="CustomerType" class="text-danger"></span>
-                    </div>
-          
-            <div class="form-group">
-                <label asp-for="Discount" class="control-label"></label>
-                <input asp-for="Discount" class="form-control" />
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Discount" class="form-label">Discount</label>
+                <input asp-for="Discount" class="form-control" placeholder="Enter discount" />
                 <span asp-validation-for="Discount" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <div class="button-group">
-
-                    <button type="submit" id="savedata" class="btn btn-primary">
-                        @if (Model.Id > 0)
-                        {
-                            @:Update
-                        }
-                        else
-                        {
-                            @:Add New
-                        }
-                    </button>
-
-                </div> 
-                
+            <div class="form-group d-flex justify-content-between">
+                <button type="submit" id="savedata" class="btn btn-primary">
+                    @if (Model.Id > 0)
+                    {
+                        @:Update
+                    }
+                    else
+                    {
+                        @:Add New
+                    }
+                </button>
                 <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-
+            </div>
         </form>
     </div>
 </div>
@@ -71,3 +62,64 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
+
+<style>
+    .form-horizontal {
+        background-color: #f5f6fa;
+        border: 1px solid #dcdfe6;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .form-control,
+    .form-select {
+        width: 100%;
+        padding: 0.75rem;
+        margin-bottom: 1rem;
+        border-radius: 50px;
+        border: 1px solid #dcdfe6;
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #1877f2;
+            box-shadow: 0 0 0 0.2rem rgba(24, 119, 242, 0.25);
+        }
+
+    .btn-primary {
+        background-color: #1877f2;
+        border-color: #1877f2;
+        color: #fff;
+        padding: 0.5rem 1.5rem;
+        border-radius: 50px;
+        transition: background-color 0.3s, border-color 0.3s;
+    }
+
+        .btn-primary:hover {
+            background-color: #165cbd;
+            border-color: #165cbd;
+        }
+
+    .btn-secondary {
+        background-color: #e0e0e0;
+        border-color: #e0e0e0;
+        color: #000;
+        padding: 0.5rem 1.5rem;
+        border-radius: 50px;
+        transition: background-color 0.3s, border-color 0.3s;
+    }
+
+        .btn-secondary:hover {
+            background-color: #c6c6c6;
+            border-color: #c6c6c6;
+        }
+</style>

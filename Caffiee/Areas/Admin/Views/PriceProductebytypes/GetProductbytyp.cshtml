@@ -3,7 +3,7 @@
 
 @{
     Layout = "_Layout";
-    ViewData["Title"] = "All Products";
+    ViewData["Title"] = "";
 }
 <!-- Modal HTML -->
 <div id="customModal" class="modal">
@@ -12,7 +12,11 @@
         <div id="modalMessage"></div>
     </div>
 </div>
+ <h1 style="font-weight:bold;">
+    الاسعار: 
+    @Servess.DescriptionEnum.GetDescription(ViewBag.CustomerType)
 
+</h1>
 <style>
      
     .shopping-bag {

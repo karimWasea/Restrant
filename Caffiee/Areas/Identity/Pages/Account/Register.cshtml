@@ -4,98 +4,84 @@
 @{
     ViewData["Title"] = "Register";
 }
+<style>
 
-<h1>@ViewData["Title"]</h1>
+    body {
+        background-color: #f0f2f5;
+    }
 
-<div class="row">
-    <div class="col-md-4">
-        <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-            <h2>Create a new account.</h2>
-            <hr />
-            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
-                <label asp-for="Input.Email">Email</label>
-                <span asp-validation-for="Input.Email" class="text-danger"></span>
-            </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label asp-for="Input.Password">Password</label>
-                <span asp-validation-for="Input.Password" class="text-danger"></span>
-            </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label asp-for="Input.ConfirmPassword">Confirm Password</label>
-                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
-            </div>
-            <div class="row mb-3">
-                <div class="col-md-12">
-                    <div class="form-floating">
-                        <select asp-for="Input.Gender" asp-items="@Html.GetEnumSelectList<Gender>()"
-                                aria-required="true" class="form-select" id="genderSelect">
-                            <option value="" disabled selected>Choose gender</option>
-                        </select>
-                        <label for="genderSelect" class="form-label">Gender</label>
-                    </div>
-                    <span asp-validation-for="Input.Gender" class="text-danger"></span>
-                </div>
-            </div> 
-            
-            <div class="row mb-3">
-                <div class="col-md-12">
-                    <div class="form-floating">
-                        <select asp-for="Input.Custemertype" asp-items="@Html.GetEnumSelectList<CustomerType>()"
-                                aria-required="true" class="form-select" id="genderSelect">
-                            <option value="" disabled selected>Choose Custemertype</option>
-                        </select>
-                        <label for="Custemertype" class="form-label">Custemertype</label>
-                    </div>
-                    <span asp-validation-for="Input.Custemertype" class="text-danger"></span>
-                </div>
-            </div>
+    .card {
+        border-radius: 8px;
+        overflow: hidden;
+    }
 
-          @*   <div class="row mb-3">
-                <div class="col-md-12">
-                    <div class="form-floating">
-                        <label asp-for="Input.CustemertypId" class="control-label"></label>
-                    <select asp-for="Input.CustemertypId" asp-items="@(ViewData["CustemertypId"] as List<SelectListItem>)" class="form-control">
-                            <option value=""  >-- Select Custemerty --</option>
-                    </select>
-                    <span asp-validation-for="Input.CustemertypId" class="text-danger"></span>
-                </div>
-            </div> *@
-            <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
-        </form>
-    </div>
-    <div class="col-md-6 col-md-offset-2">
-        <section>
-            <h3>Use another service to register.</h3>
-            <hr />
-            @{
-                if ((Model.ExternalLogins?.Count ?? 0) == 0)
-                {
-                    <div>
-                        <p>
-                            There are no external authentication services configured. See this <a href="https://go.microsoft.com/fwlink/?LinkID=532715">article
-                            about setting up this ASP.NET application to support logging in via external services</a>.
-                        </p>
-                    </div>
-                }
-                else
-                {
-                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
-                        <div>
-                            <p>
-                                @foreach (var provider in Model.ExternalLogins!)
-                                {
-                                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
-                                }
-                            </p>
+    .card-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+
+    .btn-primary {
+        background-color: #1877f2;
+        border-color: #1877f2;
+    }
+
+        .btn-primary:hover {
+            background-color: #166fe5;
+            border-color: #166fe5;
+        }
+
+    .form-control:focus {
+        border-color: #1877f2;
+        box-shadow: 0 0 0 0.2rem rgba(24, 119, 242, 0.25);
+    }
+
+    #regester {
+        margin-right:20%;
+    }
+</style>
+
+
+<div class="container mt-5" id="regester">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">انشاء حساب</h2>
+                    <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+                        
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.Email" class="form-control" autocomplete="Email" aria-required="true" placeholder="الايميل" />
+                            <label asp-for="Input.Email">الايميل</label>
+                            <span asp-validation-for="Input.Email" class="text-danger"></span>
+                        </div> 
+                        
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.UserName" class="form-control" autocomplete="username" aria-required="true" placeholder="الاسم" />
+                            <label asp-for="Input.UserName">الاسم</label>
+                            <span asp-validation-for="Input.UserName" class="text-danger"></span>
                         </div>
+                        
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder=" كله المرور  " />
+                            <label asp-for="Input.Password">كله المرور</label>
+                            <span asp-validation-for="Input.Password" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="تاكيد كلمه المرور" />
+                            <label asp-for="Input.ConfirmPassword">تاكيد كلمه المرور  </label>
+                            <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                        </div>
+
+                        <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">تسجيل الدخول</button>
                     </form>
-                }
-            }
-        </section>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+
+        </div>
     </div>
 </div>
 

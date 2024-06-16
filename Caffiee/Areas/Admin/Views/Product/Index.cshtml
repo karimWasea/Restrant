@@ -5,37 +5,50 @@
     Layout = "_Layout";
         ViewData["Title"] = " Products  ";
 }
-<partial name="_AlertMessage" />
+ <p>
+   المنتجات
+</p>
+<form method="get" asp-controller="NotPayedmoneyHistory" asp-action="Index" asp-area="Admin" class="mt-4">
+    <div class="form-row justify-content-center">
+        <div>
+            <div class="form-group col-md-4">
+                <label for="UserNotPayedmoneyName">بحث</label>
+                <input type="text" class="form-control" name="UserNotPayedmoneyName" placeholder="Search..." aria-label="Search" id="UserNotPayedmoneyName">
+            </div>
+            <div class="form-group col-md-4">
+                <label for="PaymentStatus">ابحث ب تم الدفع</label>
+                <select name="PaymentStatus" class="form-select" asp-items="@ViewBag.GetPaymentStatus" aria-required="true">
+                    <option value="">الدفع</option>
+                </select>
+            </div>
+        </div>
 
-<form id="search-form" method="get" action="@Url.Action("Index")">
-    <input type="text" name="search" value="@ViewBag.Search" placeholder="Search..." id="search-input">
+        <br />
+        <div class="form-group col-md-4 align-self-end">
+            <button class="btn btn-primary w-100" type="submit">بحث</button>
+        </div>
+    </div>
 </form>
- 
-<p>
-    <a asp-area="Admin" asp-controller="Product" asp-action="Save" class="btn btn-primary">Create New</a>
+
+<br />
+<p style="margin-left:30%;">
+    <a asp-area="Admin" asp-controller="User" asp-action="Save" class="btn btn-primary">انشا جديد  </a>
 </p>
 
-<table class="table">
-    <thead>
+<table class="table table-striped table-bordered w-100 mx-auto mt-4">
+    <thead class="thead-dark">
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.First().ProductName)
-            </th>
+ اسم المنتج            </th>
             <th>
-                @Html.DisplayNameFor(model => model.First().Price)
-            </th>
+ السعر            </th>
             <th>
-                @Html.DisplayNameFor(model => model.First().Qantity)
-            </th>
+ الكميه            </th>
             
             <th>
-                @Html.DisplayNameFor(model => model.First().Description)
-            </th><th>
-                @Html.DisplayNameFor(model => model.First().CategoryName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.First().Discount)
-            </th>
+ الوصف            </th><th>
+ توع المنتج            </th>
+            
             <th>خيارات</th>
             <th>اضافه اسعار المنجات للعمل</th>
         </tr>
@@ -56,19 +69,18 @@
                
                 <td>
                     @Html.DisplayFor(modelItem => item.Description)
-                </td>    <td>
+                </td>   
+                  <td>
                     @Servess.DescriptionEnum.GetDescription(item.CategoryTyPe)
-                 </td>
+                  </td>
+               
                 <td>
-                    @Html.DisplayFor(modelItem => item.Discount)
-                </td>
-                <td>
-                     <a asp-action="Save" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a href="javascript:void(0);" class="delete-link" data-id="@item.Id">Delete</a>
+                    <a asp-action="Save" class="btn btn-primary ml-1" asp-route-id="@item.Id">تعديل </a> |
+                    <a asp-action="Details" class="btn btn-info ml-1" asp-route-id="@item.Id">تفاصيل</a> |
+                    <a href="javascript:void(0);" class="delete-link btn btn-danger ml-1" data-id="@item.Id">حذف</a>
                 </td> <td>
-                    <a asp-area="Admin" asp-controller="PriceProductebytypes" asp-action="Save" asp-route-ProductId="@item.Id">اضافه اسعار المنجات  </a> 
-                    
+                    <a asp-area="Admin" class="btn btn-primary ml-1"  asp-controller="PriceProductebytypes" asp-action="Save" asp-route-ProductId="@item.Id">اضافه اسعار المنجات  </a>
+
                 </td>
             </tr>
         }
@@ -82,6 +94,35 @@
 }
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+<style>
+    .form-inline {
+        display: flex;
+        flex-flow: row wrap;
+        align-items: center;
+    }
+
+        .form-inline .form-group {
+            margin-right: 10px;
+        }
+
+    .input-group {
+        width: 100%;
+    }
+
+    .table {
+        width: 100%;
+    }
+
+        .table thead {
+            background-color: #343a40;
+            color: white;
+        }
+
+        .table td, .table th {
+            text-align: center;
+            vertical-align: middle;
+        }
+</style>
 
 @* @Html.AntiForgeryToken()
  *@

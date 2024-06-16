@@ -42,7 +42,7 @@ namespace Caffiee.Areas.Admin.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var _users = await _user.Users.ToListAsync();
+            var _users = await _user.Users.Where(p=>p.IsAdmin==true).ToListAsync();
             return View(_users);
         }
 
