@@ -164,6 +164,7 @@ namespace Servess
                             ishospital = i.ishospital,
                             NotPayedmoneyId = i.NotPayedmoneyId,
                             Qantity = i.Qantity,
+                             payedAmount= i.payedAmount,    
                             totalpricforanyproduct = (_context.NotPayedmoneyHistoryPriceProductebytypes
                 .Where(pp => pp.NotPayedmoneyHistoryid == i.Id)
                 .Select(pp => (decimal?)pp.PriceProductebytypes.price)

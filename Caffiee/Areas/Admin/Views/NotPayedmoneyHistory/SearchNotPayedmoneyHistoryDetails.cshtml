@@ -69,13 +69,19 @@
                 <td>@Servess.DescriptionEnum.GetDescription(item.PaymentStatus)</td> <!-- Ensure GetDescription works properly -->
                  <td>@item.totalpricforanyproduct</td>
                 <td class="col-4">
-                                         <form method="post" asp-controller="NotPayedmoneyHistory" asp-action="SaveHistory" asp-area="Admin" class="form-inline Save">
-                         <input type="hidden" id="Id" name="Id" value="@item.Id" asp-for="@item.Id" />
-                        <div class="form-group d-flex align-items-center Save">
-                            <input type="number" min="1" class="form-control   Save" id="Qantity" name="Qantity" placeholder="الكميه" style="width:150px;" />
-                             <button class="btn btn-success creditButton" type="submit">تعديل  </button>
-                        </div>
-                    </form>
+
+                    @if (item.payedAmount != item.NotpayedAmount)
+                    {
+                        <form method="post" asp-controller="NotPayedmoneyHistory" asp-action="SaveHistory" asp-area="Admin" class="form-inline Save">
+                            <input type="hidden" id="Id" name="Id" value="@item.Id" asp-for="@item.Id" />
+                            <div class="form-group d-flex align-items-center Save">
+                                <input type="number" min="1" class="form-control   Save" id="Qantity" name="Qantity" placeholder="الكميه" style="width:150px;" />
+                                <button class="btn btn-success creditButton" type="submit">تعديل  </button>
+                            </div>
+                        </form>
+                    }
+
+               
                 </td>
                 <td>
                     <a class="btn btn-success flex-grow-1 ml-1 Save" asp-area="Admin" asp-action="DeleteHistory" asp-route-Id="@item.Id">حذف</a>

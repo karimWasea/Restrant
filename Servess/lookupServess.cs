@@ -41,10 +41,15 @@ namespace Servess
 
             IQueryable<SelectListItem>? applicationuser = _user.Users.Where(i=>i.CustomerType== CustomerType).Select(x => new SelectListItem { Value = x.Id, Text = x.UserName });
             return applicationuser;
-        }    public IQueryable<SelectListItem> Users ()
+        }    public IQueryable<SelectListItem> Users (  )
         {
 
-            IQueryable<SelectListItem>? applicationuser = _user.Users .Where(i=>i.IsAdmin==false).Select(x => new SelectListItem { Value = x.Id, Text = x.UserName });
+            IQueryable<SelectListItem>? applicationuser = _user.Users .Where(i=>i.IsAdmin==false ).Select(x => new SelectListItem { Value = x.Id, Text = x.UserName  });
+            return applicationuser;
+        }    public IQueryable<SelectListItem> Users ( string userid)
+        {
+
+            IQueryable<SelectListItem>? applicationuser = _user.Users .Where(i=>i.IsAdmin==false && (i.Id==userid|| userid == null)).Select(x => new SelectListItem { Value = x.Id, Text = x.UserName  });
             return applicationuser;
         } 
         public List<SelectListItem> GetCustomerType()
