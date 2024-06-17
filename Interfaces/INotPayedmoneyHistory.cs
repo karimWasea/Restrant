@@ -18,6 +18,7 @@ namespace Interfaces
         bool CheckIfExisitNotPayedmoney(int id);
         IPagedList<NotPayedmoneyHistoryVM> SearchNotPayedmoney(NotPayedmoneyHistoryVM criteria);
 
+        public bool Salesreturns(int id);
 
         public IPagedList<NotPayedmoneyHistoryVM> SearchNotPayedmoneyHistoryDetails(int id, int? pageNuber);
         bool DeleteNotPayedmoneyHistory(int id);

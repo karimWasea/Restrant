@@ -3,6 +3,8 @@ using C_Utilities;
 
 using Cf_Viewmodels;
 using DataAcessLayers;
+using DataAcessLayers.Migrations;
+
 using Interfaces;
 
 using Microsoft.AspNetCore.Http;
@@ -59,7 +61,6 @@ namespace Servess
 
 
         }
-
         public bool DeleteNotPayedmoney(int id)
         {
             // Find the NotPayedmoney entity by id
@@ -99,34 +100,86 @@ namespace Servess
 
             return true;
         }
+        public bool Salesreturns(int id)
+        {
+            // Find the NotPayedmoney entity by id
+            var notPayedmoney = _context.NotPayedmoney.Find(id);
+            if (notPayedmoney == null)
+            {
+                return false; // or throw an exception
+            }
+
+            // Find the associated NotPayedmoneyHistory entities
+            var notPayedmoneyHistoryItems = _context.NotPayedmoneyHistory
+                .Where(i => i.NotPayedmoneyId == id)
+                .ToList();
+
+            // Find the associated NotPayedmoneyHistoryPriceProductebytypes entities
+            var notPayedmoneyHistoryPriceProductebytypesItems = _context.NotPayedmoneyHistoryPriceProductebytypes
+                .Where(i => notPayedmoneyHistoryItems.Select(h => h.Id).Contains(i.NotPayedmoneyHistoryid))
+                .ToList();
+
+            // Update the quantity of associated products
+            foreach (var historyItem in notPayedmoneyHistoryItems)
+            {
+                var productItems = notPayedmoneyHistoryPriceProductebytypesItems
+                    .Where(pp => pp.NotPayedmoneyHistoryid == historyItem.Id)
+                    .Select(pp => pp.PriceProductebytypes.Product);
+
+                foreach (var product in productItems)
+                {
+                    product.Qantity += historyItem.Qantity; // Ensure the property name is correct
+                }
+            }
+
+            // Remove associated NotPayedmoneyHistoryPriceProductebytypes entities
+            if (notPayedmoneyHistoryPriceProductebytypesItems.Any())
+            {
+                _context.NotPayedmoneyHistoryPriceProductebytypes.RemoveRange(notPayedmoneyHistoryPriceProductebytypesItems);
+            }
+
+            // Remove associated NotPayedmoneyHistory entities
+            if (notPayedmoneyHistoryItems.Any())
+            {
+                _context.NotPayedmoneyHistory.RemoveRange(notPayedmoneyHistoryItems);
+            }
+
+            // Remove the NotPayedmoney entity
+            _context.NotPayedmoney.Remove(notPayedmoney);
+
+            // Save all changes
+            _context.SaveChanges();
+
+            return true;
+        }
 
 
         public IPagedList<NotPayedmoneyHistoryVM> SearchNotPayedmoney(NotPayedmoneyHistoryVM criteria)
         {
-           var queryable =  _context.NotPayedmoneyHistory.Include(i => i.NotPayedmoneys).Include(i => i.UserNotPayedmoney).Where(i => (i.PaymentStatus == (int)criteria.PaymentStatus || criteria.PaymentStatus == 0)
+            var queryable = _context.NotPayedmoneyHistory.Include(i => i.NotPayedmoneys).Include(i => i.UserNotPayedmoney).Where(i => (i.PaymentStatus == (int)criteria.PaymentStatus || criteria.PaymentStatus == 0)
 
-             && (criteria.UserNotPayedmoneyName == null || i.UserNotPayedmoney.UserName.Contains(criteria.UserNotPayedmoneyName)) && 
-             (i.PaymentStatus == (int)criteria.PaymentStatus || criteria.PaymentStatus == 0)
+              && (criteria.UserNotPayedmoneyName == null || i.UserNotPayedmoney.UserName.Contains(criteria.UserNotPayedmoneyName)) &&
+              (i.PaymentStatus == (int)criteria.PaymentStatus || criteria.PaymentStatus == 0)
 
-             ).Select(i => new NotPayedmoneyHistoryVM
-             {
+              ).Select(i => new NotPayedmoneyHistoryVM
+              {
 
-                 Id = i.Id,
-                 HospitalaoOrprationtyp = (Enumes.HospitalOroprationtyp)i.HospitalaoOrprationtyp
-                  ,
-                 UserNotPayedmoneyName = i.UserNotPayedmoney.UserName ??"",
+                  Id = i.Id,
+                  HospitalaoOrprationtyp = (Enumes.HospitalOroprationtyp)i.HospitalaoOrprationtyp
+                   ,
+                  UserNotPayedmoneyName = i.UserNotPayedmoney.UserName ?? "",
                   CreationTime = i.CreationTime,
-                 NotpayedAmount = i.NotpayedAmount,
-                 ChangedByUserId = i.ChangedByUserId,
-                 payedAmount = i.payedAmount,
+                  NotpayedAmount = i.NotpayedAmount,
+                  ChangedByUserId = i.ChangedByUserId,
+                  payedAmount = i.payedAmount,
 
-                 ishospital = i.ishospital,
-                 NotPayedmoneyId = i.NotPayedmoneyId,
-                 PaymentStatus = (Enumes.PaymentStatus)i.PaymentStatus,
-                 TotalNotpayedAmount = _context.NotPayedmoney.FirstOrDefault(p=>p.Id==i.NotPayedmoneyId).TotalNotpayedAmount??0,
-                 TotalPayedAmount = _context.NotPayedmoney.FirstOrDefault(p=>p.Id==i.NotPayedmoneyId).TotalPayedAmount??0,
-                 
-               
+                  ishospital = i.ishospital,
+                  NotPayedmoneyId = i.NotPayedmoneyId,
+                  PaymentStatus = (Enumes.PaymentStatus)i.PaymentStatus,
+                  TotalNotpayedAmount = _context.NotPayedmoney.FirstOrDefault(p => p.Id == i.NotPayedmoneyId).TotalNotpayedAmount ?? 0,
+                  TotalPayedAmount = _context.NotPayedmoney.FirstOrDefault(p => p.Id == i.NotPayedmoneyId).TotalPayedAmount ?? 0,
+
+                
                  UserNotPayedmoneyId = i.UserNotPayedmoneyId,
 
              }

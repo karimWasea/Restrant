@@ -91,7 +91,7 @@ namespace Caffiee.Areas.Admin.Controllers
 
         }
 
-        [HttpPost]
+         [HttpGet]
         public IActionResult Delete(int id)
         {
             try
@@ -100,8 +100,9 @@ namespace Caffiee.Areas.Admin.Controllers
 
                 TempData["Message"] = "Cannot save the category. Please check the form.";
                 TempData["MessageType"] = "danger";
-                return Json(new { success = true, message = "Successfully deleted!" });
-
+                var prooduct = new NotPayedmoneyHistoryVM();
+                var product = _unitOfWork._NotPayedmoneyHistoryServess.SearchNotPayedmoney(prooduct);
+                return View("Index", product);
             }
             catch (Exception ex)
             {
@@ -110,8 +111,7 @@ namespace Caffiee.Areas.Admin.Controllers
         }
 
         #region history 
-        [HttpGet]
- 
+  
 
 
 
@@ -130,7 +130,8 @@ namespace Caffiee.Areas.Admin.Controllers
 
         }
 
-     
+
+
         [HttpPost]
         public IActionResult DeleteHistory(int id)
         {
@@ -142,6 +143,34 @@ namespace Caffiee.Areas.Admin.Controllers
                 TempData["MessageType"] = "danger";
                 return Json(new { success = true, message = "Successfully deleted!" });
 
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+        [HttpGet]
+        public IActionResult Salesreturns(int id)
+        {
+            try
+            {
+                _unitOfWork._NotPayedmoneyHistoryServess.Salesreturns(id);
+
+                TempData["Message"] = "Cannot save the category. Please check the form.";
+                TempData["MessageType"] = "danger";
+                var prooduct = new NotPayedmoneyHistoryVM();
+                var product = _unitOfWork._NotPayedmoneyHistoryServess.SearchNotPayedmoney(prooduct);
+                return View("Index", product);
             }
             catch (Exception ex)
             {

@@ -96,8 +96,8 @@ namespace Servess
                     Id = i.Id,
                     Discount = i.Discount,
                     Qantity = i.Qantity,
-                    price = i.price
-
+                    price = i.price ,
+ 
                 })
                 .OrderBy(g => g.Id);
 
@@ -352,6 +352,7 @@ namespace Servess
 
                         };
 
+                      
                         var addedHistoryCash = _context.Add(historyCash);
                         _context.SaveChanges();
 
@@ -362,6 +363,12 @@ namespace Servess
                         };
 
                         _context.Add(historyPriceProduct);
+                        // Decreasing the quantity of the product
+                        var product = _context.PriceProductebytypes.Include(i => i.Product).FirstOrDefault(x => x.Id == item.PriceProductebytypesId);
+                        if (product != null)
+                        {
+                            product.Qantity -= item.Qantity;
+                        }
                         _context.SaveChanges();
 
                     }
@@ -456,59 +463,66 @@ namespace Servess
             {
                 try
                 {
-           
-
+                    // Fetching all ShopingCaterNotpayedHistory items
                     var newNotpayedHistory = _context.ShopingCaterNotpayedHistory.ToList();
                     var totalAmount = newNotpayedHistory.Sum(i => i.TotalAmount);
 
-                    var NotPayedmoney = new NotPayedmoney
+                    // Creating a new NotPayedmoney entry
+                    var notPayedmoney = new NotPayedmoney
                     {
-                         TotalNotpayedAmount = totalAmount,
+                        TotalNotpayedAmount = totalAmount,
                         SystemUserId = SystemUserId,
                         SystemUserName = SystemUserName,
                         ChangedByUserId = SystemUserId,
-                         CreationTime = DateTime.Now,
+                        CreationTime = DateTime.Now,
                         PaymentStatus = (int)PaymentStatus.NotPaid
-                        
                     };
-                    var ADDNotPayedmoney = _context.Add(NotPayedmoney);
 
+                    _context.NotPayedmoney.Add(notPayedmoney);
                     _context.SaveChanges();
-                    var ADDNotPayedmoneyId = ADDNotPayedmoney.Entity.Id;
-
+                    var notPayedmoneyId = notPayedmoney.Id;
 
                     foreach (var item in newNotpayedHistory)
                     {
-                        var historyCash = new NotPayedmoneyHistory();
+                        // Creating a new NotPayedmoneyHistory entry
+                        var historyCash = new NotPayedmoneyHistory
+                        {
+                            NotPayedmoneyId = notPayedmoneyId,
+                            SystemUserId = SystemUserId ?? "",
+                            SystemUserName = SystemUserName ?? "",
+                            NotpayedAmount = item.TotalAmount,
+                            UserNotPayedmoneyId = item.NotpayedUserid,
+                            PaymentStatus = (int)PaymentStatus.NotPaid,
+                            ishospital = item.ishospital,
+                            Qantity = item.Qantity,
+                            ChangeDate = DateTime.Now.Date,
+                            HospitalaoOrprationtyp = item.HospitalaoOrprationtyp
+                        };
 
-                        historyCash.NotPayedmoneyId = ADDNotPayedmoneyId;
-                        historyCash.SystemUserId = SystemUserId ?? "";
-                        historyCash.SystemUserName = SystemUserName ?? "";
-                        historyCash.NotpayedAmount = item.TotalAmount;
-                     
-                            historyCash.UserNotPayedmoneyId = item.NotpayedUserid;
-
- 
-                        historyCash.PaymentStatus = (int)PaymentStatus.NotPaid;
-                        historyCash.ishospital = item.ishospital;
-                        historyCash.Qantity = item.Qantity;
-                        historyCash.ChangeDate = DateTime.Now.Date;
-                         historyCash.HospitalaoOrprationtyp=item.HospitalaoOrprationtyp;
-
-                        var ADDNotPayedmoneyIdHistoryCash = _context.Add(historyCash);
+                        _context.NotPayedmoneyHistory.Add(historyCash);
                         _context.SaveChanges();
+                        var historyCashId = historyCash.Id;
 
+                        // Creating a new NotPayedmoneyHistoryPriceProductebytypes entry
                         var historyPriceProduct = new NotPayedmoneyHistoryPriceProductebytypes
                         {
-                            NotPayedmoneyHistoryid = ADDNotPayedmoneyIdHistoryCash.Entity.Id,
+                            NotPayedmoneyHistoryid = historyCashId,
                             PriceProductebytypesid = item.PriceProductebytypesId
                         };
 
-                        _context.Add(historyPriceProduct);
-                        _context.SaveChanges();
+                        _context.NotPayedmoneyHistoryPriceProductebytypes.Add(historyPriceProduct);
 
+                        // Decreasing the quantity of the product
+                        var product = _context.PriceProductebytypes .Include(i=>i.Product).FirstOrDefault(x => x.Id == item.PriceProductebytypesId);
+                        if (product != null)
+                        {
+                            product.Qantity -= item.Qantity;
+                        }
+
+                        _context.SaveChanges();
                     }
 
+                    // Removing all processed ShopingCaterNotpayedHistory entries
                     _context.ShopingCaterNotpayedHistory.RemoveRange(newNotpayedHistory);
                     _context.SaveChanges();
 
@@ -522,7 +536,6 @@ namespace Servess
                     throw;
                 }
             }
-
         }
 
         #region EndDibts
