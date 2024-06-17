@@ -44,7 +44,7 @@ namespace Servess
         }    public IQueryable<SelectListItem> Users ()
         {
 
-            IQueryable<SelectListItem>? applicationuser = _user.Users .Select(x => new SelectListItem { Value = x.Id, Text = x.UserName });
+            IQueryable<SelectListItem>? applicationuser = _user.Users .Where(i=>i.IsAdmin==false).Select(x => new SelectListItem { Value = x.Id, Text = x.UserName });
             return applicationuser;
         } 
         public List<SelectListItem> GetCustomerType()
@@ -168,7 +168,19 @@ namespace Servess
             var fieldInfo = typeof(PaymentStatus).GetField(categoryType.ToString());
             var descriptionAttribute = fieldInfo?.GetCustomAttribute<DescriptionAttribute>();
             return descriptionAttribute?.Description ?? categoryType.ToString();
-        }   public  static string GetDescription(Gender categoryType)
+        } 
+           public  static string GetDescription(HospitalOroprationtyp HospitalOroprationtyps)
+        {
+            var fieldInfo = typeof(HospitalOroprationtyp).GetField(HospitalOroprationtyps.ToString());
+            var descriptionAttribute = fieldInfo?.GetCustomAttribute<DescriptionAttribute>();
+            return descriptionAttribute?.Description ?? HospitalOroprationtyps.ToString();
+        } 
+        
+        
+        
+        
+        
+        public  static string GetDescription(Gender categoryType)
         {
             var fieldInfo = typeof(Gender).GetField(categoryType.ToString());
             var descriptionAttribute = fieldInfo?.GetCustomAttribute<DescriptionAttribute>();
@@ -180,12 +192,7 @@ namespace Servess
             var descriptionAttribute = fieldInfo?.GetCustomAttribute<DescriptionAttribute>();
             return descriptionAttribute?.Description ?? categoryType.ToString();
         }  
-        public  static string GetDescription(HospitalOroprationtyp categoryType)
-        {
-            var fieldInfo = typeof(HospitalOroprationtyp).GetField(categoryType.ToString());
-            var descriptionAttribute = fieldInfo?.GetCustomAttribute<DescriptionAttribute>();
-            return descriptionAttribute?.Description ?? categoryType.ToString();
-        }
+     
          public  static string GetDescription(CustomerType CustomerType)
         {
             var fieldInfo = typeof(CustomerType).GetField(CustomerType.ToString());

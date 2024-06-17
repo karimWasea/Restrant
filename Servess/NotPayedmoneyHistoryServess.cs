@@ -112,7 +112,7 @@ namespace Servess
              {
 
                  Id = i.Id,
-                 HospitalaoOrprationtyp = i.HospitalaoOrprationtyp
+                 HospitalaoOrprationtyp = (Enumes.HospitalOroprationtyp)i.HospitalaoOrprationtyp
                   ,
                  UserNotPayedmoneyName = i.UserNotPayedmoney.UserName ??"",
                   CreationTime = i.CreationTime,
@@ -155,7 +155,7 @@ namespace Servess
                         {
 
                             Id = i.Id,
-                            HospitalaoOrprationtyp = i.HospitalaoOrprationtyp
+                            HospitalaoOrprationtyp = (Enumes.HospitalOroprationtyp)i.HospitalaoOrprationtyp
                              ,
                             UserNotPayedmoneyName = i.UserNotPayedmoney.UserName ?? "",
                             ChangedByUserId = i.ChangedByUserId,
@@ -210,7 +210,8 @@ namespace Servess
 
         public bool SaveNotPayedmoneyHistory(NotPayedmoneyHistoryVM criteria)
         {
-          var updated=  _context.NotPayedmoneyHistory.Find(criteria.Id);
+
+            var updated =  _context.NotPayedmoneyHistory.Find(criteria.Id);
             updated.Qantity= criteria.Qantity;
             _context.SaveChanges();
              return true;   
@@ -218,32 +219,38 @@ namespace Servess
 
         public IPagedList<NotPayedmoneyHistoryVM> PrintforHospitallDay(NotPayedmoneyHistoryVM criteria)
         {
-            var queryable = _context.NotPayedmoneyHistory.Include(i => i.UserNotPayedmoney).Include(i=>i.NotPayedmoneys).Where(i => i.NotPayedmoneyId == criteria. Id &&i.HospitalaoOrprationtyp== (int) Enumes.HospitalOroprationtyp.Hospital
+            var today = DateTime.Today;
+            var now = DateTime.Now.Date.ToLocalTime;
 
+            var queryable = _context.NotPayedmoneyHistory
+                .Include(i => i.UserNotPayedmoney)
+                .Include(i => i.NotPayedmoneys)
+                .Where(i => i.HospitalaoOrprationtyp == (int)Enumes.HospitalOroprationtyp.Hospital
+                           && i.ChangeDate == DateTime.Now.Date && i.PaymentStatus == (int)Enumes.PaymentStatus.NotPaid
 
-
-                                    ).Select(i => new NotPayedmoneyHistoryVM
-                                    {
-
-                                        Id = i.Id,
-                                        HospitalaoOrprationtyp = i.HospitalaoOrprationtyp
-                                         ,
-                                        UserNotPayedmoneyName = i.UserNotPayedmoney.UserName,
-                                        ChangedByUserId = i.ChangedByUserId,
-                                        CreationTime = i.CreationTime,
-                                        NotpayedAmount = i.NotpayedAmount,
-                                        payedAmount = i.NotpayedAmount,
-                                        ishospital = i.ishospital,
-                                        NotPayedmoneyId = i.NotPayedmoneyId,
-                                        PaymentStatus = (Enumes.PaymentStatus)i.PaymentStatus,
-
-                                        UserNotPayedmoneyId = i.UserNotPayedmoneyId,
-
-                                    }
-                                   ).OrderBy(g => g.Id);
+                          )
+                .Select(i => new NotPayedmoneyHistoryVM
+                {
+                    Id = i.Id,
+                    HospitalaoOrprationtyp = (Enumes.HospitalOroprationtyp)i.HospitalaoOrprationtyp,
+                    CreationTime = i.CreationTime,
+                    NotpayedAmount = i.NotpayedAmount,
+                    NotPayedmoneyId = i.NotPayedmoneyId,
+                    PaymentStatus = (Enumes.PaymentStatus)i.PaymentStatus,
+                    Qantity = i.Qantity,
+                    totalpricforanyproduct = (_context.NotPayedmoneyHistoryPriceProductebytypes
+                        .Where(pp => pp.NotPayedmoneyHistoryid == i.Id)
+                        .Select(pp => (decimal?)pp.PriceProductebytypes.price)
+                        .FirstOrDefault() ?? 0) * i.Qantity,
+                    productName = _context.NotPayedmoneyHistoryPriceProductebytypes
+                        .Where(pp => pp.NotPayedmoneyHistoryid == i.Id)
+                        .Select(pp => pp.PriceProductebytypes.Product.ProductName)
+                        .FirstOrDefault() ?? "",
+                })
+                .OrderBy(g => g.Id);
 
             // Provide a default value for PageNumber if it's null
-            int pageNum= criteria.pageNumber ?? 1;
+            int pageNum = criteria.pageNumber ?? 1;
 
             var pagedList = GetPagedData(queryable, pageNum);
 

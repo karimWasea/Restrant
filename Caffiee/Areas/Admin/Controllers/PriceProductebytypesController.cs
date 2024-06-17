@@ -171,15 +171,18 @@ namespace Caffiee.Areas.Admin.Controllers
         public IActionResult AddShopingCaterNotpayedHistory(PriceProductebytypesVM Entity)
         
         {
-            
-            if(!ModelState.IsValid)
+             if(!(Entity.HospitalOroprationtypId== HospitalOroprationtyp.Hospital &&string.IsNullOrEmpty(Entity.NotpayedUserid)))
             {
-                TempData["Message"] = " ادخل بيانات العميل";
-                TempData["MessageType"] = "Save";
+                if (!ModelState.IsValid)
+                {
+                    TempData["Message"] = " ادخل بيانات العميل";
+                    TempData["MessageType"] = "Save";
 
-                return Json(new { success = true, message = TempData["Message"] });
+                    return Json(new { success = true, message = TempData["Message"] });
 
-            }
+                }
+            } 
+          
             
             Entity.totalprice = Entity.price * Entity.ShopingCaterQantity;
             _unitOfWork._PriceProductebytypes.AddShopingCaterNotpayedHistory(Entity);
@@ -283,12 +286,85 @@ namespace Caffiee.Areas.Admin.Controllers
             Entity.CustomerType = (CustomerType)CustomerType;
                 _unitOfWork._PriceProductebytypes.FreeShopingCaterCashHistoryToNotpayed( "","");
             var model = _unitOfWork._PriceProductebytypes.SearchForTypes(Entity);
-            return View("GetProductbytyp" , model); // Replace "ShoppingCartPartial" with your actual partial view name
+            return View(viewName: "GetProductbytyp" , model); // Replace "ShoppingCartPartial" with your actual partial view name
         }
 
         #endregion
 
+        #region enddebite
+        [HttpGet]
+        public IActionResult EnDDebiteForPersone(string NotpayedUserid)
+        {
+            try
+            {
+                var entity = new PriceProductebytypesVM
+                {
+                    NotpayedUserid = NotpayedUserid,
+                    UsersLists = _unitOfWork._Ilookup.Users()
+                };
 
+                _unitOfWork._PriceProductebytypes.EnDDebite(entity);
+
+                return Json(new { success = true, message = "تم انهاء الدين بنجاح." });
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (implement logging as per your application needs)
+                 return Json(new { success = false, message = "حدث خطأ أثناء إنهاء الدين." });
+            }
+        }
+
+
+        public IActionResult GetDibts(PriceProductebytypesVM Entity )
+        {
+
+            var ReturnEntity = _unitOfWork._PriceProductebytypes.GetDibts(Entity);
+            ReturnEntity.UsersLists = _unitOfWork._Ilookup.Users();
+
+
+            return View(ReturnEntity); // Replace "ShoppingCartPartial" with your actual partial view name
+
+
+        }
+
+
+
+        public IActionResult EnDDebiteForHospital()
+        {
+            var Entity = new PriceProductebytypesVM();
+            var ReturnEntity = _unitOfWork._PriceProductebytypes.EnDDebiteHospital();
+            Entity.UsersLists = _unitOfWork._Ilookup.Users();
+
+            TempData["Message"] = $"تم الانهاء بنجاح "; // "Added successfully"
+            TempData["MessageType"] = "Save";
+
+
+            return View(viewName: "GetDibts", Entity); // Replace "ShoppingCartPartial" with your actual partial view name
+
+
+        }
+
+        public IActionResult GetDibtsHospital()
+        {
+
+            var ReturnEntity = _unitOfWork._PriceProductebytypes.GetDibtsHospital();
+
+            ReturnEntity.UsersLists= _unitOfWork._Ilookup.Users();
+            return View(viewName: "GetDibts" , ReturnEntity); // Replace "ShoppingCartPartial" with your actual partial view name
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+        #endregion
 
 
 

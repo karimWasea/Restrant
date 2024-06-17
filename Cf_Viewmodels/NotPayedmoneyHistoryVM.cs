@@ -21,6 +21,7 @@ namespace Cf_Viewmodels
             public decimal? TotalNotpayedAmount { get; set; }
             public decimal? payedAmount { get; set; }
       
+        public string? productName { get; set; }
         public string? ChangedByUserId { get; set; }
         public int? Qantity { get; set; }
         public decimal? totalpricforanyproduct { get; set; }
@@ -43,7 +44,7 @@ namespace Cf_Viewmodels
             public decimal? NotpayedAmount { get; set; }
 
             public PaymentStatus PaymentStatus { get; set; }
-            public int HospitalaoOrprationtyp { get; set; }
+            public HospitalOroprationtyp HospitalaoOrprationtyp { get; set; }
             public string? UserNotPayedmoneyId { get; set; }
 
             public int NotPayedmoneyId { get; set; }

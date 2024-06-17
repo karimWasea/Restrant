@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-
 using Cf_Viewmodels;
 
 using DataAcessLayers;
@@ -7,6 +6,7 @@ using DataAcessLayers;
 using Interfaces;
 
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
@@ -181,16 +181,15 @@ namespace Servess
         #region AddShopingCaterCashHistory
         public void AddShopingCaterCashHistory(PriceProductebytypesVM criteria)
         {
-             var Entity = new ShopingCaterCashHistory
-            {
-                 TotalAmount = criteria.totalprice,
-                PriceProductebytypesId = criteria.Id,
-                Qantity = criteria.ShopingCaterQantity,
-                  productName= criteria.ProductName,
-               catid= (int)criteria.Catid,    
+            
+            var Entity = new ShopingCaterCashHistory();
+            Entity.TotalAmount = criteria.totalprice;
+            Entity.PriceProductebytypesId = criteria.Id;
+            Entity.Qantity = criteria.ShopingCaterQantity;
+            Entity.productName = criteria.ProductName;
+            Entity.catid = (int)criteria.Catid;    
              
-             };
-
+ 
             _context.Add(Entity);
             _context.SaveChanges();
 
@@ -199,17 +198,26 @@ namespace Servess
         public void AddShopingCaterNotpayedHistory(PriceProductebytypesVM criteria)
         {
             var result = criteria.HospitalOroprationtypId == 0 ? HospitalOroprationtyp.oprationtyp : criteria.HospitalOroprationtypId;
-             var Entity = new ShopingCaterNotpayedHistory
-            {
-                 TotalAmount = criteria.totalprice,
-                PriceProductebytypesId = criteria.Id,
-                Qantity = criteria.ShopingCaterQantity,
-                  productName= criteria.ProductName,
-               catid= (int)criteria.Catid,    
-               NotpayedUserid= criteria.NotpayedUserid,    
-                HospitalaoOrprationtyp= (int)result,
+       
 
-             };
+            var Entity = new ShopingCaterNotpayedHistory();
+            
+                Entity.TotalAmount = criteria.totalprice;
+            Entity.PriceProductebytypesId = criteria.Id;
+            Entity.Qantity = criteria.ShopingCaterQantity;
+             Entity.productName = criteria.ProductName;
+            Entity.catid = (int)criteria.Catid;
+            if (result == HospitalOroprationtyp.Hospital)
+            {
+                var roloid = _context.Roles.FirstOrDefault(i => i.Name == C_Utilities.ConstsntValuse.SuperAdmin).Id ?? "";
+                var hospiyaid =
+                _context.UserRoles.FirstOrDefault(i => i.RoleId == roloid).UserId;
+                Entity.NotpayedUserid = hospiyaid;
+            }
+            Entity.NotpayedUserid = criteria.NotpayedUserid ;
+            Entity.HospitalaoOrprationtyp = (int)result;
+
+             
 
             _context.Add(Entity);
             _context.SaveChanges();
@@ -322,8 +330,7 @@ namespace Servess
                         SystemUserId = SystemUserId,
                         SystemUserName = SystemUserName,
                         PaymentStatus = (int)PaymentStatus.Paid ,
-                        CreationTime = DateTime.Now,
-
+ 
                     };
 
                     var addFinancialUserCash = _context.Add(financialUserCash);
@@ -341,7 +348,7 @@ namespace Servess
                             SystemUserName = SystemUserName ?? "",
                             PaymentStatus = (int)PaymentStatus.Paid,
                             PayedAmount = item.TotalAmount,
-                            CreationTime = DateTime.Now,
+                             
 
                         };
 
@@ -449,6 +456,8 @@ namespace Servess
             {
                 try
                 {
+           
+
                     var newNotpayedHistory = _context.ShopingCaterNotpayedHistory.ToList();
                     var totalAmount = newNotpayedHistory.Sum(i => i.TotalAmount);
 
@@ -462,25 +471,29 @@ namespace Servess
                         PaymentStatus = (int)PaymentStatus.NotPaid
                         
                     };
-
                     var ADDNotPayedmoney = _context.Add(NotPayedmoney);
-                    _context.SaveChanges();
 
+                    _context.SaveChanges();
                     var ADDNotPayedmoneyId = ADDNotPayedmoney.Entity.Id;
+
 
                     foreach (var item in newNotpayedHistory)
                     {
-                         var historyCash = new NotPayedmoneyHistory
-                        {
-                             NotPayedmoneyId = ADDNotPayedmoneyId,
-                            SystemUserId = SystemUserId ?? "",
-                            SystemUserName = SystemUserName ?? "",
-                             NotpayedAmount= item.TotalAmount,
-                             UserNotPayedmoneyId= item.NotpayedUserid??"",
-                            PaymentStatus = (int)PaymentStatus.NotPaid,
-                            ishospital = item.ishospital,
-                             Qantity= item.Qantity,
-                         };
+                        var historyCash = new NotPayedmoneyHistory();
+
+                        historyCash.NotPayedmoneyId = ADDNotPayedmoneyId;
+                        historyCash.SystemUserId = SystemUserId ?? "";
+                        historyCash.SystemUserName = SystemUserName ?? "";
+                        historyCash.NotpayedAmount = item.TotalAmount;
+                     
+                            historyCash.UserNotPayedmoneyId = item.NotpayedUserid;
+
+ 
+                        historyCash.PaymentStatus = (int)PaymentStatus.NotPaid;
+                        historyCash.ishospital = item.ishospital;
+                        historyCash.Qantity = item.Qantity;
+                        historyCash.ChangeDate = DateTime.Now.Date;
+                         historyCash.HospitalaoOrprationtyp=item.HospitalaoOrprationtyp;
 
                         var ADDNotPayedmoneyIdHistoryCash = _context.Add(historyCash);
                         _context.SaveChanges();
@@ -512,6 +525,166 @@ namespace Servess
 
         }
 
-      
+        #region EndDibts
+        public bool EnDDebite(PriceProductebytypesVM entity)
+        {
+            try
+            {
+                // Get all NotPayedmoneyHistory entries for the given user
+                var deptiforone = _context.NotPayedmoneyHistory
+                    .Include(i => i.NotPayedmoneys)
+                    .Where(u => u.UserNotPayedmoneyId == entity.NotpayedUserid &&u.PaymentStatus== (int)PaymentStatus.NotPaid)
+                    .ToList();
+
+                if (!deptiforone.Any())
+                {
+                    return false; // No records found to update
+                }
+
+                // Begin transaction to ensure atomicity
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    foreach (var item in deptiforone)
+                    {
+                        // Update individual NotPayedmoneyHistory entry
+                        item.payedAmount = item.NotpayedAmount.Value;
+                        item.PaymentStatus = (int)PaymentStatus.Paid;
+
+                        // Update related NotPayedmoneys entry
+                        item.NotPayedmoneys.TotalPayedAmount = item.NotPayedmoneys.TotalNotpayedAmount;
+                        item.NotPayedmoneys.PaymentStatus = (int)PaymentStatus.Paid;
+                    }
+
+                    // Save changes to the database
+                    _context.SaveChanges();
+
+                    // Commit the transaction
+                    transaction.Commit();
+                }
+
+                return true; // Successfully updated
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (implement logging as per your application needs)
+                // Example: _logger.LogError(ex, "An error occurred while processing payments.");
+                return false; // Indicate failure
+            }
+        }
+
+        public PriceProductebytypesVM GetDibts(PriceProductebytypesVM entity)
+        {
+            try
+            {
+                  if(!string.IsNullOrEmpty(entity.NotpayedUserid))
+                {
+                    entity.totalDibte = _context.NotPayedmoneyHistory
+                                   .Where(u => (u.UserNotPayedmoneyId == entity.NotpayedUserid || entity.NotpayedUserid == null)
+                                               && (u.PaymentStatus == (int)PaymentStatus.NotPaid || u.PaymentStatus == 0))
+                                   .Sum(i => (decimal?)i.NotpayedAmount) ?? 0;
+                    entity.NotpayedUserName = _user.Users.FirstOrDefault(p => p.Id == entity.NotpayedUserid).UserName ?? "";
+                    return entity;
+
+                }
+                return entity;
+
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (implement logging as per your application needs)
+                // Example: _logger.LogError(ex, "An error occurred while calculating user debts.");
+                return null; // Indicate failure
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        public bool EnDDebiteHospital( )
+        {
+            try
+            {
+                // Get all NotPayedmoneyHistory entries for the given user
+                var deptiforone = _context.NotPayedmoneyHistory
+                    .Include(i => i.NotPayedmoneys)
+                    .Where(u => u.HospitalaoOrprationtyp ==   (int)HospitalOroprationtyp.Hospital && u.PaymentStatus == (int)PaymentStatus.NotPaid)
+                    .ToList();
+
+                if (!deptiforone.Any())
+                {
+                    return false; // No records found to update
+                }
+
+                // Begin transaction to ensure atomicity
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    foreach (var item in deptiforone)
+                    {
+                        // Update individual NotPayedmoneyHistory entry
+                        item.payedAmount = item.NotpayedAmount.Value;
+                        item.PaymentStatus = (int)PaymentStatus.Paid;
+
+                        // Update related NotPayedmoneys entry
+                        item.NotPayedmoneys.TotalPayedAmount = item.NotPayedmoneys.TotalNotpayedAmount;
+                        item.NotPayedmoneys.PaymentStatus = (int)PaymentStatus.Paid;
+                    }
+
+                    // Save changes to the database
+                    _context.SaveChanges();
+
+                    // Commit the transaction
+                    transaction.Commit();
+                }
+
+                return true; // Successfully updated
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (implement logging as per your application needs)
+                // Example: _logger.LogError(ex, "An error occurred while processing payments.");
+                return false; // Indicate failure
+            }
+        }
+
+
+        public PriceProductebytypesVM GetDibtsHospital()
+        {
+            var entity = new PriceProductebytypesVM();
+            try
+            {
+                entity.totalDibtehospital = _context.NotPayedmoneyHistory
+                    .Where(u => u.HospitalaoOrprationtyp == (int)HospitalOroprationtyp.Hospital
+                                && u.PaymentStatus == (int)PaymentStatus.NotPaid)
+                    .Sum(i => (decimal?)i.NotpayedAmount) ?? 0;
+
+                return entity;
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (implement logging as per your application needs)
+                // Example: _logger.LogError(ex, "An error occurred while calculating hospital debts.");
+                return null; // Indicate failure
+            }
+        }
+
+
+
+
+
+
+
+
+
+        #endregion
     }
 }

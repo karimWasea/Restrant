@@ -24,6 +24,14 @@ namespace Interfaces
 ;
         public void FreeShopingCaterCashHistoryToFinancialUserCash(string? SystemUserId, string? SystemUserName);
         public void FreeShopingCaterCashHistoryToNotpayed(string? SystemUserId, string? SystemUserName);
+        public bool EnDDebite(PriceProductebytypesVM entity);
+        public PriceProductebytypesVM GetDibts(PriceProductebytypesVM entity);
+        public bool EnDDebiteHospital();
+        public PriceProductebytypesVM GetDibtsHospital();
+
+
+
+
 
 
 

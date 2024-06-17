@@ -15,6 +15,7 @@ namespace Cf_Viewmodels
     public class PriceProductebytypesVM : BaseVM
     {
         public string NotpayedUserid { get; set; }  
+        public string NotpayedUserName { get; set; }  =string.Empty;
         public bool isIncreas { get; set; }
         public IEnumerable<SelectListItem>? CustomerTypeIdList { get; set; } = Enumerable.Empty<SelectListItem>();
         public IEnumerable<SelectListItem>? UsersLists { get; set; } = Enumerable.Empty<SelectListItem>();
@@ -39,6 +40,8 @@ namespace Cf_Viewmodels
         public int? Discount { get; set; } // Nullable discount property
         public int? price { get; set; }
          public decimal? totalprice { get; set; }
+         public decimal? totalDibte { get; set; }
+         public decimal? totalDibtehospital { get; set; }
  
 
     }

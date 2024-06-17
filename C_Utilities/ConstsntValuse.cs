@@ -12,6 +12,8 @@ namespace C_Utilities
         public const string Admin = "Admin";
         //rollname
         public const string SuperAdmin = "SuperAdmin";
+        public const string SalessManger = "SalessManger";
         public const string SalesMan = "SalesMan";
+        public const string hospitalacont = "hospitalacont";
     }
 }

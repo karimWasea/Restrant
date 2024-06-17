@@ -1,0 +1,96 @@
+﻿@model Cf_Viewmodels.PriceProductebytypesVM 
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = " PriceProductebytypes  ";
+}
+
+ 
+<partial name="_AlertMessage" />
+<p> انهاء الدين</p>
+<form method="get" asp-controller="PriceProductebytypes" asp-action="GetDibts" asp-area="Admin" class="mt-4">
+    <div class="form-row justify-content-center">
+        <div>
+           
+            <div class="form-group col-md-4">
+                <label for="NotpayedUserid">اختر العميل      </label>
+                <select id="NotpayedUserid" name="NotpayedUserid" class="form-select" asp-items="Model.UsersLists" aria-required="true">
+                    <option value="">اختر</option>
+                </select>
+            </div>
+        </div>
+
+        <br />
+
+        <div class="form-group col-md-4 align-self-end">
+            <button class="btn btn-primary w-100" type="submit">عرض</button>
+        </div>
+    </div>
+</form>
+<div class="form-group col-md-4 align-self-end">
+
+    <div>
+        اسم العميل : @Model.NotpayedUserName
+
+    </div>
+     المطلوب دفعه
+     @Model.totalDibte جنيه
+ </div>
+
+<div class="form-group col-md-4 align-self-end">
+    <button onclick="submitDebtForm()" class="btn btn-primary w-100">انهاء الفواتير غير المدفوعه للاشخاص</button>
+</div>
+<br />
+
+
+<div class="form-group col-md-4 align-self-end">
+    <a asp-action="GetDibtsHospital" asp-controller="PriceProductebytypes" asp-area="Admin" class="btn btn-primary w-100">عرض مجموع الفواتير على المستشفى</a>
+</div>
+<br />
+<br />
+
+<div class="form-group col-md-8 align-self-end">
+     المطلوب دفعه
+ @Model.totalDibtehospital جنيه
+ </div>
+
+<br />
+<br />
+
+<div class="form-group col-md-4 align-self-end">
+    <a asp-action="EnDDebiteForHospital" asp-controller="PriceProductebytypes" asp-area="Admin" class="btn btn-primary w-100">انهاء الفواتير غير المدفوعه المستشفى</a>
+</div>
+
+
+
+
+<script>
+    function submitDebtForm() {
+        var userId = document.getElementById("NotpayedUserid").value;
+        if (userId === "") {
+            alert("الرجاء اختيار العميل");
+            return;
+        }
+
+        fetch(`/Admin/PriceProductebytypes/EnDDebiteForPersone?NotpayedUserid=${userId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("تم انهاء الدين بنجاح.");
+                    // Optionally, update the UI or redirect
+                } else {
+                    alert("حدث خطأ أثناء إنهاء الدين.");
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("حدث خطأ أثناء إنهاء الدين.");
+            });
+    }
+</script>

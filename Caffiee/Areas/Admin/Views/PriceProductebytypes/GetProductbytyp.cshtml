@@ -12,11 +12,15 @@
         <div id="modalMessage"></div>
     </div>
 </div>
- <h1 style="font-weight:bold;">
-    الاسعار: 
-    @Servess.DescriptionEnum.GetDescription(ViewBag.CustomerType)
+@{
+    var typ = (C_Utilities.Enumes.CustomerType?)ViewBag.CustomerType ?? C_Utilities.Enumes.CustomerType.OtherPeople;
+    var description = Servess.DescriptionEnum.GetDescription(typ);
+}
 
+<h1 style="font-weight:bold;">
+    الاسعار: @description
 </h1>
+
 <style>
      
     .shopping-bag {

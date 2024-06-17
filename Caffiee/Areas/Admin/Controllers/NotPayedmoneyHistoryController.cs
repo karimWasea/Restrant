@@ -35,8 +35,8 @@ namespace Caffiee.Areas.Admin.Controllers
             ViewBag.GetPaymentStatus = _unitOfWork._Ilookup.GetPaymentStatus();
             var products = _unitOfWork._NotPayedmoneyHistoryServess.SearchNotPayedmoney(Entity);
             return View(products);
-        }  
-        
+        }
+        [HttpGet]
         public IActionResult PrintHospital(NotPayedmoneyHistoryVM Entity, int? page )
         {
 
