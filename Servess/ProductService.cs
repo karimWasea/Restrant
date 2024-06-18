@@ -121,18 +121,19 @@ namespace Servess
             var queryable = _context.products.Where(
                 product =>
                     (criteria.ProductName == null || product.ProductName.Contains(criteria.ProductName))
-                    && (criteria.Description == null || product.Description.Contains(criteria.Description)))
+                    && (criteria.CategoryTyPe == null|| criteria.CategoryTyPe == 0 || product.CategoryTyPe== (int)criteria.CategoryTyPe))
                 .Select(i => new productVM
                 {
                     Id = i.Id,
-                    ProductName = i.ProductName,
+                    ProductName = i.ProductName??"",
                     Description = i.Description,
                     Discount = i.Discount,
                     CategoryTyPe = (Enumes.CategoryType)i.CategoryTyPe,
-                    Price = i.Price,
-                    Qantity = i.Qantity,
-                     //, CategoryName= i.Category.CategoryName,
-                     CoverString= _context.ProductAttachments.Where(p=>p.ProductId==i.Id).OrderByDescending(i=>i.ProductId).FirstOrDefault().FilePath,
+                    Price = i.Price ?? 0.0m,
+                    Qantity = i.Qantity ?? 0.0m,
+
+                    //, CategoryName= i.Category.CategoryName,
+
                 })
                 .OrderBy(g => g.Id);
 

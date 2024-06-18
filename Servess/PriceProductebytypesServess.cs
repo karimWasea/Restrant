@@ -302,7 +302,7 @@ namespace Servess
                 {
                     var newCashHistory = _context.ShopingCaterCashHistory.ToList();
                     var totalAmount = newCashHistory.Sum(i => i.TotalAmount);
-
+                    
                     var financialUserCash = new FinancialUserCash
                     {
                         PayedTotalAmount = totalAmount,
@@ -676,6 +676,22 @@ namespace Servess
 
 
 
+
+        #endregion
+
+        #region CheckQantityProduct
+
+        public bool CheckQantityProduct(int id, decimal ShopingCaterQantity)
+        {
+            var product = _context.products.FirstOrDefault(p => p.Id == id);
+
+            if (product != null && product.Qantity >= ShopingCaterQantity)
+            {
+                return true;
+            }
+
+            return false;
+        }
 
         #endregion
     }

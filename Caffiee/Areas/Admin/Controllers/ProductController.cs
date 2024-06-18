@@ -31,6 +31,8 @@ namespace Caffiee.Areas.Admin.Controllers
         {
 
             Entity.PageNumber = page ?? 1;
+             ViewBag.CategoryIdList = _unitOfWork._Ilookup.GetCategoryType();
+
             var products = _unitOfWork._Product.Search(Entity);
             return View(products);
         }
@@ -86,7 +88,7 @@ namespace Caffiee.Areas.Admin.Controllers
        
             if (!ModelState.IsValid)
             {
-                TempData["Message"] = "Cannot save the category. Please check the form.";
+                TempData["Message"] = " ادخل البيانات";
                 TempData["MessageType"] = "danger";
                 return View(productVm);
 
@@ -94,13 +96,12 @@ namespace Caffiee.Areas.Admin.Controllers
             if (!_unitOfWork._Product .CheckIfExisit(productVm))
             {
                 _unitOfWork._Product.Save(productVm);
-                TempData["Message"] = "Cannot save the category. Please check the form.";
-                TempData["MessageType"] = "danger";
-                return RedirectToAction(nameof(Index));
+                TempData["Message"] = "  تم الاضافه";
+                 return RedirectToAction(nameof(Index));
 
 
             }
-            TempData["Message"] = "Cannot save the category. Please check the form.";
+            TempData["Message"] = "  هذا المنتج موجود مسبقا ";
             TempData["MessageType"] = "danger";
 
             return View(productVm);
@@ -114,9 +115,9 @@ namespace Caffiee.Areas.Admin.Controllers
             {
                 _unitOfWork._Product.Delete(id);
 
-                TempData["Message"] = "Cannot save the category. Please check the form.";
-                TempData["MessageType"] = "danger";
-                return Json(new { success = true, message = "Successfully deleted!" });
+                TempData["Message"] = " تم الحذف";
+                TempData["MessageType"] = "Delete";
+                return Json(new { success = true, message = "تم الحذف " });
 
             }
             catch (Exception ex)

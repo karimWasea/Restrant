@@ -121,14 +121,14 @@ namespace Caffiee.Areas.Admin.Controllers
             if (!_unitOfWork._PriceProductebytypes.CheckIfExisit(Entity))
             {
                 _unitOfWork._PriceProductebytypes.Save(Entity);
-                TempData["Message"] = "Cannot save the category. Please check the form.";
-                TempData["MessageType"] = "danger";
+                TempData["Message"] = "تم الحفظ بنجاح";
+                TempData["MessageType"] = "Save";
 
                 return RedirectToAction(nameof(Index));
 
 
             }
-            TempData["Message"] = "Cannot save the category. Please check the form.";
+            TempData["Message"] = " لم يتم الحفظ";
             TempData["MessageType"] = "danger";
 
             return View(Entity);
@@ -141,7 +141,7 @@ namespace Caffiee.Areas.Admin.Controllers
             try
             {
                 _unitOfWork._PriceProductebytypes.Delete(id);
-                TempData["Message"] = "Cannot save the category. Please check the form.";
+                TempData["Message"] = " تم الحذف";
                 TempData["MessageType"] = "danger";
                 return Json(new { success = true, message = "Successfully deleted!" });
             }
@@ -171,7 +171,19 @@ namespace Caffiee.Areas.Admin.Controllers
         public IActionResult AddShopingCaterNotpayedHistory(PriceProductebytypesVM Entity)
         
         {
-             if(!(Entity.HospitalOroprationtypId== HospitalOroprationtyp.Hospital &&string.IsNullOrEmpty(Entity.NotpayedUserid)))
+            
+            if (!_unitOfWork._PriceProductebytypes.CheckQantityProduct(Entity.ProductId, (decimal)Entity.ShopingCaterQantity))
+            {
+                TempData["Message"] = "الكميه غير كافيه فالمخزن";
+                TempData["MessageType"] = "Delete";
+
+                return Json(new { success = true, message = TempData["Message"] });
+
+            }
+
+
+
+            if (!(Entity.HospitalOroprationtypId== HospitalOroprationtyp.Hospital &&string.IsNullOrEmpty(Entity.NotpayedUserid)))
             {
                 if (!ModelState.IsValid)
                 {
@@ -186,7 +198,7 @@ namespace Caffiee.Areas.Admin.Controllers
             
             Entity.totalprice = Entity.price * Entity.ShopingCaterQantity;
             _unitOfWork._PriceProductebytypes.AddShopingCaterNotpayedHistory(Entity);
-            TempData["Message"] = $"{Entity.totalprice}  تم اضافه المنتج بسعر "; // "Added successfully"
+            TempData["Message"] = $"  تم الحفظ "; // "Added successfully"
             TempData["MessageType"] = "Save";
 
             return Json(new { success = true, message = TempData["Message"] });
@@ -197,8 +209,10 @@ namespace Caffiee.Areas.Admin.Controllers
       
         //[HttpPost]
         public IActionResult UpdateShopingCaterNotpayedHistory(PriceProductebytypesVM Entity)
-        
+
         {
+           
+
             if (Entity.ShopingCaterQantity == null)
             {
                 TempData["Message"] = $"  ادخل الكميه"; // "Added successfully"
@@ -208,7 +222,15 @@ namespace Caffiee.Areas.Admin.Controllers
 
 
             }
+            if (!_unitOfWork._PriceProductebytypes.CheckQantityProduct(Entity.ProductId, (decimal)Entity.ShopingCaterQantity))
+            {
+                TempData["Message"] = "الكميه غير كافيه فالمخزن";
+                TempData["MessageType"] = "Delete";
 
+                IEnumerable<PriceProductebytypesVM>? Model3 = _unitOfWork._PriceProductebytypes.GetallfromShopingCartNopayed(Entity);
+                return View("GetallfromShopingCartNopayed", Model3);
+
+            }
             _unitOfWork._PriceProductebytypes.UpdateShopingCaterNotpayedHistory(Entity);
             TempData["Message"] = $"  تم التعديل بنجاح"; // "Added successfully"
             TempData["MessageType"] = "Edit";
@@ -248,7 +270,22 @@ namespace Caffiee.Areas.Admin.Controllers
         public IActionResult AddShopingCaterCashHistory(PriceProductebytypesVM Entity)
 
         {
+            if (Entity.ShopingCaterQantity == null)
+            {
+                TempData["Message"] = $"   ادخل الكميه  "; // "Added successfully"
+                TempData["MessageType"] = "delete";
 
+                return Json(new { success = true, message = TempData["Message"] });
+            }
+            if (!_unitOfWork._PriceProductebytypes.CheckQantityProduct(Entity.ProductId, (decimal)Entity.ShopingCaterQantity))
+            {
+                TempData["Message"] = $"    الكميه فالمخزن غير كافيه  "; // "Added successfully"
+                TempData["MessageType"] = "delete";
+
+                return Json(new { success = true, message = TempData["Message"] });
+            }
+
+        
             Entity.totalprice = Entity.price * Entity.ShopingCaterQantity;
             _unitOfWork._PriceProductebytypes.AddShopingCaterCashHistory(Entity);
             TempData["Message"] = $"{Entity.totalprice}  تم اضافه المنتج بسعر "; // "Added successfully"
@@ -259,6 +296,13 @@ namespace Caffiee.Areas.Admin.Controllers
         public IActionResult UpdateShopingCaterCashHistory(PriceProductebytypesVM Entity)
 
         {
+
+
+
+
+
+
+
             if (Entity.ShopingCaterQantity == null)
             {
                 TempData["Message"] = $"  ادخل الكميه"; // "Added successfully"
@@ -267,8 +311,17 @@ namespace Caffiee.Areas.Admin.Controllers
 
                 return View("GetallfromShopingCart", model2);
             }
+            if (!_unitOfWork._PriceProductebytypes.CheckQantityProduct(Entity.ProductId, (decimal)Entity.ShopingCaterQantity))
+            {
+                TempData["Message"] = "الكميه غير كافيه فالمخزن";
+                TempData["MessageType"] = "Delete";
 
-        
+                var model3 = _unitOfWork._PriceProductebytypes.GetallfromShopingCart(Entity);
+
+                return View("GetallfromShopingCart", model3);
+
+            }
+
 
             Entity.totalprice = Entity.price * Entity.ShopingCaterQantity;
             _unitOfWork._PriceProductebytypes.UpdateShopingCaterCashHistory(Entity);

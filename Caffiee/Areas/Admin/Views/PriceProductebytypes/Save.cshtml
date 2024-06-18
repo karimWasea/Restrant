@@ -5,64 +5,6 @@
     Layout = "_Layout";
     ViewBag.Title = "Save PriceProductebytypes";
 }
-
-<h2>الاسعار  </h2>
-
-<h4>اسم المنتج: @Model.ProductName</h4>
-<h4>   السعر : @Model.ProductOldPrice</h4>
-<hr />
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <form asp-action="Save" method="post" class="form-horizontal p-4 border rounded bg-light shadow-sm">
-            <div class="form-group mb-3">
-                <input asp-for="ProductId" class="form-control" hidden />
-            </div>
-            <div class="form-group mb-3">
-                <label asp-for="price" class="form-label">Price</label>
-                <input asp-for="price" class="form-control" placeholder="Enter price" />
-                <span asp-validation-for="price" class="text-danger"></span>
-            </div>
-            <div class="form-group mb-3">
-                <label asp-for="Qantity" class="form-label">Quantity</label>
-                <input asp-for="Qantity" class="form-control" placeholder="Enter quantity" />
-                <span asp-validation-for="Qantity" class="text-danger"></span>
-            </div>
-            <div class="form-group mb-3">
-                <label asp-for="CustomerType" class="form-label" style="font-weight: bold;">Customer Type</label>
-                <select class="form-select" asp-for="CustomerType" asp-items="Model.CustomerTypeIdList" data-placeholder="Select customer type">
-                    <option value=""></option>
-                </select>
-                <span asp-validation-for="CustomerType" class="text-danger"></span>
-            </div>
-            <div class="form-group mb-3">
-                <label asp-for="Discount" class="form-label">Discount</label>
-                <input asp-for="Discount" class="form-control" placeholder="Enter discount" />
-                <span asp-validation-for="Discount" class="text-danger"></span>
-            </div>
-            <div class="form-group d-flex justify-content-between">
-                <button type="submit" id="savedata" class="btn btn-primary">
-                    @if (Model.Id > 0)
-                    {
-                        @:Update
-                    }
-                    else
-                    {
-                        @:Add New
-                    }
-                </button>
-                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-            </div>
-        </form>
-    </div>
-</div>
-<partial name="_AlertMessage" />
-
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-}
-
 <style>
     .form-horizontal {
         background-color: #f5f6fa;
@@ -123,3 +65,57 @@
             border-color: #c6c6c6;
         }
 </style>
+<h1> اضافه/تعديل الاسعار للعملاء  </h1>
+
+<h4>اسم المنتج: @Model.ProductName</h4>
+<h4>   الاصلى  السعر : @Model.ProductOldPrice</h4>
+<hr />
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <form asp-action="Save" method="post" class="form-horizontal p-4 border rounded bg-light shadow-sm">
+            <div class="form-group mb-3">
+                <input asp-for="ProductId" class="form-control" hidden />
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="price" class="form-label"> السعر</label>
+                <input asp-for="price" class="form-control" placeholder="  السعر" min="1" />
+                <span asp-validation-for="price" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Qantity" class="form-label">الكميه</label>
+                <input asp-for="Qantity"  class="form-control" placeholder="  الكميه"  min="1" />
+                <span asp-validation-for="Qantity" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="CustomerType" class="form-label" style="font-weight: bold;"> نوع العميل</label>
+                <select class="form-select" asp-for="CustomerType" asp-items="Model.CustomerTypeIdList" data-placeholder="نوع العميل">
+                    <option value=""></option>
+                </select>
+                <span asp-validation-for="CustomerType" class="text-danger"></span>
+            </div>
+          
+            <div class="form-group d-flex justify-content-between">
+                <button type="submit" id="savedata" class="btn btn-primary">
+                    @if (Model.Id > 0)
+                    {
+                        @: تعديل
+                    }
+                    else
+                    {
+                        @:اضافه جديد
+                    }
+                </button>
+                <a asp-action="Index" class="btn btn-secondary">     العوده للرئسيه</a>
+            </div>
+        </form>
+    </div>
+</div>
+<partial name="_AlertMessage" />
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+

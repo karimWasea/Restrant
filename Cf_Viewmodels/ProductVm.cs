@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,9 +16,18 @@ namespace Cf_Viewmodels
 {
     public class productVM : BaseVM
     {
-         public string? ProductName { get; set; }
-        public decimal? Price { get; set; }
-        public decimal? Qantity { get; set; }
+        [Required(ErrorMessage = "هذا الحقل مطلوب")]
+
+        public string ProductName { get; set; }
+        [Required(ErrorMessage = "هذا الحقل مطلوب")]
+        [Range(0.01, double.MaxValue, ErrorMessage = "ادخل قيمه مختلفه")]
+        public decimal Price { get; set; }
+
+        [Required(ErrorMessage = "هذا الحقل مطلوب")]
+        [Range(1, int.MaxValue, ErrorMessage = "ادخل قيمه مختلفه")]
+        public decimal Qantity { get; set; }
+        [Required(ErrorMessage = "هذا الحقل مطلوب")]
+
         public CategoryType CategoryTyPe { get; set; }
 
          public string CategoryName { get; set; }
