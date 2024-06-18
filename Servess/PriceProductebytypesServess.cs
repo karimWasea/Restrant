@@ -151,7 +151,8 @@ namespace Servess
                 ShopingCaterQantity = p.Qantity,
                 ShopingCaterId = p.Id,
                 ProductName = p.productName,
-                Catid = (CategoryType)p.catid 
+                Catid = (CategoryType)p.catid,
+                                    ProductId = p.productid,
 
 
 
@@ -169,6 +170,7 @@ namespace Servess
                 ShopingCaterQantity = p.Qantity,
                     ShopingCaterId = p.Id,
                 ProductName = p.productName,
+                    ProductId = p.productid,
                 Catid = (CategoryType)p.catid,
                  NotpayedUserid=p.NotpayedUserid,
                     ClientName = _user.Users.Where(i=>i.Id==p.NotpayedUserid).FirstOrDefault().UserName
@@ -188,6 +190,7 @@ namespace Servess
             Entity.Qantity = criteria.ShopingCaterQantity;
             Entity.productName = criteria.ProductName;
             Entity.catid = (int)criteria.Catid;    
+            Entity.productid = criteria.ProductId;    
              
  
             _context.Add(Entity);
@@ -207,6 +210,8 @@ namespace Servess
             Entity.Qantity = criteria.ShopingCaterQantity;
              Entity.productName = criteria.ProductName;
             Entity.catid = (int)criteria.Catid;
+            Entity.productid = criteria.ProductId;
+
             if (result == HospitalOroprationtyp.Hospital)
             {
                 var roloid = _context.Roles.FirstOrDefault(i => i.Name == C_Utilities.ConstsntValuse.SuperAdmin).Id ?? "";
@@ -227,7 +232,7 @@ namespace Servess
         {
             var result = _context.ShopingCaterNotpayedHistory.Find(criteria.ShopingCaterId);
 
-            var product = _context.PriceProductebytypes.Include(p => p.Product).Where(i => i.Id == criteria.Id).FirstOrDefault();
+            var product = _context.PriceProductebytypes.Include(p => p.Product).Where(i => i.Id == result.PriceProductebytypesId).FirstOrDefault();
 
        
             result.Qantity =criteria.ShopingCaterQantity;
@@ -252,9 +257,9 @@ namespace Servess
         public void UpdateShopingCaterCashHistory(PriceProductebytypesVM criteria)
         {
 
-            var result = _context.ShopingCaterNotpayedHistory.Find(criteria.ShopingCaterId);
+            var result = _context.ShopingCaterCashHistory.Find(criteria.ShopingCaterId);
 
-            var product = _context.PriceProductebytypes.Include(p => p.Product).Where(i => i.Id == criteria.Id).FirstOrDefault();
+            var product = _context.PriceProductebytypes.Include(p => p.Product).Where(i => i.Id == result.PriceProductebytypesId).FirstOrDefault();
 
 
             result.Qantity = criteria.ShopingCaterQantity;
@@ -269,19 +274,7 @@ namespace Servess
         public void DeleteShopingCaterCashHistory(int id)
         {
 
-            //var product = _context.PriceProductebytypes.Include(p => p.Product).Where(i => i.Id == criteria.Id).FirstOrDefault();
-
-            ////if (criteria.ShopingCaterQantity > result.Qantity && criteria.ShopingCaterQantity<= product.Qantity)
-            ////{
-            ////    product.Qantity
-            ////         -= criteria.ShopingCaterQantity;
-            ////}
-            ////if (criteria.ShopingCaterQantity < result.Qantity)
-            ////{
-            ////    product.Qantity += criteria.ShopingCaterQantity;
-
-
-            ////}
+           
 
             _context.Remove(_context.ShopingCaterCashHistory.Find(id));
             _context.SaveChanges();
@@ -289,21 +282,7 @@ namespace Servess
         } 
         public void DeleteShopingCaterNotpayedHistory(int id)
         {
-
-
-            //var product = _context.PriceProductebytypes.Include(p => p.Product).Where(i => i.Id == criteria.Id).FirstOrDefault();
-
-            ////if (criteria.ShopingCaterQantity > result.Qantity && criteria.ShopingCaterQantity<= product.Qantity)
-            ////{
-            ////    product.Qantity
-            ////         -= criteria.ShopingCaterQantity;
-            ////}
-            ////if (criteria.ShopingCaterQantity < result.Qantity)
-            ////{
-            ////    product.Qantity += criteria.ShopingCaterQantity;
-
-
-            ////}
+ 
             _context.Remove(_context.ShopingCaterNotpayedHistory.Find(id));
             _context.SaveChanges();
 
@@ -337,7 +316,7 @@ namespace Servess
                     _context.SaveChanges();
 
                     var financialUserCashId = addFinancialUserCash.Entity.Id;
-
+                     
                     foreach (var item in newCashHistory)
                     {
                         var historyCash = new FinancialUserCashHistory
@@ -364,7 +343,7 @@ namespace Servess
 
                         _context.Add(historyPriceProduct);
                         // Decreasing the quantity of the product
-                        var product = _context.PriceProductebytypes.Include(i => i.Product).FirstOrDefault(x => x.Id == item.PriceProductebytypesId);
+                        var product = _context.products.FirstOrDefault(x => x.Id == item.productid);
                         if (product != null)
                         {
                             product.Qantity -= item.Qantity;
@@ -513,7 +492,7 @@ namespace Servess
                         _context.NotPayedmoneyHistoryPriceProductebytypes.Add(historyPriceProduct);
 
                         // Decreasing the quantity of the product
-                        var product = _context.PriceProductebytypes .Include(i=>i.Product).FirstOrDefault(x => x.Id == item.PriceProductebytypesId);
+                        var product = _context.products .FirstOrDefault(x => x.Id == item.productid);
                         if (product != null)
                         {
                             product.Qantity -= item.Qantity;

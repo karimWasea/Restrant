@@ -321,5 +321,7 @@ namespace Servess
             return _context.NotPayedmoneyHistory.Any(i => i.Id == id);
 
         }
+
+
     }
 }

@@ -1,30 +1,4 @@
-﻿@* @if (TempData.ContainsKey("Message"))
-{
-    @if (TempData.ContainsKey("MessageType") && TempData["MessageType"].ToString() == "Save")
-    {
-        <div class="alert alert-dismissible alert-success" style="height:100px; width:600px;">
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            @TempData["Message"]
-            <strong></strong> <a href="#" class="alert-link"></a>
-        </div>
-    }
-    else if (TempData.ContainsKey("MessageType") && TempData["MessageType"].ToString() == "Edit")
-    {
-        <div class="alert alert-dismissible alert-info" style="height:100px; width:600px;">
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            @TempData["Message"]
-            <strong></strong> <a href="#" class="alert-link"></a>
-        </div>
-    }
-    else if (TempData.ContainsKey("MessageType") && TempData["MessageType"].ToString() == "Delete")
-    {
-        <div class="alert alert-dismissible alert-danger" style="height:100px; width:600px;">
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            @TempData["Message"]
-            <strong></strong> <a href="#" class="alert-link"></a>
-        </div>
-    }
-} *@
+﻿@*  
  @if (TempData.ContainsKey("Message"))
 {
     @if (TempData.ContainsKey("MessageType"))
@@ -39,6 +13,53 @@
         string alertClass = GetAlertClass(messageType);
         return $@"
     <div class='position-absolute top-0 end-0 m-3 alert alert-dismissible {alertClass}' style='height:50px; max-width:300px;'>
+        <button type='button' class='btn-close' data-bs-dismiss='alert'></button>
+    {message}
+        <strong></strong> <a href='#' class='alert-link'></a>
+    </div>";
+    }
+
+    string GetAlertClass(string messageType)
+    {
+        switch (messageType)
+        {
+            case "Save":
+                return "alert-primary";
+            case "Edit":
+                return "alert-info";
+            case "Delete":
+                return "alert-danger";
+            default:
+                return "alert-secondary"; // Default to a neutral alert style
+        }
+    }
+}
+ *@
+
+
+
+
+
+
+
+
+
+
+
+@if (TempData.ContainsKey("Message"))
+{
+    @if (TempData.ContainsKey("MessageType"))
+    {
+        @Html.Raw(BuildAlertDiv(TempData["MessageType"].ToString(), TempData["Message"].ToString()))
+    }
+}
+
+@functions {
+    string BuildAlertDiv(string messageType, string message)
+    {
+        string alertClass = GetAlertClass(messageType);
+        return $@"
+    <div class='d-flex justify-content-center align-items-center position-fixed top-50 start-50 translate-middle alert alert-dismissible {alertClass}' style='height:50px; max-width:300px; z-index: 1055;'>
         <button type='button' class='btn-close' data-bs-dismiss='alert'></button>
     {message}
         <strong></strong> <a href='#' class='alert-link'></a>

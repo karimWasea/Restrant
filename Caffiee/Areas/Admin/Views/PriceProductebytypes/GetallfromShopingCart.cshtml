@@ -4,7 +4,6 @@
 @{
     Layout = "_Layout";
     ViewData["Title"] = $"{Model.Sum(i => i.totalprice)}   فاتوره رقم";
-
 }
 
 <!-- Styling -->
@@ -18,6 +17,8 @@
         width: 50%; /* Set table width to 50% */
     }
 </style>
+<p id="Cashtitle" style="font-weight:bold;">عرض الفواتير الكاش </p>
+
 <p>@DateTime.Now</p>
 
 <table class="table table-striped custom-table">
@@ -25,11 +26,10 @@
         <tr>
             <th>اسم المنتج</th>
             <th>السعر</th>
-            <th>الكمية</th> <!-- Corrected spelling -->
+            <th>الكمية</th>
             <th>النوع</th>
-            <th>العميل</th>
-            <th class="Save">تعديل الكميه </th>
-            <th class="Save"> الحذف من الفاتوره </th>
+            <th class="">تعديل الكميه</th>
+            <th class="">الحذف من الفاتوره</th>
         </tr>
     </thead>
     <tbody>
@@ -37,94 +37,79 @@
         {
             <tr>
                 <td>@item.ProductName</td>
-                <td>@item.ShopingCaterQantity</td> <!-- Corrected typo in Quantity -->
-                <td>@Servess.DescriptionEnum.GetDescription(item.Catid)</td> <!-- Ensure GetDescription works properly -->
                 <td>@item.totalprice</td>
-                 <td class="col-4">
+                <td>@item.ShopingCaterQantity</td>
+                <td>@Servess.DescriptionEnum.GetDescription(item.Catid)</td>
+                <td class="col-4">
                     <form method="post" asp-controller="PriceProductebytypes" asp-action="UpdateShopingCaterCashHistory" asp-area="Admin" class="form-inline Save">
                         <input type="hidden" id="ShopingCaterId" name="ShopingCaterId" value="@item.ShopingCaterId" asp-for="@item.ShopingCaterId" />
                         <input type="hidden" id="Id" name="Id" value="@item.Id" asp-for="@item.Id" />
+                        <input type="hidden" id="ProductId" name="ProductId" value="@item.ProductId" asp-for="@item.ProductId" />
+
                         <div class="form-group d-flex align-items-center Save">
                             <input type="number" min="1" class="form-control mr-2 Save" id="ShopingCaterQantity" name="ShopingCaterQantity" placeholder="الكميه" style="width:150px;" />
-                            <button class="btn btn-success creditButton" type="submit">تعديل  </button>
+                            <button class="btn btn-success creditButton" type="submit">تعديل</button>
                         </div>
                     </form>
                 </td>
                 <td>
                     <a class="btn btn-success flex-grow-1 ml-1 Save" asp-area="Admin" asp-action="DeleteCash" asp-route-Id="@item.ShopingCaterId">حذف</a>
                 </td>
-
             </tr>
         }
     </tbody>
     <tfoot>
         <tr>
             <td colspan="3">الإجمالي:</td>
-
-                        <td>@(Model?.Sum(i => i.totalprice) ?? 0) جنيه</td>
-           
-            <td colspan="3"> </td>
-
-
+            <td>@(Model?.Sum(i => i.totalprice) ?? 0) جنيه</td>
+            <td colspan="3"></td>
         </tr>
     </tfoot>
 </table>
 
+ 
+<partial name="_AlertMessage" />
 
 
-<div id="buttonprint">
-    <button id="printButton" class="btn btn-primary">طباعة الفاتوره</button> <!-- Print button with an id -->
+<div id="buttonprint" class="col-10">
+    <button id="printButton" class="btn btn-primary">طباعة الفاتوره</button>
+    <a class="btn btn-success Save" asp-area="Admin" asp-action="FreeFinancialUserCash" asp-route-CustomerType="@ViewBag.CustomerType" style="width:100px;">حفظ الفاتوره</a>
+ </div>
 
-    <a class="btn btn-success flex-grow-1 ml-1 Save" asp-area="Admin" asp-action="FreeShopingCaterCashHistoryToNotpayed" asp-route-CustomerType="@ViewBag.CustomerType">حفظ الفاتوره</a>
-    <a class="btn btn-success flex-grow-1 ml-1 Save" asp-area="Admin" asp-action="FreeFinancialUserCash" asp-route-CustomerType="@ViewBag.CustomerType">تعديل  الفاتوره</a>
-    <a class="btn btn-success flex-grow-1 ml-1 Save" asp-area="Admin" asp-action="FreeFinancialUserCash" asp-route-CustomerType="@ViewBag.CustomerType">انها  الفاتوره</a>
-
-
-</div>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+        var headerElement = document.getElementsByTagName('header')[0];
+        var buttonprint = document.getElementById("buttonprint");
+        var Cashtitle = document.getElementById("Cashtitle");
+
         document.getElementById("printButton").addEventListener("click", function () {
             // Hide the header
-            var headerElement = document.getElementsByTagName('header')[0];
             headerElement.style.display = 'none';
+
+            // Hide elements with class 'Save'
             document.querySelectorAll('.Save').forEach(function (element) {
                 element.style.display = 'none';
             });
-            // Hide elements with class 'save'
-            var saveColumnIndex = $('table th:contains("Save")').index();
-            $('table tr').each(function () {
-                $(this).find('td').eq(saveColumnIndex).hide();
-                $(this).find('th').eq(saveColumnIndex).hide();
-            });
-            // Hide the print button itself
-            var buttonprint = document.getElementById("buttonprint");
+
+            // Hide the print button and title
             buttonprint.style.display = 'none';
+            Cashtitle.style.display = 'none';
 
             // Print the page
             window.print();
+        });
 
+        window.onafterprint = function () {
             // Restore the visibility of the header and the print button
             headerElement.style.display = 'block';
             buttonprint.style.display = 'block';
+            Cashtitle.style.display = 'block';
 
-            // Restore the visibility of elements with class 'save'
-            $('table tr').each(function () {
-                $(this).find('td').eq(saveColumnIndex).show();
-                $(this).find('th').eq(saveColumnIndex).show();
+            // Restore the visibility of elements with class 'Save'
+            document.querySelectorAll('.Save').forEach(function (element) {
+                element.style.display = 'inline-block';
             });
-        });
+        };
     });
 </script>
 
-@* <script>
-    // JavaScript to handle printing functionality
-    document.getElementById("printButton").addEventListener("click", function () {
-        var headerElement = document.getElementsByTagName('header')[0];
-              headerElement.style.display = 'none';
-        buttonprint.style.display = 'none';
-        window.print(); // Print the table
-        headerElement.style.display = 'block';
-        buttonprint.style.display = 'block';
-     });
-</script>
- *@

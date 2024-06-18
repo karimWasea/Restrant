@@ -106,7 +106,9 @@ namespace Caffiee.Areas.Admin.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = ex.Message });
+                var prooduct = new NotPayedmoneyHistoryVM();
+                var product = _unitOfWork._NotPayedmoneyHistoryServess.SearchNotPayedmoney(prooduct);
+                return View("Index", product);
             }
         }
 
