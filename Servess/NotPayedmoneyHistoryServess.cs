@@ -217,7 +217,26 @@ namespace Servess
                             ishospital = i.ishospital,
                             NotPayedmoneyId = i.NotPayedmoneyId,
                             Qantity = i.Qantity,
-                             payedAmount= i.payedAmount,    
+                             payedAmount= i.payedAmount,
+
+                             productName = _context.NotPayedmoneyHistoryPriceProductebytypes
+                .Where(pp => pp.NotPayedmoneyHistoryid == i.Id)
+                .Select(pp =>
+                pp.PriceProductebytypes.Product.ProductName)
+                .FirstOrDefault() ?? "",
+                            Productid = _context.NotPayedmoneyHistoryPriceProductebytypes
+                .Where(pp => pp.NotPayedmoneyHistoryid == i.Id)
+                .Select(pp =>
+                pp.PriceProductebytypes.Product.Id)
+                .FirstOrDefault(),
+
+                            Pricforonproduct = _context.NotPayedmoneyHistoryPriceProductebytypes
+                .Where(pp => pp.NotPayedmoneyHistoryid == i.Id)
+                .Select(pp =>
+                pp.PriceProductebytypes.price)
+                .FirstOrDefault(),
+
+
                             totalpricforanyproduct = (_context.NotPayedmoneyHistoryPriceProductebytypes
                 .Where(pp => pp.NotPayedmoneyHistoryid == i.Id)
                 .Select(pp => (decimal?)pp.PriceProductebytypes.price)
@@ -237,39 +256,125 @@ namespace Servess
             return pagedList;
         }
 
-        public bool DeleteNotPayedmoneyHistory(int id)
+        public bool DeleteFinancialUserCashHistories(int id, int payedTotalAmount, int NotPayedmoneyid, int productid)
         {
-          var   queryable = _context.NotPayedmoneyHistory.Find( id);
-            var itemsToRemove = _context.NotPayedmoneyHistoryPriceProductebytypes
-         .Where(i => i.NotPayedmoneyHistoryid == id)
-         .ToList();
-
-            if (itemsToRemove.Any())
+            using (var transaction = _context.Database.BeginTransaction())
             {
-                _context.NotPayedmoneyHistoryPriceProductebytypes.RemoveRange(itemsToRemove);
-                _context.SaveChanges();
+                try
+                {
+                    // Find the financial user cash history record
+                    var financialUserCashHistory = _context.NotPayedmoneyHistory.Find(id);
+                    if (financialUserCashHistory == null)
+                    {
+                        throw new Exception("FinancialUserCashHistory not found");
+                    }
+
+                    // Find the associated FinancialUserCash record
+                    var financialUserCash = _context.NotPayedmoney.Find(NotPayedmoneyid);
+                    if (financialUserCash == null)
+                    {
+                        throw new Exception("FinancialUserCash not found");
+                    }
+
+                    // Update the PayedTotalAmount in FinancialUserCash
+                    financialUserCash.TotalPayedAmount -= payedTotalAmount;
+
+                    // Find the associated product
+                    var product = _context.products.Find(productid);
+                    if (product == null)
+                    {
+                        throw new Exception("Product not found");
+                    }
+
+                    // Update the quantity of the product
+                    product.Qantity += financialUserCashHistory.Qantity;
+
+                    // Find and remove the related FinancialUserCashHistoryPriceProductebytypes records
+                    var itemsToRemove = _context.FinancialUserCashHistoryPriceProductebytypes
+                        .Where(i => i.financialUserCashHistoryid == id)
+                        .ToList();
+                    if (itemsToRemove.Any())
+                    {
+                        _context.FinancialUserCashHistoryPriceProductebytypes.RemoveRange(itemsToRemove);
+                    }
+
+                    // Remove the financial user cash history record
+                    _context.NotPayedmoneyHistory.Remove(financialUserCashHistory);
+
+                    // Save all changes and commit the transaction
+                    _context.SaveChanges();
+                    transaction.Commit();
+
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    // Rollback the transaction in case of an error
+                    transaction.Rollback();
+                    // Log the exception (ex) here if needed
+                    return false;
+                }
             }
-
-
-
-            _context.NotPayedmoneyHistory.Remove(queryable);
-
-            
-            return true;
-
         }
- 
-     
+
+
+
 
 
         public bool SaveNotPayedmoneyHistory(NotPayedmoneyHistoryVM criteria)
         {
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                try
+                {
+                    // Find the financial user cash history record
+                    var updated = _context.NotPayedmoneyHistory.Find(criteria.Id);
+                    if (updated == null)
+                    {
+                        throw new Exception("FinancialUserCashHistory not found");
+                    }
 
-            var updated =  _context.NotPayedmoneyHistory.Find(criteria.Id);
-            updated.Qantity= criteria.Qantity;
-            _context.SaveChanges();
-             return true;   
+                    // Update the quantity
+                    updated.Qantity = criteria.Qantity;
+
+                    // Find the associated FinancialUserCash record
+                    var financialUserCash = _context.NotPayedmoney.Find(criteria.NotPayedmoneyId);
+                    if (financialUserCash == null)
+                    {
+                        throw new Exception("FinancialUserCash not found");
+                    }
+
+                    // Adjust the PayedTotalAmount
+                    financialUserCash.TotalPayedAmount -= updated.payedAmount;
+                    var newTotalPrice = criteria.Qantity * criteria.Pricforonproduct;
+                    financialUserCash.TotalPayedAmount += newTotalPrice;
+
+                    // Find the associated product
+                    var product = _context.products.Find(criteria.Productid);
+                    if (product == null)
+                    {
+                        throw new Exception("Product not found");
+                    }
+
+                    // Update the quantity of the product
+                    product.Qantity -= criteria.Qantity;
+
+                    // Save all changes and commit the transaction
+                    _context.SaveChanges();
+                    transaction.Commit();
+
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    // Rollback the transaction in case of an error
+                    transaction.Rollback();
+                    // Log the exception (ex) here if needed
+                    return false;
+                }
+            }
         }
+
 
         public IPagedList<NotPayedmoneyHistoryVM> PrintforHospitallDay(NotPayedmoneyHistoryVM criteria)
         {

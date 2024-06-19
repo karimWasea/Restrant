@@ -56,7 +56,7 @@ namespace Servess
             {
                 _context.Update(Entity);
 
-            }
+            } else
             {
 
                 _context.Add(Entity);
@@ -86,18 +86,17 @@ namespace Servess
         {
             var queryable = _context.PriceProductebytypes.Include(i => i.Product).Where(
                 product =>
-                    (criteria.ProductId == 0 || product.ProductId == criteria.ProductId)
+                    (criteria.ProductName == null || product.Product.ProductName.Contains(criteria.ProductName))
                     && (criteria.CustomerType == 0 || product.CustomerType == criteria.CustomerType))
                 .Select(i => new PriceProductebytypesVM
                 {
-                    ProductName = i.Product.ProductName,
+                    ProductName = i.Product.ProductName??"",
                     CustomerType = i.CustomerType,
                     ProductId = i.ProductId,
                     Id = i.Id,
-                    Discount = i.Discount,
-                    Qantity = i.Qantity,
-                    price = i.price ,
- 
+                    Qantity = i.Qantity ?? 0, // Assuming i.Qantity is nullable and defaulting to 0 if null
+                    price = i.price ?? 0
+
                 })
                 .OrderBy(g => g.Id);
 
@@ -125,8 +124,8 @@ namespace Servess
                    ProductId = i.ProductId,
                    Id = i.Id,
                    Discount = i.Discount,
-                   Qantity = i.Qantity,
-                   price = i.price,
+                   Qantity = i.Qantity ?? 0, // Assuming i.Qantity is nullable and defaulting to 0 if null
+                   price = i.price ?? 0,
                    Catid = (CategoryType)i.Product.CategoryTyPe,
 
                })

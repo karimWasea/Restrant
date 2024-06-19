@@ -19,8 +19,11 @@ namespace Cf_Viewmodels
         public decimal? Price { get; set; }
         public decimal? payedAmount { get; set; }
         public decimal? PayedTotalAmount { get; set; }
-        public decimal? Qantity { get; set; }
-        public HospitalOroprationtyp HospitalaoOrprationtyp { get; set; }
+        public int? Qantity { get; set; }
+        public int Frercahid { get; set; }
+        public int? Pricforonproduct { get; set; }
+        public int? Productid { get; set; }
+         public HospitalOroprationtyp HospitalaoOrprationtyp { get; set; }
         public CategoryType CategoryTyPe { get; set; }
 
          public string CategoryName { get; set; }

@@ -76,11 +76,66 @@ namespace Servess
 
             return true;
         }
+        public bool Salesreturns(int id)
+        {
+            // Find the NotPayedmoney entity by id
+            var FinancialUserCash = _context.FinancialUserCash.Find(id);
+            if (FinancialUserCash == null)
+            {
+                return false; // or throw an exception
+            }
 
+            // Find the associated NotPayedmoneyHistory entities
+            var FinancialUserCashHistories = _context.FinancialUserCashHistories
+                .Where(i => i.FinancialUserCashId == id)
+                .ToList();
+
+            // Find the associated NotPayedmoneyHistoryPriceProductebytypes entities
+            var FinancialUserCashHistoryPriceProductebytypes = _context.FinancialUserCashHistoryPriceProductebytypes
+                .Where(i => FinancialUserCashHistories.Select(h => h.Id).Contains(i.financialUserCashHistoryid))
+                .ToList();
+
+            // Update the quantity of associated products
+            foreach (var historyItem in FinancialUserCashHistories)
+            {
+                var productItems = FinancialUserCashHistoryPriceProductebytypes
+                    .Where(pp => pp.financialUserCashHistoryid == historyItem.Id)
+                    .Select(pp => pp.PriceProductebytypes.Product);
+
+                foreach (var product in productItems)
+                {
+                    product.Qantity += historyItem.Qantity; // Ensure the property name is correct
+                }
+            }
+
+            // Remove associated NotPayedmoneyHistoryPriceProductebytypes entities
+            if (FinancialUserCashHistoryPriceProductebytypes.Any())
+            {
+                _context.FinancialUserCashHistoryPriceProductebytypes.RemoveRange(FinancialUserCashHistoryPriceProductebytypes);
+
+
+                // Remove associated NotPayedmoneyHistory entities
+                if (FinancialUserCashHistories.Any())
+                {
+                    _context.FinancialUserCashHistories.RemoveRange(FinancialUserCashHistories);
+                }
+
+                // Remove the NotPayedmoney entity
+            }
+            _context.FinancialUserCash.Remove(FinancialUserCash);
+
+            // Save all changes
+            
+            _context.SaveChanges();
+
+                return true;
+            
+        }
+         
         public IPagedList<FinancialUserCashHistoryVM> SearchFinancialUserCashH(FinancialUserCashHistoryVM criteria)
         {
             var queryable = _context.FinancialUserCashHistories
-                .Include(i => i.FinancialUserCash).Where(i =>         (i.CreationTime == criteria.CreationTime || criteria.CreationTime == DateTime.MinValue)
+                .Include(i => i.FinancialUserCash).Where(i =>         (i.FinancialUserCash.PayedTotalAmount == criteria.payedAmount || criteria.payedAmount==0|| criteria.payedAmount == null)
 
 
                          
@@ -89,16 +144,19 @@ namespace Servess
                          {
 
 
-                             Id = i.Id,
+                             Id = i.FinancialUserCash.Id,
                              HospitalaoOrprationtyp = (Enumes.HospitalOroprationtyp)i.HospitalOroprationtyp
                   ,
                               CreationTime = i.CreationTime,
                           
  
                               PaymentStatus = (Enumes.PaymentStatus)i.PaymentStatus,
-                             PayedTotalAmount = _context.FinancialUserCash.FirstOrDefault(p => p.Id == i.FinancialUserCashId).PayedTotalAmount ?? 0,
+                             PayedTotalAmount = (_context.FinancialUserCashHistoryPriceProductebytypes
+                .Where(pp => pp.financialUserCashHistoryid == i.Id)
+                .Select(pp => (decimal?)pp.PriceProductebytypes.price)
+                .FirstOrDefault() ?? 0) * i.Qantity,
 
-                  
+
 
                          }
             ).OrderBy(g => g.Id);
@@ -113,40 +171,98 @@ namespace Servess
 
         }
 
-        public bool DeleteFinancialUserCashHistories(int id)
+        public bool DeleteFinancialUserCashHistories(int id, int payedTotalAmount, int frercahid, int productid)
         {
-            var queryable = _context.FinancialUserCashHistories.Find(id);
-            var itemsToRemove = _context. FinancialUserCashHistoryPriceProductebytypes
-         .Where(i => i.financialUserCashHistoryid == id)
-         .ToList();
-
-            if (itemsToRemove.Any())
+            using (var transaction = _context.Database.BeginTransaction())
             {
-                _context.FinancialUserCashHistoryPriceProductebytypes.RemoveRange(itemsToRemove);
-                _context.SaveChanges();
+                try
+                {
+                    // Find the financial user cash history record
+                    var financialUserCashHistory = _context.FinancialUserCashHistories.Find(id);
+                    if (financialUserCashHistory == null)
+                    {
+                        throw new Exception("FinancialUserCashHistory not found");
+                    }
+
+                    // Find the associated FinancialUserCash record
+                    var financialUserCash = _context.FinancialUserCash.Find(frercahid);
+                    if (financialUserCash == null)
+                    {
+                        throw new Exception("FinancialUserCash not found");
+                    }
+
+                    // Update the PayedTotalAmount in FinancialUserCash
+                    financialUserCash.PayedTotalAmount -= financialUserCashHistory. PayedAmount;
+
+                    // Find the associated product
+                    var product = _context.products.Find(productid);
+                    if (product == null)
+                    {
+                        throw new Exception("Product not found");
+                    }
+
+                    // Update the quantity of the product
+                    product.Qantity += financialUserCashHistory.Qantity;
+
+                    // Find and remove the related FinancialUserCashHistoryPriceProductebytypes records
+                    var itemsToRemove = _context.FinancialUserCashHistoryPriceProductebytypes
+                        .Where(i => i.financialUserCashHistoryid == id)
+                        .ToList();
+                    if (itemsToRemove.Any())
+                    {
+                        _context.FinancialUserCashHistoryPriceProductebytypes.RemoveRange(itemsToRemove);
+                    }
+
+                    // Remove the financial user cash history record
+                    _context.FinancialUserCashHistories.Remove(financialUserCashHistory);
+
+                    // Save all changes and commit the transaction
+                    _context.SaveChanges();
+                    transaction.Commit();
+
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    // Rollback the transaction in case of an error
+                    transaction.Rollback();
+                    // Log the exception (ex) here if needed
+                    return false;
+                }
             }
-
-
-
-            _context.FinancialUserCashHistories.Remove(queryable);
-
-
-            return true;
-
         }
+
 
         public IPagedList<FinancialUserCashHistoryVM> SearchFinancialUserCashHistoryDetails(int id,int  ?pageNuber)
             {
-                var queryable = _context.FinancialUserCashHistories.Where(i => i.FinancialUserCashId == id
+            var queryable = _context.FinancialUserCashHistories.Where(i => i.FinancialUserCashId == id
 
 
 
-                            ).Select(i => new FinancialUserCashHistoryVM
-                            {
-                                
-                                Id = i.Id,
-                                HospitalaoOrprationtyp = (Enumes.HospitalOroprationtyp)i.HospitalOroprationtyp
-                                 ,
+                        ).Select(i => new FinancialUserCashHistoryVM
+                        {
+
+                            Id = i.Id,
+                            HospitalaoOrprationtyp = (Enumes.HospitalOroprationtyp)i.HospitalOroprationtyp
+                             ,
+                            Frercahid = id,
+                            ProductName = _context.FinancialUserCashHistoryPriceProductebytypes
+    .FirstOrDefault(pp => pp.financialUserCashHistoryid == i.Id).PriceProductebytypes.Product.ProductName
+  
+   
+     ,
+
+                             Productid = _context.FinancialUserCashHistoryPriceProductebytypes
+                .Where(pp => pp.financialUserCashHistoryid == i.Id)
+                .Select(pp => 
+                pp.PriceProductebytypes.Product.Id)
+                .FirstOrDefault()  ,
+                            
+                            Pricforonproduct = _context.FinancialUserCashHistoryPriceProductebytypes
+                .Where(pp => pp.financialUserCashHistoryid == i.Id)
+                .Select(pp => 
+                pp.PriceProductebytypes.price)
+                .FirstOrDefault()  ,
                                  CreationTime = i.CreationTime,
                                    Qantity = i.Qantity,
                                 PayedTotalAmount = (_context. FinancialUserCashHistoryPriceProductebytypes
@@ -158,7 +274,7 @@ namespace Servess
 
  
                             }
-                           ).OrderBy(g => g.Id);
+                           ).OrderByDescending(i=>i.Id);
 
                 // Provide a default value for PageNumber if it's null
                 int pageNumber = pageNuber ?? 1;
@@ -169,7 +285,60 @@ namespace Servess
             }
 
 
+        public bool SaveFinancialUserCashHistories(FinancialUserCashHistoryVM criteria)
+        {
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                try
+                {
+                    // Find the financial user cash history record
+                    var updated = _context.FinancialUserCashHistories.Find(criteria.Id);
+                    if (updated == null)
+                    {
+                        throw new Exception("FinancialUserCashHistory not found");
+                    }
 
+                    // Update the quantity
+                    updated.Qantity = criteria.Qantity;
 
+                    // Find the associated FinancialUserCash record
+                    var financialUserCash = _context.FinancialUserCash.Find(criteria.Frercahid);
+                    if (financialUserCash == null)
+                    {
+                        throw new Exception("FinancialUserCash not found");
+                    }
+
+                    // Adjust the PayedTotalAmount
+                    financialUserCash.PayedTotalAmount -= updated.PayedAmount;
+                    var newTotalPrice = criteria.Qantity * criteria.Pricforonproduct;
+                    financialUserCash.PayedTotalAmount += newTotalPrice;
+
+                    // Find the associated product
+                    var product = _context.products.Find(criteria.Productid);
+                    if (product == null)
+                    {
+                        throw new Exception("Product not found");
+                    }
+
+                    // Update the quantity of the product
+                    product.Qantity -= criteria.Qantity;
+
+                    // Save all changes and commit the transaction
+                    _context.SaveChanges();
+                    transaction.Commit();
+
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    // Rollback the transaction in case of an error
+                    transaction.Rollback();
+                    // Log the exception (ex) here if needed
+                    return false;
+                }
+            }
         }
+
+
+    }
 }

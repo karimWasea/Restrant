@@ -21,7 +21,7 @@ namespace Interfaces
         public bool Salesreturns(int id);
 
         public IPagedList<NotPayedmoneyHistoryVM> SearchNotPayedmoneyHistoryDetails(int id, int? pageNuber);
-        bool DeleteNotPayedmoneyHistory(int id);
+        public bool DeleteFinancialUserCashHistories(int id, int payedTotalAmount, int NotPayedmoneyid, int productid);
         public IPagedList<NotPayedmoneyHistoryVM> PrintforHospitallDay(NotPayedmoneyHistoryVM criteria);  
             bool SaveNotPayedmoneyHistory(NotPayedmoneyHistoryVM criteria);
 
@@ -38,11 +38,16 @@ namespace Interfaces
 
 
          bool DeleteFinancialUserCash(int id);
+        public bool Salesreturns(int id);
+
         IPagedList<FinancialUserCashHistoryVM> SearchFinancialUserCashH(FinancialUserCashHistoryVM criteria);
 
+        public bool SaveFinancialUserCashHistories(FinancialUserCashHistoryVM criteria);
 
         public IPagedList<FinancialUserCashHistoryVM> SearchFinancialUserCashHistoryDetails(int id, int? pageNuber);
-        public bool DeleteFinancialUserCashHistories(int id);
+        public bool DeleteFinancialUserCashHistories(int id,int PayedTotalAmount, int Frercahid,int Productid);
+
+                     
        
     }
 

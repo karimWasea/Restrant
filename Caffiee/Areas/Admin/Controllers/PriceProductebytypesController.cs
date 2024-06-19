@@ -33,6 +33,7 @@ namespace Caffiee.Areas.Admin.Controllers
         {
 
             Entity.PageNumber = page ?? 1;
+            ViewBag.CustomerTypeIdList = _unitOfWork._Ilookup.GetCustomerType();
             var Entitys = _unitOfWork._PriceProductebytypes.Search(Entity);
             return View(Entitys);
         }
@@ -398,7 +399,7 @@ namespace Caffiee.Areas.Admin.Controllers
 
 
         public IActionResult GetDibts(PriceProductebytypesVM Entity )
-        {
+            {
 
             var ReturnEntity = _unitOfWork._PriceProductebytypes.GetDibts(Entity);
             ReturnEntity.UsersLists = _unitOfWork._Ilookup.Users();

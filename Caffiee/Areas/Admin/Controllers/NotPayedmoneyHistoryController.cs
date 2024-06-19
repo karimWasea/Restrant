@@ -7,6 +7,8 @@ using Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.CodeAnalysis;
+
 using Servess;
 
 namespace Caffiee.Areas.Admin.Controllers
@@ -122,24 +124,43 @@ namespace Caffiee.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult SaveHistory(NotPayedmoneyHistoryVM Entity)
         {
+             var id=Entity.Id;  
+                if (Entity.Qantity == null)
+                {
 
-            
+                    TempData["Message"] = $"ادخل كميه "; // "Added successfully"
+                    TempData["MessageType"] = "Save";
+
+                var model = _unitOfWork._NotPayedmoneyHistoryServess.SearchNotPayedmoneyHistoryDetails(id, 1);
+            }
+
+                if (!_unitOfWork._PriceProductebytypes.CheckQantityProduct((int)Entity.Productid, (decimal)Entity.Qantity))
+                {
+                    TempData["Message"] = $"الكميه ف المخزن غير كافيه "; // "Added successfully"
+                    TempData["MessageType"] = "Save";
+                var model2 = _unitOfWork._NotPayedmoneyHistoryServess.SearchNotPayedmoneyHistoryDetails(id,1);
+                return View(viewName: "SearchNotPayedmoneyHistoryDetails", model2);
+
+            }
+
             _unitOfWork._NotPayedmoneyHistoryServess.SaveNotPayedmoney(Entity);
             TempData["Message"] = $"{Entity.payedAmount}  تم اضافه المنتج بسعر "; // "Added successfully"
             TempData["MessageType"] = "Save";
 
-            return Json(new { success = true, message = TempData["Message"] });
+            var model3 = _unitOfWork._NotPayedmoneyHistoryServess.SearchNotPayedmoneyHistoryDetails(id, 1);
+            return View(viewName: "SearchNotPayedmoneyHistoryDetails", model3);
+
 
         }
 
 
 
         [HttpPost]
-        public IActionResult DeleteHistory(int id)
+        public IActionResult DeleteHistory(int id ,int payedTotalAmount ,int NotPayedmoneyid , int productid)
         {
             try
             {
-                _unitOfWork._NotPayedmoneyHistoryServess.DeleteNotPayedmoneyHistory(id);
+                _unitOfWork._NotPayedmoneyHistoryServess.DeleteFinancialUserCashHistories(  id,   payedTotalAmount,   NotPayedmoneyid,   productid);
 
                 TempData["Message"] = "Cannot save the category. Please check the form.";
                 TempData["MessageType"] = "danger";

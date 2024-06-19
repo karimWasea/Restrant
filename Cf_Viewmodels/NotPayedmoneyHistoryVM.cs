@@ -20,8 +20,9 @@ namespace Cf_Viewmodels
             public decimal? TotalPayedAmount { get; set; }
             public decimal? TotalNotpayedAmount { get; set; }
             public decimal? payedAmount { get; set; }
-      
-        public string? productName { get; set; }
+        public int? Pricforonproduct { get; set; }
+        public int? Productid { get; set; }
+         public string? productName { get; set; }
         public string? ChangedByUserId { get; set; }
         public int? Qantity { get; set; }
         public decimal? totalpricforanyproduct { get; set; }

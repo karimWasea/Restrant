@@ -53,6 +53,7 @@
             <th>اسم  العميل </th>
             <th>الكميه</th>
             <th>السعر الكلى</th>
+            <th>   اسم المنتج</th>
 
             <th> تم الدفع/لا</th> <!-- Corrected spelling -->
              <th class="Save">تعديل الكميه </th>
@@ -66,6 +67,7 @@
                 <td>@item.UserNotPayedmoneyName</td> <!-- Corrected typo in Quantity -->
 
                <td>@item.Qantity</td>
+               <td>@item.productName</td>
                 <td>@Servess.DescriptionEnum.GetDescription(item.PaymentStatus)</td> <!-- Ensure GetDescription works properly -->
                  <td>@item.totalpricforanyproduct</td>
                 <td class="col-4">
@@ -74,6 +76,9 @@
                     {
                         <form method="post" asp-controller="NotPayedmoneyHistory" asp-action="SaveHistory" asp-area="Admin" class="form-inline Save">
                             <input type="hidden" id="Id" name="Id" value="@item.Id" asp-for="@item.Id" />
+                            <input type="hidden" id="Pricforonproduct" name="Pricforonproduct" value="@item.Pricforonproduct" asp-for="@item.Pricforonproduct" />
+                            <input type="hidden" id="NotPayedmoneyId" name="NotPayedmoneyId" value="@item.NotPayedmoneyId" asp-for="@item.NotPayedmoneyId" />
+                            <input type="hidden" id="Productid" name="Productid" value="@item.Productid" asp-for="@item.Productid" />
                             <div class="form-group d-flex align-items-center Save">
                                 <input type="number" min="1" class="form-control   Save" id="Qantity" name="Qantity" placeholder="الكميه" style="width:150px;" />
                                 <button class="btn btn-success creditButton" type="submit">تعديل  </button>
@@ -84,7 +89,12 @@
                
                 </td>
                 <td>
-                    <a class="btn btn-success flex-grow-1 ml-1 Save" asp-area="Admin" asp-action="DeleteHistory" asp-route-Id="@item.Id">حذف</a>
+                    <a class="btn btn-success flex-grow-1 ml-1 Save" asp-area="Admin"
+                    asp-action="DeleteHistory"
+                        asp-route-id="@item.Id"
+                       asp-route-NotPayedmoneyid="@item.NotPayedmoneyId"
+                       asp-route-payedTotalAmount="@item.TotalNotpayedAmount"
+                       asp-route-productid="@item.Productid">حذف</a>
                 </td>
 
             </tr>

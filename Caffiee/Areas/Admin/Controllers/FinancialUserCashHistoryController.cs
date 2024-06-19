@@ -7,6 +7,8 @@ using Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.CodeAnalysis;
+
 using Servess;
 
 namespace Caffiee.Areas.Admin.Controllers
@@ -34,11 +36,29 @@ namespace Caffiee.Areas.Admin.Controllers
          
             var products = _unitOfWork._iFinancialUserCashHistoryServess.SearchFinancialUserCashH(Entity);
             return View(products);
-        }  
-        
-   
+        }
+
+        [HttpGet]
+        public IActionResult Salesreturns(int id)
+        {
+            try
+            {
+                _unitOfWork._iFinancialUserCashHistoryServess.Salesreturns(id);
+
+                TempData["Message"] = "تم  المرتجع";
+                TempData["MessageType"] = "Save";
+                var Entity = new FinancialUserCashHistoryVM();
+                var product = _unitOfWork._iFinancialUserCashHistoryServess.SearchFinancialUserCashH(Entity);
+                return View("Index", product);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
 
         // GET: Products/Details/5
+        [HttpGet]
         public IActionResult SearchFinancialUserCashHistoryDetails(int Id, int? page)
         {
             page = page ?? 1;
@@ -57,17 +77,17 @@ namespace Caffiee.Areas.Admin.Controllers
 
       
 
-        [HttpPost]
-        public IActionResult Delete(int Id)
+         public IActionResult Delete(int Id)
         {
             try
             {
                 _unitOfWork._iFinancialUserCashHistoryServess.DeleteFinancialUserCash(Id);
 
-                TempData["Message"] = "Cannot save the category. Please check the form.";
-                TempData["MessageType"] = "danger";
-                return Json(new { success = true, message = "Successfully deleted!" });
-
+                TempData["Message"] = " تم الحذف.";
+                TempData["MessageType"] = "Delete";
+                var model = new FinancialUserCashHistoryVM();
+                var products = _unitOfWork._iFinancialUserCashHistoryServess.SearchFinancialUserCashH(model);
+                 return View("Index", products);
             }
             catch (Exception ex)
             {
@@ -76,35 +96,66 @@ namespace Caffiee.Areas.Admin.Controllers
         }
 
         #region history 
-        [HttpGet]
- 
 
 
 
 
 
-     
 
-     
-        [HttpPost]
-        public IActionResult DeleteHistory(int Id)
+
+         public IActionResult DeleteHistory(int id, int payedTotalAmount, int frercahid, int productid)
         {
+            var Id= id;
             try
             {
-                _unitOfWork._iFinancialUserCashHistoryServess.DeleteFinancialUserCashHistories(Id);
+                _unitOfWork._iFinancialUserCashHistoryServess.DeleteFinancialUserCashHistories(id, payedTotalAmount, frercahid, productid);
 
-                TempData["Message"] = "Cannot save the category. Please check the form.";
-                TempData["MessageType"] = "danger";
-                return Json(new { success = true, message = "Successfully deleted!" });
-
+                TempData["Message"] = "تم الامر  بنجاح";
+                TempData["MessageType"] = "delete";
+                var model = _unitOfWork._iFinancialUserCashHistoryServess.SearchFinancialUserCashHistoryDetails(Id, 1);
+                return View("SearchFinancialUserCashHistoryDetails", model);
             }
             catch (Exception ex)
             {
                 return Json(new { success = false, message = ex.Message });
             }
         }
-            #endregion
 
 
+
+
+        [HttpPost]
+        public IActionResult SaveHistory(FinancialUserCashHistoryVM entity)
+        {
+            var id = entity.Id;
+            if (entity.Qantity == null)
+            {
+                TempData["Message"] = "ادخل كميه"; // "Enter Quantity"
+                TempData["MessageType"] = "Error";
+
+                var model = _unitOfWork._iFinancialUserCashHistoryServess.SearchFinancialUserCashHistoryDetails(id, 1);
+                return View("SearchFinancialUserCashHistoryDetails", model);
+            }
+
+            if (!_unitOfWork._PriceProductebytypes.CheckQantityProduct((int)entity.Productid, (decimal)entity.Qantity))
+            {
+                TempData["Message"] = "الكميه ف المخزن غير كافيه"; // "Insufficient stock quantity"
+                TempData["MessageType"] = "Error";
+
+                var model = _unitOfWork._iFinancialUserCashHistoryServess.SearchFinancialUserCashHistoryDetails(id, 1);
+                return View("SearchFinancialUserCashHistoryDetails", model);
+            }
+
+            _unitOfWork._iFinancialUserCashHistoryServess.SaveFinancialUserCashHistories(entity);
+            TempData["Message"] = "تم اضافه بنجاح"; // "Added successfully"
+            TempData["MessageType"] = "Success";
+
+            var updatedModel = _unitOfWork._iFinancialUserCashHistoryServess.SearchFinancialUserCashHistoryDetails(id, 1);
+            return View("SearchFinancialUserCashHistoryDetails", updatedModel);
         }
+
+        #endregion
+
+
     }
+}
