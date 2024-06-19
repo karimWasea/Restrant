@@ -90,17 +90,20 @@ namespace Servess
                 .Where(i => i.FinancialUserCashId == id)
                 .ToList();
 
-            // Find the associated NotPayedmoneyHistoryPriceProductebytypes entities
-            var FinancialUserCashHistoryPriceProductebytypes = _context.FinancialUserCashHistoryPriceProductebytypes
+            var financialUserCashHistoryPriceProductebytypes = _context.FinancialUserCashHistoryPriceProductebytypes
+                .Include(pp => pp.PriceProductebytypes)
+                    .ThenInclude(p => p.Product)
                 .Where(i => FinancialUserCashHistories.Select(h => h.Id).Contains(i.financialUserCashHistoryid))
                 .ToList();
 
             // Update the quantity of associated products
             foreach (var historyItem in FinancialUserCashHistories)
             {
-                var productItems = FinancialUserCashHistoryPriceProductebytypes
+                var productItems = financialUserCashHistoryPriceProductebytypes
                     .Where(pp => pp.financialUserCashHistoryid == historyItem.Id)
-                    .Select(pp => pp.PriceProductebytypes.Product);
+                    .Select(pp => pp.PriceProductebytypes?.Product) // Use ?. to prevent NullReferenceException
+                    .Where(p => p != null) // Filter out null products
+                    .ToList();
 
                 foreach (var product in productItems)
                 {
@@ -109,9 +112,9 @@ namespace Servess
             }
 
             // Remove associated NotPayedmoneyHistoryPriceProductebytypes entities
-            if (FinancialUserCashHistoryPriceProductebytypes.Any())
+            if (financialUserCashHistoryPriceProductebytypes.Any())
             {
-                _context.FinancialUserCashHistoryPriceProductebytypes.RemoveRange(FinancialUserCashHistoryPriceProductebytypes);
+                _context.FinancialUserCashHistoryPriceProductebytypes.RemoveRange(financialUserCashHistoryPriceProductebytypes);
 
 
                 // Remove associated NotPayedmoneyHistory entities
@@ -131,35 +134,25 @@ namespace Servess
                 return true;
             
         }
-         
+
         public IPagedList<FinancialUserCashHistoryVM> SearchFinancialUserCashH(FinancialUserCashHistoryVM criteria)
         {
-            var queryable = _context.FinancialUserCashHistories
-                .Include(i => i.FinancialUserCash).Where(i =>         (i.FinancialUserCash.PayedTotalAmount == criteria.payedAmount || criteria.payedAmount==0|| criteria.payedAmount == null)
-
-
-                         
-                       
-                         ).Select(i => new FinancialUserCashHistoryVM
-                         {
-
-
-                             Id = i.FinancialUserCash.Id,
-                             HospitalaoOrprationtyp = (Enumes.HospitalOroprationtyp)i.HospitalOroprationtyp
-                  ,
-                              CreationTime = i.CreationTime,
-                          
- 
-                              PaymentStatus = (Enumes.PaymentStatus)i.PaymentStatus,
-                             PayedTotalAmount = (_context.FinancialUserCashHistoryPriceProductebytypes
-                .Where(pp => pp.financialUserCashHistoryid == i.Id)
-                .Select(pp => (decimal?)pp.PriceProductebytypes.price)
-                .FirstOrDefault() ?? 0) * i.Qantity,
-
-
-
-                         }
-            ).OrderBy(g => g.Id);
+            var queryable = _context.FinancialUserCash
+                .Where(i =>
+                    i.PayedTotalAmount == criteria.payedAmount || criteria.payedAmount == 0 || criteria.payedAmount == null
+                )
+                .Select(i => new FinancialUserCashHistoryVM
+                {
+                    Id = i.Id,
+                    HospitalaoOrprationtyp = _context.FinancialUserCashHistories
+                        .Where(p => p.FinancialUserCashId == i.Id)
+                        .Select(p => (Enumes.HospitalOroprationtyp?)p.HospitalOroprationtyp)
+                        .FirstOrDefault() ?? default(Enumes.HospitalOroprationtyp),
+                    CreationTime = i.CreationTime,
+                    PaymentStatus = (Enumes.PaymentStatus)i.PaymentStatus,
+                    PayedTotalAmount = i.PayedTotalAmount
+                })
+                .OrderBy(g => g.Id);
 
             // Provide a default value for PageNumber if it's null
             int pageNumber = criteria.PageNumber ?? 1;
@@ -167,6 +160,9 @@ namespace Servess
             var pagedList = GetPagedData(queryable, pageNumber);
 
             return pagedList;
+        
+
+          
 
 
         }

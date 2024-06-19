@@ -182,8 +182,7 @@ namespace Caffiee.Areas.Admin.Controllers
 
             }
 
-
-
+  ModelState.Remove("Qantity");
             if (!(Entity.HospitalOroprationtypId== HospitalOroprationtyp.Hospital &&string.IsNullOrEmpty(Entity.NotpayedUserid)))
             {
                 if (!ModelState.IsValid)

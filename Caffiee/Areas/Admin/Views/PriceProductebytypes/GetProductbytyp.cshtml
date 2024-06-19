@@ -114,8 +114,7 @@
     <div>
         <a class="btn btn-primary" asp-area="Admin" asp-action="GetallfromShopingCart" asp-route-CustomerType="@ViewBag.CustomerType" asp-route-Catid="">  عرض الفاتوره الكاش</a>
         <a class="btn btn-dark" asp-area="Admin" asp-action="GetallfromShopingCartNopayed" asp-route-CustomerType="@ViewBag.CustomerType" asp-route-Catid="">  عرض الفاتوره الاجل</a>
-        <a class="btn btn-secondary" asp-area="Admin" asp-action="GetallfromShopingCart" asp-route-CustomerType="@ViewBag.CustomerType" asp-route-Catid=""> عرض الفاتوره الكاش الاجل  </a>
- 
+  
  
        
     </div>
@@ -129,7 +128,8 @@
                     <div class="card product-card h-100">
                         <div class="card-body">
                             <h5 class="card-title">@product.ProductName</h5>
-                            <p class="card-text">السعر: @product.price</p>
+                            <p class="card-text">السعر: @product.price جنيه</p>
+                            <p class="card-text">الكميه المتوفره: @product.QantityInStore</p>
                             <p class="card-text">النوع: @Servess.DescriptionEnum.GetDescription(product.Catid)</p>
                         </div>
                         <div class="card-footer">

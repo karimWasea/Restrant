@@ -42,7 +42,8 @@ namespace Cf_Viewmodels
         public int? Discount { get; set; }
         [Required(ErrorMessage = "هذا الحقل مطلوب")]
         [Range(1, int.MaxValue, ErrorMessage = " ادخل قيمه اقل ")]
-        public int Qantity { get; set; }
+        public int? Qantity { get; set; }
+        public decimal? QantityInStore { get; set; }
 
         [Required(ErrorMessage = "هذا الحقل مطلوب")]
         [Range(1, int.MaxValue, ErrorMessage = " ادخل قيمه اقل ")]

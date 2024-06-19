@@ -158,16 +158,16 @@ namespace Servess
         {
             var queryable = _context.NotPayedmoneyHistory.Include(i => i.NotPayedmoneys).Include(i => i.UserNotPayedmoney).Where(i => (i.PaymentStatus == (int)criteria.PaymentStatus || criteria.PaymentStatus == 0)
 
-              && (criteria.UserNotPayedmoneyName == null || i.UserNotPayedmoney.UserName.Contains(criteria.UserNotPayedmoneyName)) &&
+              && (criteria.UserNotPayedmoneyName == null || i.UserNotPayedmoney.FullCustumName.Contains(criteria.UserNotPayedmoneyName)) &&
               (i.PaymentStatus == (int)criteria.PaymentStatus || criteria.PaymentStatus == 0)
 
               ).Select(i => new NotPayedmoneyHistoryVM
               {
 
-                  Id = i.Id,
+                  Id = i.NotPayedmoneys.Id,
                   HospitalaoOrprationtyp = (Enumes.HospitalOroprationtyp)i.HospitalaoOrprationtyp
                    ,
-                  UserNotPayedmoneyName = i.UserNotPayedmoney.UserName ?? "",
+                  UserNotPayedmoneyName = i.UserNotPayedmoney.FullCustumName ?? "",
                   CreationTime = i.CreationTime,
                   NotpayedAmount = i.NotpayedAmount,
                   ChangedByUserId = i.ChangedByUserId,

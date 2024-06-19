@@ -155,17 +155,16 @@ namespace Caffiee.Areas.Admin.Controllers
 
 
 
-        [HttpPost]
-        public IActionResult DeleteHistory(int id ,int payedTotalAmount ,int NotPayedmoneyid , int productid)
+         public IActionResult DeleteHistory(int id ,int payedTotalAmount ,int NotPayedmoneyid , int productid)
         {
             try
             {
                 _unitOfWork._NotPayedmoneyHistoryServess.DeleteFinancialUserCashHistories(  id,   payedTotalAmount,   NotPayedmoneyid,   productid);
 
-                TempData["Message"] = "Cannot save the category. Please check the form.";
-                TempData["MessageType"] = "danger";
-                return Json(new { success = true, message = "Successfully deleted!" });
-
+                TempData["Message"] = "  تم  الحذف بنجاح";
+                TempData["MessageType"] = "Delete";
+                var model3 = _unitOfWork._NotPayedmoneyHistoryServess.SearchNotPayedmoneyHistoryDetails(id, 1);
+                return View(viewName: "SearchNotPayedmoneyHistoryDetails", model3);
             }
             catch (Exception ex)
             {

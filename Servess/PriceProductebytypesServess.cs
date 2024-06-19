@@ -124,6 +124,7 @@ namespace Servess
                    ProductId = i.ProductId,
                    Id = i.Id,
                    Discount = i.Discount,
+                    QantityInStore = i.Product.Qantity??0.0m,
                    Qantity = i.Qantity ?? 0, // Assuming i.Qantity is nullable and defaulting to 0 if null
                    price = i.price ?? 0,
                    Catid = (CategoryType)i.Product.CategoryTyPe,
