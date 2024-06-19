@@ -7,17 +7,17 @@
 }
 <partial name="_AlertMessage" />
 
-<form method="get" asp-controller="NotPayedmoneyHistory" asp-action="Index" asp-area="Admin" class="mt-4">
+<form method="get" asp-controller="User" asp-action="Index" asp-area="Admin" class="mt-4">
     <div class="form-row justify-content-center">
         <div>
             <div class="form-group col-md-4">
-                <label for="UserNotPayedmoneyName">بحث</label>
-                <input type="text" class="form-control" name="UserNotPayedmoneyName" placeholder="Search..." aria-label="Search" id="UserNotPayedmoneyName">
+                <label for="UserNme">بحث</label>
+                <input type="text" class="form-control" name="UserNme" placeholder="UserNme..." aria-label="UserNme" id="UserNme">
             </div>
             <div class="form-group col-md-4">
-                <label for="PaymentStatus">ابحث ب تم الدفع</label>
-                <select name="PaymentStatus" class="form-select" asp-items="@ViewBag.GetPaymentStatus" aria-required="true">
-                    <option value="">الدفع</option>
+                <label for="CustomerType">نوع العميل</label>
+                <select name="CustomerType" class="form-select" asp-items="@ViewBag.GetCustomerType" aria-required="true">
+                    <option value="">اختر</option>
                 </select>
             </div>
         </div>

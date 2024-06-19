@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,4 +18,12 @@ namespace C_Utilities
         public const string SalesMan = "SalesMan";
         public const string hospitalacont = "hospitalacont";
     }
+    public class CustomUserValidator<TUser> : IUserValidator<TUser> where TUser : class
+    {
+        public Task<IdentityResult> ValidateAsync(UserManager<TUser> manager, TUser user)
+        {
+            return Task.FromResult(IdentityResult.Success);
+        }
+    }
+
 }

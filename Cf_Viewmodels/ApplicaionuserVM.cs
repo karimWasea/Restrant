@@ -14,7 +14,7 @@ namespace Cf_Viewmodels
 {
     public class ApplicaionuserVM 
     {
-        public string Id { get; set; }  
+        public string Id { get; set; } = string.Empty; 
         public string UserNme { get; set; }  
         public bool isIncreas { get; set; }
         public IEnumerable<SelectListItem>? CustomerTypeList { get; set; } = Enumerable.Empty<SelectListItem>();

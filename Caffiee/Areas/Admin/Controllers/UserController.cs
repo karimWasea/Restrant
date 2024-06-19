@@ -28,6 +28,8 @@ namespace Caffiee.Areas.Admin.Controllers
 
         public async Task<IActionResult> Index(ApplicaionuserVM user)
         {
+            ViewBag.GetCustomerType = _unitOfWork._Ilookup.GetCustomerType();
+
             var users = await _unitOfWork._userService.Search(user);
             return View(users);
         }
@@ -74,26 +76,34 @@ namespace Caffiee.Areas.Admin.Controllers
         {
             user.CustomerTypeList = _unitOfWork._Ilookup.GetCustomerType();
             user.GenderList = _unitOfWork._Ilookup.GetGenderType();
+            if (await _unitOfWork._userService.CheckIfExists(user))
+            {
+                TempData["Message"] = "هذا الاكونت موجود مسبقا";
+                TempData["MessageType"] = "Save";
+                return View(user);
+
+            }
+         
             if (!ModelState.IsValid)
             {
-                TempData["Message"] = "user save the category. Please check the form.";
-                TempData["MessageType"] = "danger";
+                TempData["Message"] = "ادخل البيانات صحيحه";
+                TempData["MessageType"] = "Save";
                 return View(user);
             }
             
          
-            if (user.Id != null)
+            if (user.Id != null&& user.Id!=string.Empty)
             {
                 var updatedUser = await _unitOfWork._userService.UpdateAsync(user);
-                TempData["Message"] = "user save the category. Please check the form.";
-                TempData["MessageType"] = "danger";
+                TempData["Message"] = "تم التعديل بنجاح";
+                TempData["MessageType"] = "Save";
 
                 return RedirectToAction(nameof(Index));
             }
             else {
                 ApplicaionuserVM? createdUser = await _unitOfWork._userService.CreateAsync(user);
-                TempData["Message"] = "user save the category. Please check the form.";
-                TempData["MessageType"] = "danger";
+                TempData["Message"] = "تم الاضافه بنجاح";
+                TempData["MessageType"] = "Save";
                 return RedirectToAction(nameof(Index));
             }
         }
@@ -109,8 +119,8 @@ namespace Caffiee.Areas.Admin.Controllers
                 var success = await _unitOfWork._userService.DeleteAsync(id);
                
 
-                TempData["Message"] = "Cannot save the category. Please check the form.";
-                TempData["MessageType"] = "danger";
+                TempData["Message"] = "تم الحذف بنجاح";
+                TempData["MessageType"] = "Delete";
                 return Json(new { success = true, message = "Successfully deleted!" });
 
             }

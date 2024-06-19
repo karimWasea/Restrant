@@ -16,5 +16,7 @@ namespace Interfaces
         Task<ApplicaionuserVM> CreateAsync(ApplicaionuserVM user);
         Task<ApplicaionuserVM> UpdateAsync(ApplicaionuserVM user);
         Task<bool> DeleteAsync(string id);
+            Task<bool> CheckIfExists(ApplicaionuserVM userVm);
+
     }
 }

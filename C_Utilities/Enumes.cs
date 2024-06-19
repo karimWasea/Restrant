@@ -34,7 +34,10 @@ public enum CustomerType
 
     public enum Gender
         {
+            [Description("ذكر  ")]
             Male,
+            [Description("انثى  ")]
+
             Female,
         }
 

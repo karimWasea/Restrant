@@ -12,6 +12,7 @@ namespace DataAcessLayers
         public bool IsAdmin { get; set; }   
         public string? SystemUserId { get; set; }
         public string? SystemUserName { get; set; }
+        public string? FullCustumName { get; set; }
         public DateTime CreationTime { get; set; } = DateTime.Now;
       
         public CustomerType CustomerType { get; set; }

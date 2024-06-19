@@ -19,6 +19,15 @@ IServiceCollection serviceCollection =
 
 builder.Services.AddIdentity<Applicaionuser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = false)
 .AddEntityFrameworkStores<ApplicationDBcontext>().AddDefaultTokenProviders();
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    // Customizing username validation to allow any characters
+    options.User.AllowedUserNameCharacters = null;
+});
+
+// Replace the default IUserValidator with your custom validator
+builder.Services.AddScoped<IUserValidator<Applicaionuser>, CustomUserValidator<Applicaionuser>>();
+
 
 builder.Services.AddTransient<UnitOfWork>();
  builder.Services.AddTransient<lookupServess>();

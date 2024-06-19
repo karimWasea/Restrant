@@ -60,7 +60,7 @@ namespace Caffiee.Areas.Admin.Controllers
                     roleName = r.Name,
                     useRole = userRoles.Any(x => x == r.Name)
                 });
-                ViewBag.userName = user.UserName;
+                ViewBag.userName = user.FullCustumName;
                 ViewBag.userId = userId;
                 return View(roleList);
             }

@@ -151,7 +151,7 @@ namespace Caffiee.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
-                user.UserName = Input.UserName;
+                user.FullCustumName = Input.UserName;
                 user.IsAdmin = true;
 
 
