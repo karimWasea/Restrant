@@ -12,7 +12,55 @@
 
 <!-- Styling -->
 <style>
-    /* Add your custom CSS styles here */
+    body {
+        font-family: Arial, sans-serif;
+    }
+
+    .custom-table {
+        width: 100%;
+        max-width: 800px;
+        margin: auto;
+        background-color: #fff;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+
+        .custom-table thead {
+            background-color: #ad8313 !important;
+        }
+
+        .custom-table th, .custom-table td {
+            background-color: #ad8313 !important;
+        }
+
+    .table-container {
+        display: flex;
+        justify-content: center;
+        padding: 20px;
+        background-color: #f9f9f9;
+    }
+
+    #buttonprint {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    @@media print {
+        header, #buttonprint, .Save, #notpayed {
+            display: none !important;
+        }
+
+        .table-container {
+            margin: 0;
+            padding: 0;
+        }
+
+        .custom-table {
+            width: 100%;
+            margin: 0;
+        }
+    }
+     /* Add your custom CSS styles here */
     .table-striped {
         /* Add styling for striped table */
     }
@@ -49,15 +97,18 @@
             vertical-align: middle;
         }
 </style>
+<p id="notpayed" style="font-weight:bold; text-align:center;"> للمستشفى الفاتوره اليوميه</p>
 
+<div class="table-container">
 
-<table class="table table-striped table-bordered w-100 mx-auto mt-4">
+    <table class="table table-striped table-bordered w-100 mx-auto mt-4 custom-table">
     <thead class="thead-dark">
         <tr>
             <th>اسم  العميل </th>
             <th>المنتج</th>
-            <th>السعر</th> <!-- Corrected spelling -->
              <th> وقت عمل الفاتوره </th>
+            <th>السعر</th> <!-- Corrected spelling -->
+
           
         </tr>
     </thead>
@@ -68,6 +119,7 @@
                 <td>المستشفى</td>
                 <td>@item.productName</td>
                 <td>@item.CreationTime</td>
+
                 <!-- Corrected typo in Quantity -->
                 <td>@item.totalpricforanyproduct</td> <!-- Corrected typo in Quantity -->
            
@@ -87,6 +139,7 @@
         </tr>
     </tfoot>
 </table>
+</div>
 
 
 

@@ -295,8 +295,7 @@ namespace Servess
                     }
 
                     // Update the quantity
-                    updated.Qantity = criteria.Qantity;
-
+ 
                     // Find the associated FinancialUserCash record
                     var financialUserCash = _context.FinancialUserCash.Find(criteria.Frercahid);
                     if (financialUserCash == null)
@@ -317,8 +316,9 @@ namespace Servess
                     }
 
                     // Update the quantity of the product
-                    product.Qantity -= criteria.Qantity;
-
+                    product.Qantity += updated.Qantity;
+                    updated.Qantity = criteria.Qantity;
+                    product.Qantity -= updated.Qantity;
                     // Save all changes and commit the transaction
                     _context.SaveChanges();
                     transaction.Commit();

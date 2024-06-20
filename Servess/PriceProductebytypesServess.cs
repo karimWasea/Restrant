@@ -173,7 +173,7 @@ namespace Servess
                     ProductId = p.productid,
                 Catid = (CategoryType)p.catid,
                  NotpayedUserid=p.NotpayedUserid,
-                    ClientName = _user.Users.Where(i=>i.Id==p.NotpayedUserid).FirstOrDefault().UserName
+                    ClientName = _user.Users.Where(i=>i.Id==p.NotpayedUserid).FirstOrDefault().FullCustumName??""
 
 
                 }).ToList() ;
@@ -182,7 +182,9 @@ namespace Servess
         }
         #region AddShopingCaterCashHistory
         public void AddShopingCaterCashHistory(PriceProductebytypesVM criteria)
-        {
+        
+         { 
+             
             
             var Entity = new ShopingCaterCashHistory();
             Entity.TotalAmount = criteria.totalprice;
@@ -294,6 +296,18 @@ namespace Servess
 
 
         #endregion
+        public bool checkedifShopingCaterCashHistoryHavedata( ) {
+             var model= _context.ShopingCaterCashHistory.Any();
+             return model;
+
+
+        }
+        public bool checkedifhopingCaterNotpayedHavedata() {
+             var model2= _context.ShopingCaterNotpayedHistory.Any();
+             return model2;
+
+
+        }
         public void FreeShopingCaterCashHistoryToFinancialUserCash(string? SystemUserId, string? SystemUserName)
         {
             using (var transaction = _context.Database.BeginTransaction())
@@ -450,6 +464,7 @@ namespace Servess
                     var notPayedmoney = new NotPayedmoney
                     {
                         TotalNotpayedAmount = totalAmount,
+                        TotalPayedAmount = 0,
                         SystemUserId = SystemUserId,
                         SystemUserName = SystemUserName,
                         ChangedByUserId = SystemUserId,
@@ -572,9 +587,9 @@ namespace Servess
                 {
                     entity.totalDibte = _context.NotPayedmoneyHistory
                                    .Where(u => (u.UserNotPayedmoneyId == entity.NotpayedUserid || entity.NotpayedUserid == null)
-                                               && (u.PaymentStatus == (int)PaymentStatus.NotPaid || u.PaymentStatus == 0))
+                                               && (u.NotPayedmoneys.PaymentStatus == (int)PaymentStatus.NotPaid  ))
                                    .Sum(i => (decimal?)i.NotpayedAmount) ?? 0;
-                    entity.NotpayedUserName = _user.Users.FirstOrDefault(p => p.Id == entity.NotpayedUserid).UserName ?? "";
+                    entity.NotpayedUserName = _user.Users.FirstOrDefault(p => p.Id == entity.NotpayedUserid).FullCustumName ?? "";
                     return entity;
 
                 }
@@ -656,7 +671,7 @@ namespace Servess
             {
                 entity.totalDibtehospital = _context.NotPayedmoneyHistory
                     .Where(u => u.HospitalaoOrprationtyp == (int)HospitalOroprationtyp.Hospital
-                                && u.PaymentStatus == (int)PaymentStatus.NotPaid)
+                                && u.NotPayedmoneys.PaymentStatus == (int)PaymentStatus.NotPaid)
                     .Sum(i => (decimal?)i.NotpayedAmount) ?? 0;
 
                 return entity;

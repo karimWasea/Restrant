@@ -72,22 +72,24 @@
                 <td>@Servess.DescriptionEnum.GetDescription(item.PaymentStatus)</td>
                 <td>@item.CreationTime</td>
                 <td class="Save">
-                    @if (item. TotalNotpayedAmount != item.TotalPayedAmount)
+                    @if (item.TotalNotpayedAmount != 0)
                     {
-                        <form method="post" asp-controller="NotPayedmoneyHistory" asp-action="Save" asp-area="Admin" class="form-inline">
-                            <input type="hidden" name="NotpayedAmount" value="@item.NotpayedAmount" />
+                        @if (item.TotalNotpayedAmount != item.TotalPayedAmount)
+                        {
+                            <form method="post" asp-controller="NotPayedmoneyHistory" asp-action="Save" asp-area="Admin" class="form-inline">
+                                <input type="hidden" name="NotpayedAmount" value="@item.NotpayedAmount" />
                             <input type="hidden" name="Id" value="@item.Id" />
                                  <input type="number" min="1" class="form-control mr-2" name="payedAmount" placeholder="ادخل الدين" style="width:100px;" />
                                 <button class="btn btn-success" type="submit">تعديل</button>
                          </form>
-                    }
+                    }}
                 </td>
                 <td class="Save">
-                    <a class="btn btn-danger ml-1" asp-area="Admin" asp-controller="NotPayedmoneyHistory" asp-action="Delete" asp-route-id="@item.NotPayedmoneyId">حذف</a>
+                    <a class="btn btn-danger ml-1" asp-area="Admin" asp-controller="NotPayedmoneyHistory" asp-action="Delete" asp-route-id="@item.Id">حذف</a>
 
-                    @if (item.TotalNotpayedAmount != item.TotalPayedAmount)
+                    @if (item.TotalNotpayedAmount != 0)
                     {
-                        <a class="btn btn-danger ml-1" asp-area="Admin" asp-controller="NotPayedmoneyHistory" asp-action="Salesreturns" asp-route-id="@item.NotPayedmoneyId">مرتجع</a>
+                        <a class="btn btn-danger ml-1" asp-area="Admin" asp-controller="NotPayedmoneyHistory" asp-action="Salesreturns" asp-route-id="@item.Id">مرتجع</a>
                     }
                     <a class="btn btn-info ml-1" asp-area="Admin" asp-controller="NotPayedmoneyHistory" asp-action="SearchNotPayedmoneyHistoryDetails" asp-route-id="@item.Id">تفاصيل</a>
                 </td>

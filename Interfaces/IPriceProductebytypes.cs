@@ -22,8 +22,10 @@ namespace Interfaces
         public void DeleteShopingCaterCashHistory(int id);
         public void DeleteShopingCaterNotpayedHistory(int id)
 ;   bool CheckQantityProduct(int id, decimal quantityFromShoppingCard);
-
-        public void FreeShopingCaterCashHistoryToFinancialUserCash(string? SystemUserId, string? SystemUserName);
+        public bool checkedifShopingCaterCashHistoryHavedata();
+      
+    public bool checkedifhopingCaterNotpayedHavedata();
+         public void FreeShopingCaterCashHistoryToFinancialUserCash(string? SystemUserId, string? SystemUserName);
         public void FreeShopingCaterCashHistoryToNotpayed(string? SystemUserId, string? SystemUserName);
         public bool EnDDebite(PriceProductebytypesVM entity);
         public PriceProductebytypesVM GetDibts(PriceProductebytypesVM entity);

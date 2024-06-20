@@ -72,36 +72,36 @@ namespace Caffiee.Areas.Admin.Controllers
        
             if (!ModelState.IsValid)
             {
-                TempData["Message"] = "Cannot save the category. Please check the form.";
-                TempData["MessageType"] = "danger";
+                TempData["Message"] = "يوجد خطاء فالبيانات";
+                TempData["MessageType"] = "delete";
                 var model = _unitOfWork._NotPayedmoneyHistoryServess.SearchNotPayedmoney(productVm);
                 return View("Index", model);
             }
             if (_unitOfWork._NotPayedmoneyHistoryServess.CheckIfExisitNotPayedmoney(productVm.Id))
             {
                 _unitOfWork._NotPayedmoneyHistoryServess.SaveNotPayedmoney(productVm);
-                TempData["Message"] = "Cannot save the category. Please check the form.";
-                TempData["MessageType"] = "danger";
+                TempData["Message"] = "تم الحفظ بنجاح";
+                TempData["MessageType"] = "Save";
                 return RedirectToAction(nameof(Index));
 
 
             }
-            TempData["Message"] = "Cannot save the category. Please check the form.";
-            TempData["MessageType"] = "danger";
+            TempData["Message"] = "يوجد خطاء";
+            TempData["MessageType"] = "delete";
             var product = _unitOfWork._NotPayedmoneyHistoryServess.SearchNotPayedmoney(productVm);
             return View("Index", product);
 
         }
 
-         [HttpGet]
+         //[HttpGet]
         public IActionResult Delete(int id)
         {
             try
             {
                 _unitOfWork._NotPayedmoneyHistoryServess.DeleteNotPayedmoney(id);
 
-                TempData["Message"] = "Cannot save the category. Please check the form.";
-                TempData["MessageType"] = "danger";
+                TempData["Message"] = "تم الحذف بنجاح";
+                TempData["MessageType"] = "Delete";
                 var prooduct = new NotPayedmoneyHistoryVM();
                 var product = _unitOfWork._NotPayedmoneyHistoryServess.SearchNotPayedmoney(prooduct);
                 return View("Index", product);
@@ -132,6 +132,8 @@ namespace Caffiee.Areas.Admin.Controllers
                     TempData["MessageType"] = "Save";
 
                 var model = _unitOfWork._NotPayedmoneyHistoryServess.SearchNotPayedmoneyHistoryDetails(id, 1);
+              
+                return View(viewName: "SearchNotPayedmoneyHistoryDetails", model);
             }
 
                 if (!_unitOfWork._PriceProductebytypes.CheckQantityProduct((int)Entity.Productid, (decimal)Entity.Qantity))
@@ -143,8 +145,16 @@ namespace Caffiee.Areas.Admin.Controllers
 
             }
 
-            _unitOfWork._NotPayedmoneyHistoryServess.SaveNotPayedmoney(Entity);
-            TempData["Message"] = $"{Entity.payedAmount}  تم اضافه المنتج بسعر "; // "Added successfully"
+        var saved=    _unitOfWork._NotPayedmoneyHistoryServess.SaveNotPayedmoneyHistory(Entity);
+            //if (!saved)
+            //{
+            //    TempData["Message"] = $"{Entity.payedAmount}  تم اضافه المنتج بسعر "; // "Added successfully"
+            //    TempData["MessageType"] = "Save";
+
+            //    var model4 = _unitOfWork._NotPayedmoneyHistoryServess.SearchNotPayedmoneyHistoryDetails(id, 1);
+            //    return View(viewName: "SearchNotPayedmoneyHistoryDetails", model4);
+            //}
+            TempData["Message"] = $" تم الاضافه   "; // "Added successfully"
             TempData["MessageType"] = "Save";
 
             var model3 = _unitOfWork._NotPayedmoneyHistoryServess.SearchNotPayedmoneyHistoryDetails(id, 1);
@@ -188,8 +198,8 @@ namespace Caffiee.Areas.Admin.Controllers
             {
                 _unitOfWork._NotPayedmoneyHistoryServess.Salesreturns(id);
 
-                TempData["Message"] = "Cannot save the category. Please check the form.";
-                TempData["MessageType"] = "danger";
+                TempData["Message"] = " تم بنجاح";
+                TempData["MessageType"] = " save";
                 var prooduct = new NotPayedmoneyHistoryVM();
                 var product = _unitOfWork._NotPayedmoneyHistoryServess.SearchNotPayedmoney(prooduct);
                 return View("Index", product);

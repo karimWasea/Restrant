@@ -187,7 +187,7 @@ namespace Caffiee.Areas.Admin.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    TempData["Message"] = " ادخل بيانات العميل";
+                    TempData["Message"] = " ادخل بيانات العميل او نوع العميل ";
                     TempData["MessageType"] = "Save";
 
                     return Json(new { success = true, message = TempData["Message"] });
@@ -269,7 +269,8 @@ namespace Caffiee.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult AddShopingCaterCashHistory(PriceProductebytypesVM Entity)
 
-        {
+        { 
+ 
             if (Entity.ShopingCaterQantity == null)
             {
                 TempData["Message"] = $"   ادخل الكميه  "; // "Added successfully"
@@ -353,8 +354,18 @@ namespace Caffiee.Areas.Admin.Controllers
 
         public IActionResult FreeFinancialUserCash(CustomerType CustomerType  )
         {
-
             var Entity = new PriceProductebytypesVM();
+
+            if (!_unitOfWork._PriceProductebytypes.checkedifShopingCaterCashHistoryHavedata())
+            {
+                TempData["Message"] = $"لايوجد بيانات  "; // "Added successfully"
+                TempData["MessageType"] = "delete";
+
+                var model2 = _unitOfWork._PriceProductebytypes.SearchForTypes(Entity);
+                return View("GetProductbytyp", model2);
+
+            }
+
             Entity.CustomerType = (CustomerType)CustomerType;
                 _unitOfWork._PriceProductebytypes.FreeShopingCaterCashHistoryToFinancialUserCash( "","");
             var model = _unitOfWork._PriceProductebytypes.SearchForTypes(Entity);
@@ -363,8 +374,17 @@ namespace Caffiee.Areas.Admin.Controllers
 
         public IActionResult FreeShopingCaterCashHistoryToNotpayed(CustomerType CustomerType )
         {
-
             var Entity = new PriceProductebytypesVM();
+
+            if (!_unitOfWork._PriceProductebytypes.checkedifhopingCaterNotpayedHavedata())
+            {
+                TempData["Message"] = $"لايوجد بيانات  "; // "Added successfully"
+                TempData["MessageType"] = "delete";
+
+                var model2 = _unitOfWork._PriceProductebytypes.SearchForTypes(Entity);
+                return View(viewName: "GetProductbytyp", model2);
+
+            }
             Entity.CustomerType = (CustomerType)CustomerType;
                 _unitOfWork._PriceProductebytypes.FreeShopingCaterCashHistoryToNotpayed( "","");
             var model = _unitOfWork._PriceProductebytypes.SearchForTypes(Entity);
