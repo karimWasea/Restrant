@@ -42,6 +42,7 @@
         }
 
         .table td, .table th {
+            background-color: #ad8313 !important;
             text-align: center;
             vertical-align: middle;
         }
@@ -50,7 +51,7 @@
 <h1 class="centered-text" id="siting">
     اعدادات اسعار المنتجات للعملاء
 </h1>
-<form method="get" asp-controller="PriceProductebytypes" asp-action="Index" asp-area="Admin" class="mt-4" style="background-color: #ad8313 !important;">
+<form method="get" asp-controller="PriceProductebytypes" asp-action="Index" asp-area="Admin" class="mt-4"  >
     <div class="form-row justify-content-center">
         <div>
             <div class="form-group col-md-4">
@@ -118,6 +119,8 @@
     @Html.AntiForgeryToken()
     <script>
         $(document).ready(function () {
+            $('select').select2();
+
             // Set up the AJAX request to include the anti-forgery token
             $.ajaxSetup({
                 headers: {

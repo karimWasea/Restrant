@@ -1,13 +1,22 @@
-﻿@* @model PagedList.IPagedList<HR.ViewModel.Depatmentvm>
- *@
+﻿@* Reference the IPagedList model *@
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @{
     Layout = "_Layout";
     ViewData["Title"] = "Home Page";
+    var backgroundImageUrl = Url.Content("~/Images/th.jpeg");
 }
+
+<style>
+    body {
+        background-image: url('@backgroundImageUrl');
+        background-size: cover; /* Make the background cover the entire page */
+        background-repeat: no-repeat; /* Ensure the background image does not repeat */
+        background-position: center center; /* Center the background image */
+    }
+</style>
 
 <div class="text-center">
     <h1 class="display-4">Welcome Cafiee</h1>
- </div>
+</div>

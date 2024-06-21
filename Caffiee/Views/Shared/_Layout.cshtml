@@ -1,96 +1,113 @@
 ﻿<!DOCTYPE html>
 <html lang="ar" dir="rtl">
- <!-- Set language to Arabic and text direction to right-to-left -->
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - الكافيه</title>
     <link href="~/css/bootstrap.rtl.min.css" rel="stylesheet" />
-@*     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
- *@    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Caffiee.styles.css" asp-append-version="true" />
+    <link href="~/lib/select2/css/select2.min.css" rel="stylesheet" />
     <style>
-
-        .nav-link {
-            border: 1px solid transparent; /* Add a transparent border to all links */
-            border-radius: 0; /* Remove any existing border radius */
-            transition: border-color 0.3s; /* Add transition effect to border color */
+        .navbar {
+            background-color: #ad8313 !important;
         }
 
-     </style>
-      
+        .nav-link {
+            border: 1px solid transparent;
+            border-radius: 0;
+            transition: border-color 0.3s;
+            color: #fff !important;
+        }
+
+            .nav-link:hover, .nav-link.active {
+                border-color: #343a40;
+            }
+
+        .dropdown-menu {
+            background-color: #8b4513 !important; /* Brown background color */
+            border: none;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+
+        .dropdown-item {
+            color: #fff !important;
+            transition: background-color 0.3s;
+        }
+
+            .dropdown-item:hover, .dropdown-item:focus {
+                background-color: #5a2d0c !important; /* Darker brown on hover */
+            }
+
+        .navbar-brand {
+            font-weight: bold;
+            color: #fff !important;
+        }
+
+        .sticky-top {
+            position: -webkit-sticky;
+            position: sticky;
+            top: 0;
+            z-index: 1020;
+        }
+
+        .nav-item {
+            margin-right: 10px;
+        }
+    </style>
 </head>
- 
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg bg-light" data-bs-theme="light">
+        <nav class="navbar navbar-expand-lg sticky-top">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="Admin" asp-controller="Home" asp-action="Index">Caffiee</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        
-                       
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle" href="#" id="settingsDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 اعدادات
                             </a>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <div class="dropdown-menu" aria-labelledby="settingsDropdown">
                                 <a class="dropdown-item" asp-controller="PriceProductebytypes" asp-action="Index">اعدادات الاسعار</a>
-                                <a class="dropdown-item" asp-controller="Product" asp-action="Index">اعدادات االمنتجات</a>
-@*                                 <a class="dropdown-item" asp-controller="Category" asp-action="Index">اعدادت الانواع</a>
- *@                            </div>
+                                <a class="dropdown-item" asp-controller="Product" asp-action="Index">اعدادات المنتجات</a>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                مدير النظام
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="adminDropdown">
+                                <a class="dropdown-item" asp-controller="Roles" asp-action="Index">الادوار الامنيه</a>
+                                <a class="dropdown-item" asp-controller="User" asp-action="Index">العملاء   </a>
+                            </div>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="PriceProductebytypes" asp-action="GetProductbytyp" asp-route-CustomerType="@C_Utilities.Enumes.CustomerType.OtherPeople">ألاسعار للحالات</a>
+                            <a class="nav-link" asp-controller="PriceProductebytypes" asp-action="GetProductbytyp" asp-route-CustomerType="@C_Utilities.Enumes.CustomerType.OtherPeople">ألاسعار للحالات</a>
                         </li>
-                        
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="PriceProductebytypes" asp-action="GetProductbytyp" asp-route-CustomerType="@C_Utilities.Enumes.CustomerType.Nursing">ألاسعار للتمريض</a>
+                            <a class="nav-link" asp-controller="PriceProductebytypes" asp-action="GetProductbytyp" asp-route-CustomerType="@C_Utilities.Enumes.CustomerType.Nursing">ألاسعار للتمريض</a>
                         </li>
-                        
-                   @*      <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="PriceProductebytypes" asp-action="GetProductbytyp" asp-route-CustomerType="@C_Utilities.Enumes.CustomerType.HospitalManagement">الاسعار للمستشفى  </a>
-                        </li>  *@  
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="PriceProductebytypes" asp-action="GetProductbytyp" asp-route-CustomerType="@C_Utilities.Enumes.CustomerType.oprations"> الاسعار للعمليات  </a>
-                        </li> 
-                        
+                            <a class="nav-link" asp-controller="PriceProductebytypes" asp-action="GetProductbytyp" asp-route-CustomerType="@C_Utilities.Enumes.CustomerType.oprations"> الاسعار للعمليات</a>
+                        </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="PriceProductebytypes" asp-action="GetProductbytyp" asp-route-CustomerType="@C_Utilities.Enumes.CustomerType.Worker">ألاسعار للعمال</a>
-                        </li>  
-                        
+                            <a class="nav-link" asp-controller="PriceProductebytypes" asp-action="GetProductbytyp" asp-route-CustomerType="@C_Utilities.Enumes.CustomerType.Worker">ألاسعار للعمال</a>
+                        </li>
+                      
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Roles" asp-action="Index"  >الادوار الامنبه</a>
-                        </li>  
-                        
+                            <a class="nav-link" asp-controller="NotPayedmoneyHistory" asp-action="Index">الاجل</a>
+                        </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="User" asp-action="Index"  > العملاء
-                                </a>
-                        </li>   
+                            <a class="nav-link" asp-controller="FinancialUserCashHistory" asp-action="Index">الكاش</a>
+                        </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="NotPayedmoneyHistory" asp-action="Index">
-                                الاجل
-                                </a>
-                        </li> 
-                        
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="FinancialUserCashHistory" asp-action="Index">
-                                الكاش
-                                </a>
-                        </li>  
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="NotPayedmoneyHistory" asp-action="PrintHospital">
-                                 الفاتوره اليوميه للمستشفى
-                                </a>
+                            <a class="nav-link" asp-controller="NotPayedmoneyHistory" asp-action="PrintHospital">الفاتوره اليوميه للمستشفى</a>
                         </li>
                     </ul>
-
                     <partial name="_LoginPartial" />
-
                 </div>
             </div>
         </nav>
@@ -100,16 +117,12 @@
             @RenderBody()
         </main>
     </div>
-
     <footer class="border-top footer text-muted">
-      
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/select2/js/select2.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
- 
- 
-
