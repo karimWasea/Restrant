@@ -22,6 +22,8 @@ namespace Interfaces
         public void DeleteShopingCaterCashHistory(int id);
         public void DeleteShopingCaterNotpayedHistory(int id)
 ;   bool CheckQantityProduct(int id, decimal quantityFromShoppingCard);
+        bool CheckIfOneCustmeidinshopingingcard(PriceProductebytypesVM Shopingcarditim);
+
         public bool checkedifShopingCaterCashHistoryHavedata();
       
     public bool checkedifhopingCaterNotpayedHavedata();

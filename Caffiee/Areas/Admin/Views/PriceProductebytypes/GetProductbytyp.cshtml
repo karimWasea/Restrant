@@ -46,16 +46,24 @@
         transition: transform 0.3s ease;
     }
 
+
+  
         .product-card:hover {
             transform: translateY(-5px);
             box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
-        }
+        background-color:  goldenrod !important;
+    }
 
         .product-card img {
             width: 100%;
             height: auto;
             border-top-left-radius: 10px;
             border-top-right-radius: 10px;
+    }
+
+        .product-card   {
+           
+            background-color: #ad8313 !important;
         }
 
     .product-details {
@@ -77,6 +85,11 @@
     .product-category {
         font-size: 0.875rem;
         color: #6c757d;
+    } 
+    
+    .shopping-bag {
+        font-size: 0.875rem;
+        background-color: saddlebrown;
     }
 </style>
 <div class="shopping-bag">
@@ -124,7 +137,7 @@
         <div class="row product-list">
             @foreach (var product in Model)
             {
-                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-4 ">
                     <div class="card product-card h-100">
                         <div class="card-body">
                             <h5 class="card-title">@product.ProductName</h5>

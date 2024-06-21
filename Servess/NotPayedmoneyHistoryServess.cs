@@ -47,18 +47,24 @@ namespace Servess
                 return  true; 
 
             }
+              if(criteria.payedAmount> queryable.TotalNotpayedAmount)
+            {
+                return false;
 
+            }
             queryable.TotalNotpayedAmount -= criteria.payedAmount;
             queryable.TotalPayedAmount += criteria.payedAmount;
             if (queryable.TotalNotpayedAmount == 0)
             {
                 queryable.PaymentStatus = (int)Enumes.PaymentStatus.Paid;
+                ispayed = true;
+
 
             }
             else
             {
                 queryable.PaymentStatus = (int)Enumes.PaymentStatus.NotPaid;
-
+                ispayed=true;
             }
             _context.Update(queryable);
             _context.SaveChanges();
@@ -164,7 +170,8 @@ namespace Servess
                     .ThenInclude(nph => nph.UserNotPayedmoney)
                 .Where(i =>
                     (criteria.PaymentStatus == 0 || i.PaymentStatus == (int)criteria.PaymentStatus) &&
-                    (criteria.UserNotPayedmoneyName == null || i.NotPayedmoneyHistory.Any(nph => nph.UserNotPayedmoney.FullCustumName.Contains(criteria.UserNotPayedmoneyName)))
+                    ( i.NotPayedmoneyHistory.FirstOrDefault().HospitalaoOrprationtyp == (int)criteria.HospitalaoOrprationtyp|| criteria.HospitalaoOrprationtyp==0) &&
+                    (criteria.UserNotPayedmoneyName == null || criteria.UserNotPayedmoneyName ==string.Empty|| i.NotPayedmoneyHistory.Any(nph => nph.UserNotPayedmoney.FullCustumName.Contains(criteria.UserNotPayedmoneyName)))
                 )
                 .Select(i => new NotPayedmoneyHistoryVM
                 {

@@ -35,6 +35,7 @@ namespace Caffiee.Areas.Admin.Controllers
             Entity.PageNumber = page ?? 1;
             ViewBag.AllUsers = _unitOfWork._Ilookup.Users();
             ViewBag.GetPaymentStatus = _unitOfWork._Ilookup.GetPaymentStatus();
+            ViewBag.HospitalOroprationtyp = _unitOfWork._Ilookup.HospitalOroprationtyp();
             var products = _unitOfWork._NotPayedmoneyHistoryServess.SearchNotPayedmoney(Entity);
             return View(products);
         }
@@ -60,16 +61,13 @@ namespace Caffiee.Areas.Admin.Controllers
             return View(product);
         }
 
-      
 
-        
 
-         [HttpPost]
-         public IActionResult Save(NotPayedmoneyHistoryVM productVm)
-        { 
-             
-           
-       
+
+
+        [HttpPost]
+        public IActionResult Save(NotPayedmoneyHistoryVM productVm)
+        {
             if (!ModelState.IsValid)
             {
                 TempData["Message"] = "يوجد خطاء فالبيانات";
@@ -77,23 +75,25 @@ namespace Caffiee.Areas.Admin.Controllers
                 var model = _unitOfWork._NotPayedmoneyHistoryServess.SearchNotPayedmoney(productVm);
                 return View("Index", model);
             }
-            if (_unitOfWork._NotPayedmoneyHistoryServess.CheckIfExisitNotPayedmoney(productVm.Id))
+
+            bool exists = _unitOfWork._NotPayedmoneyHistoryServess.CheckIfExisitNotPayedmoney(productVm.Id);
+            bool saveSuccessful = _unitOfWork._NotPayedmoneyHistoryServess.SaveNotPayedmoney(productVm);
+
+            if (exists && saveSuccessful)
             {
-                _unitOfWork._NotPayedmoneyHistoryServess.SaveNotPayedmoney(productVm);
                 TempData["Message"] = "تم الحفظ بنجاح";
                 TempData["MessageType"] = "Save";
                 return RedirectToAction(nameof(Index));
-
-
             }
+
             TempData["Message"] = "يوجد خطاء";
             TempData["MessageType"] = "delete";
             var product = _unitOfWork._NotPayedmoneyHistoryServess.SearchNotPayedmoney(productVm);
             return View("Index", product);
-
         }
 
-         //[HttpGet]
+
+        //[HttpGet]
         public IActionResult Delete(int id)
         {
             try

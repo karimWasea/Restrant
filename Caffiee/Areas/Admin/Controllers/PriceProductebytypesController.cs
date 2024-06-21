@@ -182,9 +182,12 @@ namespace Caffiee.Areas.Admin.Controllers
 
             }
 
-  ModelState.Remove("Qantity");
+         
+               ModelState.Remove("Qantity");
             if (!(Entity.HospitalOroprationtypId== HospitalOroprationtyp.Hospital &&string.IsNullOrEmpty(Entity.NotpayedUserid)))
             {
+                ModelState.Remove("HospitalOroprationtypId");
+
                 if (!ModelState.IsValid)
                 {
                     TempData["Message"] = " ادخل بيانات العميل او نوع العميل ";
@@ -193,9 +196,15 @@ namespace Caffiee.Areas.Admin.Controllers
                     return Json(new { success = true, message = TempData["Message"] });
 
                 }
-            } 
-          
-            
+            }
+
+            if (!_unitOfWork._PriceProductebytypes.CheckIfOneCustmeidinshopingingcard(Entity))
+            {
+                TempData["Message"] = "يجب ان تكون الفاتوره لعميل واحد";
+                TempData["MessageType"] = "Delete";
+
+                return Json(new { success = true, message = TempData["Message"] });
+            }
             Entity.totalprice = Entity.price * Entity.ShopingCaterQantity;
             _unitOfWork._PriceProductebytypes.AddShopingCaterNotpayedHistory(Entity);
             TempData["Message"] = $"  تم الحفظ "; // "Added successfully"

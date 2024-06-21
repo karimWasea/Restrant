@@ -3,8 +3,7 @@
 
 @{
     Layout = "_Layout";
-    ViewData["Title"] = $"   فاتوره رقم";
-    
+    ViewData["Title"] = "فاتوره رقم";
 }
 
 <!-- Styling -->
@@ -15,7 +14,7 @@
     }
 
     .custom-table {
-         width: 50%; /* Set table width to 50% */
+        width: 50%; /* Set table width to 50% */
     }
 
     .form-inline {
@@ -33,11 +32,12 @@
     }
 
     .table {
+        background-color: #ad8313 !important;
         width: 100%;
     }
 
         .table thead {
-            background-color: #343a40;
+            background-color: #ad8313 !important;
             color: white;
         }
 
@@ -46,73 +46,56 @@
             vertical-align: middle;
         }
 </style>
-<h1 class="centered-text" id="siting">
- تفاصيل الفواتير الكاش</h1>
-<table class="table table-striped table-bordered w-100 mx-auto mt-4">
+
+<h1 class="centered-text" id="siting">تفاصيل الفواتير الكاش</h1>
+<table class="table table-striped table-bordered w-100 mx-auto mt-4" style="background-color: #ad8313 !important;">
     <thead class="thead-dark">
         <tr>
-             <th>اسم المنتج</th>
-             <th>الكميه</th>
+            <th>اسم المنتج</th>
+            <th>الكميه</th>
             <th>السعر الكلى</th>
- 
-            <th> تم الدفع/لا</th> <!-- Corrected spelling -->
-            <th>  تعديل الكميه</th> <!-- Corrected spelling -->
-             <th class="Save"> الحذف   </th>
+            <th>تم الدفع/لا</th>
+            <th>تعديل الكميه</th>
+            <th class="Save">الحذف</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
             <tr>
- 
-               <td>@item.ProductName</td>
-               <td>@item.Qantity</td>
+                <td>@item.ProductName</td>
+                <td>@item.Qantity</td>
                 <td>@item.PayedTotalAmount</td>
- 
-
-                <td>@Servess.DescriptionEnum.GetDescription(item.PaymentStatus)</td> <!-- Ensure GetDescription works properly -->
+                <td>@Servess.DescriptionEnum.GetDescription(item.PaymentStatus)</td>
                 <td class="col-4">
-
-
                     <form method="post" asp-controller="FinancialUserCashHistory" asp-action="SaveHistory" asp-area="Admin" class="form-inline Save">
-                            <input type="hidden" id="Id" name="Id" value="@item.Id" asp-for="@item.Id" />
-                            <input type="hidden" id="Pricforonproduct" name="Pricforonproduct" value="@item.Pricforonproduct" asp-for="@item.Pricforonproduct" />
+                        <input type="hidden" id="Id" name="Id" value="@item.Id" asp-for="@item.Id" />
+                        <input type="hidden" id="Pricforonproduct" name="Pricforonproduct" value="@item.Pricforonproduct" asp-for="@item.Pricforonproduct" />
                         <input type="hidden" id="Frercahid" name="Frercahid" value="@item.Frercahid" asp-for="@item.Frercahid" />
-                            <input type="hidden" id="Productid" name="Productid" value="@item.Productid" asp-for="@item.Productid" />
-                            <div class="form-group d-flex align-items-center Save">
-                                <input type="number" min="1" class="form-control   Save" id="Qantity" name="Qantity" placeholder="الكميه" style="width:150px;" />
-                                <button class="btn btn-success creditButton" type="submit">تعديل  </button>
-                            </div>
-                        </form>
- 
-
+                        <input type="hidden" id="Productid" name="Productid" value="@item.Productid" asp-for="@item.Productid" />
+                        <div class="form-group d-flex align-items-center Save">
+                            <input type="number" min="1" class="form-control Save" id="Qantity" name="Qantity" placeholder="الكميه" style="width:150px;" />
+                            <button class="btn btn-success creditButton" type="submit">تعديل</button>
+                        </div>
+                    </form>
                 </td>
                 <td>
- 
-                    <a class="btn btn-success flex-grow-1 ml-1 Save" asp-area="Admin" asp-action="DeleteHistory"
+                    <a class="btn btn-danger flex-grow-1 ml-1 Save" asp-area="Admin" asp-action="DeleteHistory"
                        asp-controller="FinancialUserCashHistory"
                        asp-route-id="@item.Id"
                        asp-route-payedTotalAmount="@item.PayedTotalAmount"
                        asp-route-Frercahid="@item.Frercahid"
-                       asp-route-Productid="@item.Productid"
-                   >حذف</a>
-                </td>         
-
-
+                       asp-route-Productid="@item.Productid">حذف</a>
+                </td>
             </tr>
         }
     </tbody>
-  
 </table>
 
-
-
 <div id="buttonprint">
-    <button id="printButton" class="btn btn-primary" style="display:none;">طباعة الفاتوره</button> <!-- Print button with an id -->
-
-     
-
+    <button id="printButton" class="btn btn-primary">طباعة الفاتوره</button> <!-- Print button with an id -->
 </div>
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("printButton").addEventListener("click", function () {
@@ -122,12 +105,14 @@
             document.querySelectorAll('.Save').forEach(function (element) {
                 element.style.display = 'none';
             });
-            // Hide elements with class 'save'
-            var saveColumnIndex = $('table th:contains("Save")').index();
+
+            // Hide the Save column
+            var saveColumnIndex = $('table th:contains("الحذف")').index();
             $('table tr').each(function () {
                 $(this).find('td').eq(saveColumnIndex).hide();
                 $(this).find('th').eq(saveColumnIndex).hide();
             });
+
             // Hide the print button itself
             var buttonprint = document.getElementById("buttonprint");
             buttonprint.style.display = 'none';
@@ -137,10 +122,9 @@
 
             // Restore the visibility of the header and the print button
             headerElement.style.display = 'block';
-     
             buttonprint.style.display = 'block';
 
-            // Restore the visibility of elements with class 'save'
+            // Restore the visibility of the Save column
             $('table tr').each(function () {
                 $(this).find('td').eq(saveColumnIndex).show();
                 $(this).find('th').eq(saveColumnIndex).show();
@@ -148,5 +132,3 @@
         });
     });
 </script>
-
- 
