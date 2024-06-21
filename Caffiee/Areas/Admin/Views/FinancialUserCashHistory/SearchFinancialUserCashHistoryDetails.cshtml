@@ -8,52 +8,61 @@
 
 <!-- Styling -->
 <style>
-    /* Add your custom CSS styles here */
-    .table-striped {
-        /* Add styling for striped table */
+    .table {
+        background-color: #ad8313 !important;
+        width: 100%;
     }
- 
+
+    .table td, .table th {
+        background-color: #ad8313 !important;
+        text-align: center;
+        vertical-align: middle;
+    }
+
     .form-inline {
         display: flex;
         flex-flow: row wrap;
         align-items: center;
     }
 
-        .form-inline .form-group {
-            margin-right: 10px;
-        }
+    .form-inline .form-group {
+        margin-right: 10px;
+    }
 
     .input-group {
         width: 100%;
     }
 
-    .table {
-        background-color: #ad8313 !important;
-        width: 100%;
+    .btn-primary, .btn-success, .btn-danger {
+        color: white !important;
     }
 
-       /*  .table thead {
-            background-color: #ad8313 !important;
-            color: white;
-        } */
-
-        .table td, .table th {
-            background-color: #ad8313 !important;
-            text-align: center;
-            vertical-align: middle;
+    @@media print {
+        .no-print, .no-print * {
+            display: none !important;
         }
+
+        .table th, .table td {
+            background-color: white !important;
+            color: black !important;
+        }
+
+        .table {
+            width: 100%; /* Ensure table width is 100% for printing */
+        }
+    }
 </style>
 
-<h1 class="centered-text" id="siting">تفاصيل الفواتير الكاش</h1>
-<table class="table table-striped table-bordered w-100 mx-auto mt-4"  >
+<h1 class="centered-text no-print">تفاصيل الفواتير الكاش</h1>
+<table class="table table-striped table-bordered mx-auto mt-4">
     <thead class="thead-dark">
         <tr>
             <th>اسم المنتج</th>
-            <th>الكميه</th>
-            <th>السعر الكلى</th>
-            <th>تم الدفع/لا</th>
-            <th>تعديل الكميه</th>
-            <th class="Save">الحذف</th>
+            <th>الكمية</th>
+            <th>السعر</th>
+            <th class="no-print">تم الدفع/لا</th>
+            <th class="no-print">تعديل الكمية</th>
+            <th class="no-print">الحذف</th>
         </tr>
     </thead>
     <tbody>
@@ -63,21 +72,21 @@
                 <td>@item.ProductName</td>
                 <td>@item.Qantity</td>
                 <td>@item.PayedTotalAmount</td>
-                <td>@Servess.DescriptionEnum.GetDescription(item.PaymentStatus)</td>
-                <td class="col-4">
-                    <form method="post" asp-controller="FinancialUserCashHistory" asp-action="SaveHistory" asp-area="Admin" class="form-inline Save">
+                <td class="no-print">@Servess.DescriptionEnum.GetDescription(item.PaymentStatus)</td>
+                <td class="col-4 no-print">
+                    <form method="post" asp-controller="FinancialUserCashHistory" asp-action="SaveHistory" asp-area="Admin" class="form-inline">
                         <input type="hidden" id="Id" name="Id" value="@item.Id" asp-for="@item.Id" />
                         <input type="hidden" id="Pricforonproduct" name="Pricforonproduct" value="@item.Pricforonproduct" asp-for="@item.Pricforonproduct" />
                         <input type="hidden" id="Frercahid" name="Frercahid" value="@item.Frercahid" asp-for="@item.Frercahid" />
                         <input type="hidden" id="Productid" name="Productid" value="@item.Productid" asp-for="@item.Productid" />
-                        <div class="form-group d-flex align-items-center Save">
-                            <input type="number" min="1" class="form-control Save" id="Qantity" name="Qantity" placeholder="الكميه" style="width:150px;" />
-                            <button class="btn btn-success creditButton" type="submit">تعديل</button>
+                        <div class="form-group d-flex align-items-center">
+                            <input type="number" min="1" class="form-control" id="Qantity" name="Qantity" placeholder="الكمية" style="width:150px;" />
+                            <button class="btn btn-success" type="submit">تعديل</button>
                         </div>
                     </form>
                 </td>
-                <td>
-                    <a class="btn btn-danger flex-grow-1 ml-1 Save" asp-area="Admin" asp-action="DeleteHistory"
+                <td class="no-print">
+                    <a class="btn btn-danger" asp-area="Admin" asp-action="DeleteHistory"
                        asp-controller="FinancialUserCashHistory"
                        asp-route-id="@item.Id"
                        asp-route-payedTotalAmount="@item.PayedTotalAmount"
@@ -87,45 +96,48 @@
             </tr>
         }
     </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="2">الإجمالي:</td>
+            <td>@(Model?.Sum(i => i.PayedTotalAmount) ?? 0) جنيه</td>
+            <td class="no-print"></td>
+        </tr>
+    </tfoot>
 </table>
 
-<div id="buttonprint">
-    <button id="printButton" class="btn btn-primary">طباعة الفاتوره</button> <!-- Print button with an id -->
+<div id="buttonprint" class="no-print">
+    <button id="printButton" class="btn btn-primary">طباعة الفاتوره</button>
 </div>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("printButton").addEventListener("click", function () {
-            // Hide the header
-            var headerElement = document.getElementsByTagName('header')[0];
+            // Hide the header and print button
+            var headerElement = document.querySelector('header');
             headerElement.style.display = 'none';
-            document.querySelectorAll('.Save').forEach(function (element) {
+
+            // Hide elements with the no-print class
+            var elementsToHide = document.querySelectorAll('.no-print');
+            elementsToHide.forEach(function (element) {
                 element.style.display = 'none';
             });
 
-            // Hide the Save column
-            var saveColumnIndex = $('table th:contains("الحذف")').index();
-            $('table tr').each(function () {
-                $(this).find('td').eq(saveColumnIndex).hide();
-                $(this).find('th').eq(saveColumnIndex).hide();
-            });
-
-            // Hide the print button itself
-            var buttonprint = document.getElementById("buttonprint");
-            buttonprint.style.display = 'none';
+            // Adjust table width for printing
+            var table = document.querySelector('.table');
+            table.style.width = '100%';
 
             // Print the page
             window.print();
 
-            // Restore the visibility of the header and the print button
+            // Restore the visibility and styles of hidden elements after printing
             headerElement.style.display = 'block';
-            buttonprint.style.display = 'block';
-
-            // Restore the visibility of the Save column
-            $('table tr').each(function () {
-                $(this).find('td').eq(saveColumnIndex).show();
-                $(this).find('th').eq(saveColumnIndex).show();
+            elementsToHide.forEach(function (element) {
+                element.style.display = 'table-cell'; // or 'block', depending on the element
             });
+
+            // Restore table width after printing
+            table.style.width = 'auto';
         });
     });
 </script>
+
