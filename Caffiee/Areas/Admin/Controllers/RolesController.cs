@@ -11,12 +11,15 @@ using Newtonsoft.Json;
 using Microsoft.EntityFrameworkCore;
 
 using Servess;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Caffiee.Areas.Admin.Controllers
 {
     [Area(ConstsntValuse.Admin)]
+    [Authorize(Policy = "SuperAdminOrSalesMan")]
 
 
+    [Authorize(Roles = ConstsntValuse.SuperAdmin)]
 
     public class RolesController : Controller
     {

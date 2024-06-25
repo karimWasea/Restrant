@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="utf-8" />
@@ -64,52 +65,69 @@
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="settingsDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                اعدادات
-                            </a>
-                            <div class="dropdown-menu" aria-labelledby="settingsDropdown">
-                                <a class="dropdown-item" asp-controller="PriceProductebytypes" asp-action="Index">اعدادات الاسعار</a>
-                                <a class="dropdown-item" asp-controller="Product" asp-action="Index">اعدادات المنتجات</a>
-                            </div>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                مدير النظام
-                            </a>
-                            <div class="dropdown-menu" aria-labelledby="adminDropdown">
-                                <a class="dropdown-item" asp-controller="Roles" asp-action="Index">الادوار الامنيه</a>
-                                <a class="dropdown-item" asp-controller="User" asp-action="Index">العملاء   </a>
-                            </div>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="PriceProductebytypes" asp-action="GetProductbytyp" asp-route-CustomerType="@C_Utilities.Enumes.CustomerType.OtherPeople">ألاسعار للحالات</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="PriceProductebytypes" asp-action="GetProductbytyp" asp-route-CustomerType="@C_Utilities.Enumes.CustomerType.Nursing">ألاسعار للتمريض</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="PriceProductebytypes" asp-action="GetProductbytyp" asp-route-CustomerType="@C_Utilities.Enumes.CustomerType.oprations"> الاسعار للعمليات</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="PriceProductebytypes" asp-action="GetProductbytyp" asp-route-CustomerType="@C_Utilities.Enumes.CustomerType.Worker">ألاسعار للعمال</a>
-                        </li>
-                      
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="NotPayedmoneyHistory" asp-action="Index">الاجل</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="FinancialUserCashHistory" asp-action="Index">الكاش</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="NotPayedmoneyHistory" asp-action="PrintHospital">الفاتوره اليوميه للمستشفى</a>
-                        </li>
+              
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                  
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        @if (User.IsInRole(C_Utilities.ConstsntValuse.SuperAdmin) || User.IsInRole(C_Utilities.ConstsntValuse.SalessManger))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="settingsDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    اعدادات
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="settingsDropdown">
+                                    <a class="dropdown-item" asp-area="Admin" asp-controller="PriceProductebytypes" asp-action="Index">اعدادات الاسعار</a>
+                                    <a class="dropdown-item" asp-area="Admin" asp-controller="Product" asp-action="Index">اعدادات المنتجات</a>
+                                </div>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+ اداره الموظفين
+                               </a>
+                                <div class="dropdown-menu" aria-labelledby="adminDropdown">
+                                    <a class="dropdown-item" asp-area="Admin" asp-controller="Roles" asp-action="Index">الادوار الامنيه</a>
+                                    <a class="dropdown-item" asp-area="Admin" asp-controller="User" asp-action="Index">العملاء   </a>
+                                </div>
+                            </li>
+                       
+
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="Admin" asp-controller="NotPayedmoneyHistory" asp-action="Index">الاجل</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="Admin"  asp-controller="FinancialUserCashHistory" asp-action="Index">الكاش</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="Admin"  asp-controller="NotPayedmoneyHistory" asp-action="PrintHospital">الفاتوره اليوميه للمستشفى</a>
+                            </li>
+
+
+
+                            }
+
+                        @if (User.IsInRole(C_Utilities.ConstsntValuse.SuperAdmin) || User.IsInRole(C_Utilities.ConstsntValuse.SalessManger) || User.IsInRole(C_Utilities.ConstsntValuse.SalesMan))
+                        {
+                            <li class="nav-item">
+
+                                <a class="nav-link" asp-area="Admin" asp-controller="PriceProductebytypes" asp-action="GetProductbytyp" asp-route-CustomerType="@C_Utilities.Enumes.CustomerType.OtherPeople">ألاسعار للحالات</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link"  asp-area="Admin" asp-controller="PriceProductebytypes" asp-action="GetProductbytyp" asp-route-CustomerType="@C_Utilities.Enumes.CustomerType.Nursing">ألاسعار للتمريض</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="Admin" asp-controller="PriceProductebytypes" asp-action="GetProductbytyp" asp-route-CustomerType="@C_Utilities.Enumes.CustomerType.oprations"> الاسعار للعمليات</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="Admin"  asp-controller="PriceProductebytypes" asp-action="GetProductbytyp" asp-route-CustomerType="@C_Utilities.Enumes.CustomerType.Worker">ألاسعار للعمال</a>
+                            </li>
+                        }
                     </ul>
-                    <partial name="_LoginPartial" />
-                </div>
+
+                        <partial name="_LoginPartial" />
+                    </div>
+                
             </div>
+
         </nav>
     </header>
     <div class="container">

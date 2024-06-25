@@ -66,20 +66,48 @@ builder.Services.ConfigureApplicationCookie(option =>
 
 });
 
+
+
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("SuperAdminOrSalesMan", policy =>
+        policy.RequireRole(ConstsntValuse.SuperAdmin, ConstsntValuse.SalesMan));
+});
+
+// Add policy for SuperAdmin and SalesManager roles
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("SuperAdminOrSalesManager", policy =>
+        policy.RequireRole(ConstsntValuse.SuperAdmin, ConstsntValuse.SalessManger));
+});
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("SuperAdminOrSalesManagerSalesMan", policy =>
+        policy.RequireRole(ConstsntValuse.SuperAdmin, ConstsntValuse.SalessManger , ConstsntValuse.SalesMan));
+});
 var app = builder.Build();
 
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Index");
+    app.UseDeveloperExceptionPage();
+
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    //app.UseHsts();
+}
+else
+{
+    app.UseExceptionHandler("/Home/Index");
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+
 
 app.UseAuthentication();
 app.UseAuthorization();

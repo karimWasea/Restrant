@@ -179,11 +179,25 @@ namespace Caffiee.Areas.Identity.Pages.Account
                                     {
                                         Name = ConstsntValuse.SalesMan,
                                         Id = Guid.NewGuid().ToString()
+                                    }; 
+                                var SalessManger = new IdentityRole
+                                    {
+                                        Name = ConstsntValuse.SalessManger,
+                                        Id = Guid.NewGuid().ToString()
+                                    };   
+                            
+                            
+                                var Usersessrole = new IdentityRole
+                                    {
+                                        Name = ConstsntValuse.Users,
+                                        Id = Guid.NewGuid().ToString()
                                     };
 
                                     // Create roles
                                     var createSuperAdminRoleResult = await _roles.CreateAsync(superAdminRole);
                                     var createSalesManRoleResult = await _roles.CreateAsync(salesManRole);
+                                   var createSalessMangerRoleResult = await _roles.CreateAsync(SalessManger);
+                                   var createUsersrRoleResult = await _roles.CreateAsync(Usersessrole);
 
                                     if (!createSuperAdminRoleResult.Succeeded || !createSalesManRoleResult.Succeeded)
                                     {
@@ -216,8 +230,13 @@ namespace Caffiee.Areas.Identity.Pages.Account
                                 }
 
                             }
-                        } 
+                        }
+                    else
+                    {
+                        // Assign user to SuperAdmin role
+                        var addToRoleResult = await _userManager.AddToRoleAsync(user, ConstsntValuse.Users);
 
+                    }
                                 var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));

@@ -714,7 +714,7 @@ namespace Servess
             // Check conditions
             var model = !_context.ShopingCaterNotpayedHistory.Any() // Check if ShopingCaterNotpayedHistory is empty
                         || (Shopingcarditim.HospitalOroprationtypId == 0
-                            && !_context.ShopingCaterNotpayedHistory
+                            && _context.ShopingCaterNotpayedHistory
                                     .Any(i => i.NotpayedUserid == Shopingcarditim.NotpayedUserid))
                         || (Shopingcarditim.HospitalOroprationtypId != 0
                             && string.IsNullOrEmpty(Shopingcarditim.NotpayedUserid));

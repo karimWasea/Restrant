@@ -16,6 +16,7 @@ namespace C_Utilities
         public const string SuperAdmin = "SuperAdmin";
         public const string SalessManger = "SalessManger";
         public const string SalesMan = "SalesMan";
+        public const string Users = "Users";
         public const string hospitalacont = "hospitalacont";
     }
     public class CustomUserValidator<TUser> : IUserValidator<TUser> where TUser : class

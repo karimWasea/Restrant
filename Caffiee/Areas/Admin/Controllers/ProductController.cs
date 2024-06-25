@@ -4,6 +4,7 @@ using Cf_Viewmodels;
 using DataAcessLayers;
 using Interfaces;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -12,6 +13,7 @@ using Servess;
 namespace Caffiee.Areas.Admin.Controllers
 {
     [Area(ConstsntValuse.Admin)]
+    [Authorize(Roles = ConstsntValuse.SuperAdmin)]
 
     public class ProductController :  BaseController
     {

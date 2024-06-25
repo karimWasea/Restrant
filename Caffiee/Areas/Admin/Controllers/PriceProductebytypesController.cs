@@ -4,16 +4,22 @@ using Cf_Viewmodels;
 using DataAcessLayers;
 using Interfaces;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Servess;
+
+using System.Data;
 
 using static C_Utilities.Enumes;
 
 namespace Caffiee.Areas.Admin.Controllers
 {
     [Area(ConstsntValuse.Admin)]
+
+    [Authorize(Roles = $"{ConstsntValuse.SuperAdmin},{ConstsntValuse.SalesMan}")]
+    //[Authorize(Roles = ConstsntValuse.SalesMan)]
 
     public class PriceProductebytypesController : BaseController
     {
@@ -26,9 +32,8 @@ namespace Caffiee.Areas.Admin.Controllers
         {
 
         }
-
-
         [HttpGet]
+
         public IActionResult Index(PriceProductebytypesVM Entity, int? page)
         {
 
@@ -39,10 +44,11 @@ namespace Caffiee.Areas.Admin.Controllers
         }
 
 
+        [Authorize(Roles = $"{ConstsntValuse.SuperAdmin},{ConstsntValuse.SalesMan}")]
 
         [HttpGet]
-
-        public IActionResult GetProductbytyp(PriceProductebytypesVM Entity, int? page)
+        [Route("Admin/PriceProductebytypes/GetProductbytyp")]
+         public IActionResult GetProductbytyp(PriceProductebytypesVM Entity, int? page)
         {
             ViewBag.CustomerType = Entity.CustomerType;
             ViewBag.UsersLists = _unitOfWork._Ilookup.Users(Entity.CustomerType);
@@ -67,8 +73,9 @@ namespace Caffiee.Areas.Admin.Controllers
             return View(Entity);
         }
 
-        // GET: Products/Create
-        public IActionResult Save(int Id, int ProductId)
+        // GET: Products/Create [Authorize(Roles = ConstsntValuse.SalesMan)]
+ 
+         public IActionResult Save(int Id, int ProductId)
         {
             if (Id > 0)
             {
@@ -104,7 +111,8 @@ namespace Caffiee.Areas.Admin.Controllers
 
         // POST: Products/Create
         [HttpPost]
-        //[ValidateAntiForgeryToken]
+ 
+         //[ValidateAntiForgeryToken]
         public IActionResult Save(PriceProductebytypesVM Entity)
         {
             Entity.CustomerTypeIdList = _unitOfWork._Ilookup.GetCustomerType();
@@ -137,7 +145,8 @@ namespace Caffiee.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Delete(int id)
+ 
+         public IActionResult Delete(int id)
         {
             try
             {
@@ -159,7 +168,8 @@ namespace Caffiee.Areas.Admin.Controllers
        
         
         [HttpGet]
-        public IActionResult GetallfromShopingCartNopayed(PriceProductebytypesVM Entity, int? page)
+ 
+         public IActionResult GetallfromShopingCartNopayed(PriceProductebytypesVM Entity, int? page)
         {
             ViewBag.CustomerType = Entity.CustomerType;
             ViewBag.Catid = Entity.Catid;
@@ -169,7 +179,8 @@ namespace Caffiee.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddShopingCaterNotpayedHistory(PriceProductebytypesVM Entity)
+ 
+         public IActionResult AddShopingCaterNotpayedHistory(PriceProductebytypesVM Entity)
         
         {
             
@@ -211,13 +222,14 @@ namespace Caffiee.Areas.Admin.Controllers
             TempData["MessageType"] = "Save";
 
             return Json(new { success = true, message = TempData["Message"] });
-        }   
-        
-        
-        
-      
+        }
+
+
+
+
         //[HttpPost]
-        public IActionResult UpdateShopingCaterNotpayedHistory(PriceProductebytypesVM Entity)
+ 
+         public IActionResult UpdateShopingCaterNotpayedHistory(PriceProductebytypesVM Entity)
 
         {
            
@@ -250,8 +262,8 @@ namespace Caffiee.Areas.Admin.Controllers
 
 
 
-
-        public IActionResult DeleteNopayed(int Id)
+ 
+         public IActionResult DeleteNopayed(int Id)
         {
 
             _unitOfWork._PriceProductebytypes.DeleteShopingCaterNotpayedHistory(Id);
@@ -266,7 +278,8 @@ namespace Caffiee.Areas.Admin.Controllers
         #region ShopingCater
       
         [HttpGet]
-        public IActionResult GetallfromShopingCart(PriceProductebytypesVM Entity, int? page)
+ 
+         public IActionResult GetallfromShopingCart(PriceProductebytypesVM Entity, int? page)
         {
             ViewBag.CustomerType = Entity.CustomerType;
             ViewBag.Catid = Entity.Catid;
@@ -303,7 +316,8 @@ namespace Caffiee.Areas.Admin.Controllers
 
             return Json(new { success = true, message = TempData["Message"] });
         }
-        public IActionResult UpdateShopingCaterCashHistory(PriceProductebytypesVM Entity)
+ 
+         public IActionResult UpdateShopingCaterCashHistory(PriceProductebytypesVM Entity)
 
         {
 
@@ -342,8 +356,8 @@ namespace Caffiee.Areas.Admin.Controllers
             return View("GetallfromShopingCart", model);
         }
 
-
-        public IActionResult DeleteCash(int Id)
+ 
+         public IActionResult DeleteCash(int Id)
         {
 
             _unitOfWork._PriceProductebytypes.DeleteShopingCaterCashHistory(Id);
@@ -360,8 +374,8 @@ namespace Caffiee.Areas.Admin.Controllers
 
         #region freecart
         [HttpGet]
-
-        public IActionResult FreeFinancialUserCash(CustomerType CustomerType  )
+ 
+         public IActionResult FreeFinancialUserCash(CustomerType CustomerType  )
         {
             var Entity = new PriceProductebytypesVM();
 
@@ -404,7 +418,7 @@ namespace Caffiee.Areas.Admin.Controllers
 
         #region enddebite
         [HttpGet]
-        public IActionResult EnDDebiteForPersone(string NotpayedUserid)
+         public IActionResult EnDDebiteForPersone(string NotpayedUserid)
         {
             try
             {
@@ -439,8 +453,7 @@ namespace Caffiee.Areas.Admin.Controllers
         }
 
 
-
-        public IActionResult EnDDebiteForHospital()
+         public IActionResult EnDDebiteForHospital()
         {
             var Entity = new PriceProductebytypesVM();
             var ReturnEntity = _unitOfWork._PriceProductebytypes.EnDDebiteHospital();
