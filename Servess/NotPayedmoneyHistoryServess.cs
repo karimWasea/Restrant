@@ -390,7 +390,7 @@ namespace Servess
                 .Include(i => i.UserNotPayedmoney)
                 .Include(i => i.NotPayedmoneys)
                 .Where(i => i.HospitalaoOrprationtyp == (int)Enumes.HospitalOroprationtyp.Hospital
-                           && i.ChangeDate == DateTime.Now.Date && i.PaymentStatus == (int)Enumes.PaymentStatus.NotPaid
+                           && i.ChangeDate == DateTime.Now.Date && i.NotPayedmoneys.PaymentStatus == (int)Enumes.PaymentStatus.NotPaid
 
                           )
                 .Select(i => new NotPayedmoneyHistoryVM
