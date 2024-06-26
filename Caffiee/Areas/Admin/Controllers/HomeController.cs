@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Caffiee.Areas.Admin.Controllers
 {
     [Area(ConstsntValuse.Admin)]
-    [Authorize(Roles = ConstsntValuse.SuperAdmin)]
+    //[Authorize(Roles = ConstsntValuse.SuperAdmin)]
 
     //[Authorize(Roles = SystemRols.SuperAdmin)]
     public class HomeController : Controller

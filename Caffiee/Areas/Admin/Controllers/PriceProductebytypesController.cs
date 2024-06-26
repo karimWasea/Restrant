@@ -18,7 +18,8 @@ namespace Caffiee.Areas.Admin.Controllers
 {
     [Area(ConstsntValuse.Admin)]
 
-    [Authorize(Roles = $"{ConstsntValuse.SuperAdmin},{ConstsntValuse.SalesMan}")]
+    //[Authorize(Roles = $"{ConstsntValuse.SuperAdmin},{ConstsntValuse.SalessManger}")]
+    [Authorize(Roles = $"{ConstsntValuse.SuperAdmin},{ConstsntValuse.SalesMan},{ConstsntValuse.SalessManger}")]
     //[Authorize(Roles = ConstsntValuse.SalesMan)]
 
     public class PriceProductebytypesController : BaseController
@@ -44,7 +45,7 @@ namespace Caffiee.Areas.Admin.Controllers
         }
 
 
-        [Authorize(Roles = $"{ConstsntValuse.SuperAdmin},{ConstsntValuse.SalesMan}")]
+        //[Authorize(Roles = $"{ConstsntValuse.SuperAdmin},{ConstsntValuse.SalesMan}")]
 
         [HttpGet]
         [Route("Admin/PriceProductebytypes/GetProductbytyp")]

@@ -16,7 +16,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace Caffiee.Areas.Admin.Controllers
 {
     [Area(ConstsntValuse.Admin)]
-    [Authorize(Policy = "SuperAdminOrSalesMan")]
+    //[Authorize(Policy = "SuperAdminOrSalesMan")]
 
 
     [Authorize(Roles = ConstsntValuse.SuperAdmin)]

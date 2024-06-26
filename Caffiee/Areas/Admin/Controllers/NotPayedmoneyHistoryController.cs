@@ -16,6 +16,7 @@ namespace Caffiee.Areas.Admin.Controllers
 {
     [Area(ConstsntValuse.Admin)]
 
+    [Authorize(Roles = $"{ConstsntValuse.SuperAdmin},{ConstsntValuse.SalessManger}")]
 
     public class NotPayedmoneyHistoryController   :  BaseController
     {

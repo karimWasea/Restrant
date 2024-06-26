@@ -15,7 +15,8 @@ using Servess;
 namespace Caffiee.Areas.Admin.Controllers
 {
     [Area(ConstsntValuse.Admin)]
-    [Authorize(Roles = ConstsntValuse.SuperAdmin)]
+    //[Authorize(Roles = ConstsntValuse.SuperAdmin)]
+    [Authorize(Roles = $"{ConstsntValuse.SuperAdmin},{ConstsntValuse.SalessManger}")]
 
     public class FinancialUserCashHistoryController :  BaseController
     {

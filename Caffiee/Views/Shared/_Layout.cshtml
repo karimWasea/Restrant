@@ -83,16 +83,17 @@
                                     <a class="dropdown-item" asp-area="Admin" asp-controller="Product" asp-action="Index">اعدادات المنتجات</a>
                                 </div>
                             </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
- اداره الموظفين
-                               </a>
-                                <div class="dropdown-menu" aria-labelledby="adminDropdown">
-                                    <a class="dropdown-item" asp-area="Admin" asp-controller="Roles" asp-action="Index">الادوار الامنيه</a>
-                                    <a class="dropdown-item" asp-area="Admin" asp-controller="User" asp-action="Index">العملاء   </a>
-                                </div>
-                            </li>
-                       
+                            if(User.IsInRole(C_Utilities.ConstsntValuse.SuperAdmin)){
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        اداره الموظفين
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="adminDropdown">
+                                        <a class="dropdown-item" asp-area="Admin" asp-controller="Roles" asp-action="Index">الادوار الامنيه</a>
+                                        <a class="dropdown-item" asp-area="Admin" asp-controller="User" asp-action="Index">العملاء   </a>
+                                    </div>
+                                </li>
+                        }
 
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="Admin" asp-controller="NotPayedmoneyHistory" asp-action="Index">الاجل</a>
