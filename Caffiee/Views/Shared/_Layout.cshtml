@@ -10,6 +10,22 @@
     <link rel="stylesheet" href="~/Caffiee.styles.css" asp-append-version="true" />
     <link href="~/lib/select2/css/select2.min.css" rel="stylesheet" />
     <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden; /* Prevent horizontal scrollbar */
+        }
+
+        body {
+            background-image: url('Images/Screenshot 2024-06-27 180933.png');
+            background-size: contain; /* Change to 'contain' to fit within the body */
+            background-repeat: no-repeat;
+            background-position: center;
+            height: 100%; 
+         }
+
+
         .navbar {
             background-color: #ad8313 !important;
         }
@@ -56,6 +72,62 @@
             margin-right: 10px;
         }
     </style>
+  
+
+  @*   <style>
+        .navbar {
+            background-color: #ad8313 !important;
+        }
+
+        body {
+            background-image: url(' Images/Screenshot 2024-06-27 180933.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .nav-link {
+            border: 1px solid transparent;
+            border-radius: 0;
+            transition: border-color 0.3s;
+            color: #fff !important;
+        }
+
+            .nav-link:hover, .nav-link.active {
+                border-color: #343a40;
+            }
+
+        .dropdown-menu {
+            background-color: #8b4513 !important; /* Brown background color */
+            border: none;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+
+        .dropdown-item {
+            color: #fff !important;
+            transition: background-color 0.3s;
+        }
+
+            .dropdown-item:hover, .dropdown-item:focus {
+                background-color: #5a2d0c !important; /* Darker brown on hover */
+            }
+
+        .navbar-brand {
+            font-weight: bold;
+            color: #fff !important;
+        }
+
+        .sticky-top {
+            position: -webkit-sticky;
+            position: sticky;
+            top: 0;
+            z-index: 1020;
+        }
+
+        .nav-item {
+            margin-right: 10px;
+        }
+    </style> *@
 </head>
 <body>
     <header>
