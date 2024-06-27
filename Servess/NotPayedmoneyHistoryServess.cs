@@ -169,9 +169,10 @@ namespace Servess
                 .Include(i => i.NotPayedmoneyHistory)
                     .ThenInclude(nph => nph.UserNotPayedmoney)
                 .Where(i =>
-                    (criteria.PaymentStatus == 0 || i.PaymentStatus == (int)criteria.PaymentStatus) &&
-                    ( i.NotPayedmoneyHistory.FirstOrDefault().HospitalaoOrprationtyp == (int)criteria.HospitalaoOrprationtyp|| criteria.HospitalaoOrprationtyp==0) &&
-                    (criteria.UserNotPayedmoneyName == null || criteria.UserNotPayedmoneyName ==string.Empty|| i.NotPayedmoneyHistory.Any(nph => nph.UserNotPayedmoney.FullCustumName.Contains(criteria.UserNotPayedmoneyName)))
+                    (criteria.PaymentStatus == 0 || i.PaymentStatus == (int)criteria.PaymentStatus)
+                &&
+                (i.NotPayedmoneyHistory.FirstOrDefault().HospitalaoOrprationtyp == (int)criteria.HospitalaoOrprationtyp || criteria.HospitalaoOrprationtyp == 0) &&
+                (criteria.UserNotPayedmoneyName == null || criteria.UserNotPayedmoneyName == string.Empty || i.NotPayedmoneyHistory.Any(nph => nph.UserNotPayedmoney.FullCustumName.Contains(criteria.UserNotPayedmoneyName)))
                 )
                 .Select(i => new NotPayedmoneyHistoryVM
                 {

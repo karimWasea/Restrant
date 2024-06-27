@@ -7,6 +7,8 @@ using Cf_Atomapper;
 using Interfaces;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using C_Utilities;
+using Microsoft.AspNetCore.Localization;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +18,14 @@ IServiceCollection serviceCollection =
     builder.Services.AddDbContext<ApplicationDBcontext>(options =>
     options.UseSqlServer(connectionString));
 
-
+ 
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    var supportedCultures = new[] { new CultureInfo("en-US"), new CultureInfo("fr-FR") };
+    options.DefaultRequestCulture = new RequestCulture("en-US");
+    options.SupportedCultures = supportedCultures;
+    options.SupportedUICultures = supportedCultures;
+});
 builder.Services.AddIdentity<Applicaionuser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = false)
 .AddEntityFrameworkStores<ApplicationDBcontext>().AddDefaultTokenProviders();
 builder.Services.Configure<IdentityOptions>(options =>

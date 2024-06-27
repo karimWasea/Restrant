@@ -95,7 +95,7 @@ namespace Servess
                     ProductId = i.ProductId,
                     Id = i.Id,
                     Qantity = i.Qantity ?? 0, // Assuming i.Qantity is nullable and defaulting to 0 if null
-                    price = i.price ?? 0
+                    price = i.price  
 
                 })
                 .OrderBy(g => g.Id);
@@ -126,7 +126,7 @@ namespace Servess
                    Discount = i.Discount,
                     QantityInStore = i.Product.Qantity??0.0m,
                    Qantity = i.Qantity ?? 0, // Assuming i.Qantity is nullable and defaulting to 0 if null
-                   price = i.price ?? 0,
+                   price = i.price  ,
                    Catid = (CategoryType)i.Product.CategoryTyPe,
 
                })

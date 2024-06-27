@@ -20,10 +20,14 @@ namespace Cf_Viewmodels
 
         public string ProductName { get; set; }
         [Required(ErrorMessage = "هذا الحقل مطلوب")]
+        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = true)]
+
         [Range(0.01, double.MaxValue, ErrorMessage = "ادخل قيمه مختلفه")]
         public decimal Price { get; set; }
 
         [Required(ErrorMessage = "هذا الحقل مطلوب")]
+        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = true)]
+
         [Range(1, int.MaxValue, ErrorMessage = "ادخل قيمه مختلفه")]
         public decimal Qantity { get; set; }
         [Required(ErrorMessage = "هذا الحقل مطلوب")]

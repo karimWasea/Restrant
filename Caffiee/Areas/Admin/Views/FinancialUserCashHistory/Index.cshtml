@@ -36,8 +36,10 @@
                 <td>@item.PayedTotalAmount</td>
                 <td>@Servess.DescriptionEnum.GetDescription(item.PaymentStatus)</td>
                 <td>@item.CreationTime</td>
-                <td class="Save">
-                    <a class="btn btn-danger ml-1" asp-area="Admin" asp-action="Delete" asp-route-Id="@item.Id">حذف</a>
+                <td class="Save">  @if(User.IsInRole(C_Utilities.ConstsntValuse.SuperAdmin)){
+                        <a class="btn btn-danger ml-1" asp-area="Admin" asp-action="Delete" asp-route-Id="@item.Id">حذف</a>
+
+                }
                     <a class="btn btn-danger ml-1" asp-area="Admin" asp-controller="FinancialUserCashHistory" asp-action="Salesreturns" asp-route-id="@item.Id">مرتجع</a>
                     <a class="btn btn-info ml-1" asp-area="Admin" asp-controller="FinancialUserCashHistory" asp-action="SearchFinancialUserCashHistoryDetails" asp-route-Id="@item.Id">تفاصيل</a>
                 </td>

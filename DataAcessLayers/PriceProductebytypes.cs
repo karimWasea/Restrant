@@ -19,7 +19,7 @@ namespace DataAcessLayers
          public CustomerType CustomerType { get; set; }
         public int ? Qantity { get; set; }
         public int? Discount { get; set; } // Nullable discount property
-        public int ? price { get; set; }
+        public int  price { get; set; }
          public virtual ShopingCaterCashHistory ShopingCaterCashHistory { get;}
         [NotMapped]
          public virtual ShopingCaterNotpayedHistory ShopingCaterNotpayedHistory { get;}

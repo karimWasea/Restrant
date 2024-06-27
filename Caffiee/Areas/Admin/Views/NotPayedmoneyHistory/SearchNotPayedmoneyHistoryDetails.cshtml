@@ -97,14 +97,16 @@
                    
                 </td>
                 <td>
-                    @if (item.TotalNotpayedAmount != 0)
+                    @if (User.IsInRole(C_Utilities.ConstsntValuse.SuperAdmin))
                     {
-                        <a class="btn btn-success flex-grow-1 ml-1 Save" asp-area="Admin"
-                        asp-action="DeleteHistory"
+                        @if (item.TotalNotpayedAmount != 0)
+                        {
+                            <a class="btn btn-success flex-grow-1 ml-1 Save" asp-area="Admin"
+                            asp-action="DeleteHistory"
                         asp-route-id="@item.Id"
                        asp-route-NotPayedmoneyid="@item.NotPayedmoneyId"
                        asp-route-payedTotalAmount="@item.TotalNotpayedAmount"
-                       asp-route-productid="@item.Productid">حذف</a>}
+                       asp-route-productid="@item.Productid">حذف</a>}}
                 </td>
 
             </tr>

@@ -76,6 +76,8 @@ public enum CustomerType
             HotDrink=2,
             [Description("اضافات")]
             Addon=3,
+            [Description("الاكلات")]
+            Eating=4,
 
         } 
         

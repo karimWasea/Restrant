@@ -108,8 +108,10 @@
                 <td>@Html.DisplayFor(modelItem => item.Description)</td>
                 <td>@Servess.DescriptionEnum.GetDescription(item.CategoryTyPe)</td>
                 <td>
-                    <a asp-action="Save" class="btn btn-primary ml-1" asp-route-id="@item.Id">تعديل</a> |
-                     <a href="javascript:void(0);" class="delete-link btn btn-danger ml-1" data-id="@item.Id">حذف</a>
+                    <a asp-action="Save" class="btn btn-primary ml-1" asp-route-id="@item.Id">تعديل</a> |@if (User.IsInRole(C_Utilities.ConstsntValuse.SuperAdmin))
+                    {
+                        <a href="javascript:void(0);" class="delete-link btn btn-danger ml-1" data-id="@item.Id">حذف</a>
+                    }
                 </td>
                 <td>
                     <a asp-area="Admin" class="btn btn-primary ml-1" asp-controller="PriceProductebytypes" asp-action="Save" asp-route-ProductId="@item.Id">اضافه اسعار المنتجات</a>

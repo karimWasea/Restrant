@@ -86,12 +86,14 @@
                     </form>
                 </td>
                 <td class="no-print">
-                    <a class="btn btn-danger" asp-area="Admin" asp-action="DeleteHistory"
-                       asp-controller="FinancialUserCashHistory"
+                    @if (User.IsInRole(C_Utilities.ConstsntValuse.SuperAdmin))
+                    {
+                        <a class="btn btn-danger" asp-area="Admin" asp-action="DeleteHistory"
+                        asp-controller="FinancialUserCashHistory"
                        asp-route-id="@item.Id"
                        asp-route-payedTotalAmount="@item.PayedTotalAmount"
                        asp-route-Frercahid="@item.Frercahid"
-                       asp-route-Productid="@item.Productid">حذف</a>
+                       asp-route-Productid="@item.Productid">حذف</a>}
                 </td>
             </tr>
         }

@@ -36,21 +36,42 @@ namespace Cf_Viewmodels
         public string ProductImg{ get; set; } =string.Empty  ;
         [Required(ErrorMessage = "هذا الحقل مطلوب")]
 
-        public CategoryType Catid { get; set; }  
+        public CategoryType Catid { get; set; }
+        [Range(0.01, 10000.00, ErrorMessage = "Please enter a valid price.")]
+
+        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = true)]
+ 
         public decimal? ProductOldPrice { get; set; }
           public int? ShopingCaterQantity { get; set; }
         public int? Discount { get; set; }
         [Required(ErrorMessage = "هذا الحقل مطلوب")]
         [Range(1, int.MaxValue, ErrorMessage = " ادخل قيمه اقل ")]
         public int? Qantity { get; set; }
+        [Range(0.01, 10000.00, ErrorMessage = "Please enter a valid price.")]
+
+        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = true)]
+
         public decimal? QantityInStore { get; set; }
 
         [Required(ErrorMessage = "هذا الحقل مطلوب")]
-        [Range(1, int.MaxValue, ErrorMessage = " ادخل قيمه اقل ")]
-        public int price { get; set; }
+        [Range(0.01, double.MaxValue, ErrorMessage = "أدخل قيمة صالحة")]
+        public decimal price
+        {
+            get; set;
+        }
+            [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = true)]
+        [Range(0.01, 10000.00, ErrorMessage = "Please enter a valid price.")]
+
         public decimal? totalprice { get; set; }
-         public decimal? totalDibte { get; set; }
-         public decimal? totalDibtehospital { get; set; }
+        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = true)]
+        [Range(0.01, 10000.00, ErrorMessage = "Please enter a valid price.")]
+
+        public decimal? totalDibte { get; set; }
+        [Range(0.01, 10000.00, ErrorMessage = "Please enter a valid price.")]
+
+        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = true)]
+
+        public decimal? totalDibtehospital { get; set; }
  
 
     }

@@ -38,7 +38,7 @@
             </div>
             <div class="form-group col-md-4">
                 <label for="HospitalaoOrprationtyp"> المستشفى  </label>
-                <select name="HospitalaoOrprationtyp" class="form-select" asp-items="@ViewBag.HospitalOroprationtypt" aria-required="true">
+                <select name="HospitalaoOrprationtyp" class="form-select" asp-items="@ViewBag.HospitalOroprationtyp" aria-required="true">
                     <option value="">اختر</option>
                 </select>
             </div>
@@ -76,14 +76,15 @@
             <tr>
 
                 <td>
-                    @if (string.IsNullOrEmpty(item.UserNotPayedmoneyName))
+                    @item.UserNotPayedmoneyName
+               @*      @if (string.IsNullOrEmpty(item.UserNotPayedmoneyName))
                     {
                         @item.UserNotPayedmoneyName
                     }
                     else
                     {
                         @:المستشفى
-                    }
+                    } *@
                 </td>
 
                  <td>@item.TotalNotpayedAmount</td>
@@ -104,7 +105,10 @@
                     }}
                 </td>
                 <td class="Save">
-                    <a class="btn btn-danger ml-1" asp-area="Admin" asp-controller="NotPayedmoneyHistory" asp-action="Delete" asp-route-id="@item.Id">حذف</a>
+                    @if (User.IsInRole(C_Utilities.ConstsntValuse.SuperAdmin))
+                    {
+                        <a class="btn btn-danger ml-1" asp-area="Admin" asp-controller="NotPayedmoneyHistory" asp-action="Delete" asp-route-id="@item.Id">حذف</a>
+                    }
 
                     @if (item.TotalNotpayedAmount != 0)
                     {

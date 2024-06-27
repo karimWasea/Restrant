@@ -24,10 +24,11 @@ namespace Servess
     public class ApplicationUserService : PaginationHelper<FinancialUserCashHistoryVM>, IUserService
     {
         private readonly UserManager<Applicaionuser> _userManager;
+        private readonly RoleManager<IdentityRole> _roles;
 
-        public ApplicationUserService(UserManager<Applicaionuser> userManager)
+        public ApplicationUserService(UserManager<Applicaionuser> userManager,       RoleManager<IdentityRole> roles)
         {
-            _userManager = userManager;
+             _userManager = userManager; _roles=roles;  
         }
 
 
@@ -124,11 +125,36 @@ namespace Servess
 
         public async Task<bool> DeleteAsync(string id)
         {
+            // Find the user by id
             var user = await _userManager.FindByIdAsync(id);
-            if (user == null) return false;
+            if (user == null)
+            {
+                // User not found
+                return false;
+            }
 
+            // Get user roles
+            var roles = await _userManager.GetRolesAsync(user);
+
+
+            // Remove user from all roles
+            foreach (var role in roles)
+            {
+                var roleResult = await _userManager.RemoveFromRoleAsync(user, role);
+                if (!roleResult.Succeeded)
+                {
+                    // Handle errors in role removal
+                    return false;
+                }
+            }
+
+            // Delete the user
             var result = await _userManager.DeleteAsync(user);
+
+            // Return the result of the delete operation
             return result.Succeeded;
         }
-}    }
+
+    }
+}
 

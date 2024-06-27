@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,12 +15,16 @@ namespace Cf_Viewmodels
 {
     public class NotPayedmoneyHistoryVM : BaseVM
     {
-       
 
+        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = true)]
 
-            public decimal? TotalPayedAmount { get; set; }
-            public decimal? TotalNotpayedAmount { get; set; }
-            public decimal? payedAmount { get; set; }
+        public decimal? TotalPayedAmount { get; set; }
+        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = true)]
+
+        public decimal? TotalNotpayedAmount { get; set; }
+        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = true)]
+
+        public decimal? payedAmount { get; set; }
         public int? Pricforonproduct { get; set; }
         public int? Productid { get; set; }
          public string? productName { get; set; }
@@ -40,9 +45,10 @@ namespace Cf_Viewmodels
 
 
 
+        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = true)]
 
 
-            public decimal? NotpayedAmount { get; set; }
+        public decimal? NotpayedAmount { get; set; }
 
             public PaymentStatus PaymentStatus { get; set; }
             public HospitalOroprationtyp HospitalaoOrprationtyp { get; set; }
