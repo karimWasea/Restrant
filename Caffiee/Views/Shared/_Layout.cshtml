@@ -1,5 +1,4 @@
-﻿
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="utf-8" />
@@ -16,15 +15,6 @@
             padding: 0;
             overflow-x: hidden; /* Prevent horizontal scrollbar */
         }
-
-        body {
-            background-image: url('Images/Screenshot 2024-06-27 180933.png');
-            background-size: contain; /* Change to 'contain' to fit within the body */
-            background-repeat: no-repeat;
-            background-position: center;
-            height: 100%; 
-         }
-
 
         .navbar {
             background-color: #ad8313 !important;
@@ -72,62 +62,7 @@
             margin-right: 10px;
         }
     </style>
-  
-
-  @*   <style>
-        .navbar {
-            background-color: #ad8313 !important;
-        }
-
-        body {
-            background-image: url(' Images/Screenshot 2024-06-27 180933.png');
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-position: center;
-        }
-
-        .nav-link {
-            border: 1px solid transparent;
-            border-radius: 0;
-            transition: border-color 0.3s;
-            color: #fff !important;
-        }
-
-            .nav-link:hover, .nav-link.active {
-                border-color: #343a40;
-            }
-
-        .dropdown-menu {
-            background-color: #8b4513 !important; /* Brown background color */
-            border: none;
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-        }
-
-        .dropdown-item {
-            color: #fff !important;
-            transition: background-color 0.3s;
-        }
-
-            .dropdown-item:hover, .dropdown-item:focus {
-                background-color: #5a2d0c !important; /* Darker brown on hover */
-            }
-
-        .navbar-brand {
-            font-weight: bold;
-            color: #fff !important;
-        }
-
-        .sticky-top {
-            position: -webkit-sticky;
-            position: sticky;
-            top: 0;
-            z-index: 1020;
-        }
-
-        .nav-item {
-            margin-right: 10px;
-        }
-    </style> *@
+    @RenderSection("Styles", required: false)
 </head>
 <body>
     <header>
@@ -136,14 +71,11 @@
                 <a class="navbar-brand" asp-area="Admin" asp-controller="Home" asp-action="Index">
                     <img src="~/Images/WhatsApp Image 2024-06-23 at 18.02.41_823d62cf.jpg" alt="Caffiee Logo" height="40" />
                 </a>
-
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-              
-                    <div class="collapse navbar-collapse" id="navbarNav">
-                  
-                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         @if (User.IsInRole(C_Utilities.ConstsntValuse.SuperAdmin) || User.IsInRole(C_Utilities.ConstsntValuse.SalessManger))
                         {
                             <li class="nav-item dropdown">
@@ -155,7 +87,8 @@
                                     <a class="dropdown-item" asp-area="Admin" asp-controller="Product" asp-action="Index">اعدادات المنتجات</a>
                                 </div>
                             </li>
-                            if(User.IsInRole(C_Utilities.ConstsntValuse.SuperAdmin)){
+                            if (User.IsInRole(C_Utilities.ConstsntValuse.SuperAdmin))
+                            {
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         اداره الموظفين
@@ -165,45 +98,36 @@
                                         <a class="dropdown-item" asp-area="Admin" asp-controller="User" asp-action="Index">العملاء   </a>
                                     </div>
                                 </li>
-                        }
-
+                            }
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="Admin" asp-controller="NotPayedmoneyHistory" asp-action="Index">الاجل</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="Admin"  asp-controller="FinancialUserCashHistory" asp-action="Index">الكاش</a>
+                                <a class="nav-link" asp-area="Admin" asp-controller="FinancialUserCashHistory" asp-action="Index">الكاش</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="Admin"  asp-controller="NotPayedmoneyHistory" asp-action="PrintHospital">الفاتوره اليوميه للمستشفى</a>
+                                <a class="nav-link" asp-area="Admin" asp-controller="NotPayedmoneyHistory" asp-action="PrintHospital">الفاتوره اليوميه للمستشفى</a>
                             </li>
-
-
-
-                            }
-
+                        }
                         @if (User.IsInRole(C_Utilities.ConstsntValuse.SuperAdmin) || User.IsInRole(C_Utilities.ConstsntValuse.SalessManger) || User.IsInRole(C_Utilities.ConstsntValuse.SalesMan))
                         {
                             <li class="nav-item">
-
                                 <a class="nav-link" asp-area="Admin" asp-controller="PriceProductebytypes" asp-action="GetProductbytyp" asp-route-CustomerType="@C_Utilities.Enumes.CustomerType.OtherPeople">ألاسعار للحالات</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link"  asp-area="Admin" asp-controller="PriceProductebytypes" asp-action="GetProductbytyp" asp-route-CustomerType="@C_Utilities.Enumes.CustomerType.Nursing">ألاسعار للتمريض</a>
+                                <a class="nav-link" asp-area="Admin" asp-controller="PriceProductebytypes" asp-action="GetProductbytyp" asp-route-CustomerType="@C_Utilities.Enumes.CustomerType.Nursing">ألاسعار للتمريض</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="Admin" asp-controller="PriceProductebytypes" asp-action="GetProductbytyp" asp-route-CustomerType="@C_Utilities.Enumes.CustomerType.oprations"> الاسعار للعمليات</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="Admin"  asp-controller="PriceProductebytypes" asp-action="GetProductbytyp" asp-route-CustomerType="@C_Utilities.Enumes.CustomerType.Worker">ألاسعار للعمال</a>
+                                <a class="nav-link" asp-area="Admin" asp-controller="PriceProductebytypes" asp-action="GetProductbytyp" asp-route-CustomerType="@C_Utilities.Enumes.CustomerType.Worker">ألاسعار للعمال</a>
                             </li>
                         }
                     </ul>
-
-                        <partial name="_LoginPartial" />
-                    </div>
-                
+                    <partial name="_LoginPartial" />
+                </div>
             </div>
-
         </nav>
     </header>
     <div class="container">

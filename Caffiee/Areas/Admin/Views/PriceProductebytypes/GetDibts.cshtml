@@ -65,8 +65,102 @@
         </div>
     </div>
 </div>
+<style>
+    /* Style for centered confirmation dialog */
+    .centered-confirm {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #4CAF50; /* Green background */
+        color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        z-index: 1000; /* Ensure it's on top of other elements */
+    }
+
+    /* Style for centered alerts */
+    .centered-alert {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent black background */
+        color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        text-align: center;
+        z-index: 1000; /* Ensure it's on top of other elements */
+    }
+</style>
 
 <script>
+    function submitDebtForm() {
+        var userId = document.getElementById("NotpayedUserid").value;
+        if (userId === "") {
+            showAlert(" الرجا اختيار العميل ");
+            return;
+        }
+
+        var confirmationDialog = document.createElement('div');
+        confirmationDialog.className = 'centered-confirm';
+        confirmationDialog.innerHTML = `
+                <p>هل أنت متأكد أنك تريد إنهاء الدين؟</p>
+                <button onclick="confirmDebtCompletion('${userId}')">نعم</button>
+                <button onclick="closeConfirmationDialog()">إلغاء</button>
+            `;
+        document.body.appendChild(confirmationDialog);
+    }
+
+    function confirmDebtCompletion(userId) {
+        closeConfirmationDialog(); // Close the confirmation dialog
+
+        fetch(`/Admin/PriceProductebytypes/EnDDebiteForPersone?NotpayedUserid=${userId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert("تم انهاء الدين بنجاح.");
+                    // Optionally, update the UI or redirect
+                } else {
+                    showAlert("حدث خطأ أثناء إنهاء الدين: " + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert("حدث خطأ أثناء إنهاء الدين.");
+            });
+    }
+
+    function closeConfirmationDialog() {
+        var confirmationDialog = document.querySelector('.centered-confirm');
+        if (confirmationDialog) {
+            confirmationDialog.remove();
+        }
+    }
+
+    function showAlert(message) {
+        var alertBox = document.createElement('div');
+        alertBox.className = 'centered-alert';
+        alertBox.innerHTML = `<p>${message}</p>`;
+        document.body.appendChild(alertBox);
+
+        // Remove the alert after a few seconds (adjust timing as needed)
+        setTimeout(function () {
+            alertBox.remove();
+        }, 3000); // Remove after 3 seconds
+    }
+</script>
+
+
+@* <script>
     function submitDebtForm() {
         var userId = document.getElementById("NotpayedUserid").value;
         if (userId === "") {
@@ -94,4 +188,4 @@
                 alert("حدث خطأ أثناء إنهاء الدين.");
             });
     }
-</script>
+</script> *@

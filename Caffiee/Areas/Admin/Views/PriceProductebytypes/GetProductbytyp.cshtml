@@ -97,21 +97,17 @@
 
     <img src="~/Images/WhatsApp Image 2024-06-23 at 18.02.40_35881d78.jpg" class="circular-img" width="100"  style="margin-right:500px;" />
     <!-- Add the search input form -->
- 
-<div class="input-group mt-4">
-    <input type="text" class="form-control" placeholder="Search..." aria-label="Search" aria-describedby="button-addon2" id="search-input">
-    <div class="input-group-append">
-        <button class="btn btn-primary" type="button" id="button-addon2">
-             بحث
-            </button>
+    <form method="get" asp-controller="PriceProductebytypes" asp-action="GetProductbytyp" asp-area="Admin" class="mt-4">
+        <div class="input-group mt-4">
+            <input type="hidden" class="form-control" name="CustomerType" value="@ViewBag.CustomerType">
+            <input type="text" class="form-control" name="ProductName" placeholder="بحث..." aria-label="Search" aria-describedby="button-addon2" id="search-input">
+            <div class="input-group-append">
+                <button class="btn btn-primary" type="submit" id="button-addon2">بحث</button>
+            </div>
         </div>
-       
-
-       
+    </form>
 
 
-    
-</div>
 
  <br />
  <br />
@@ -161,7 +157,7 @@
                                 <br />
                                 <div class="col NotpayedUseridselected">
                                     <select value="NotpayedUserid" name="NotpayedUserid" class="form-select glass-select same-width NotpayedUserid" asp-items="@ViewBag.UsersLists"
-                                            aria-required="true" data-placeholder="Select CategoryId" style="z-index: 1;">
+                                            aria-required="true" data-placeholder=" العميل" style="z-index: 1;">
                                         <option value="">العميل</option>
                                     </select>
                                     <span asp-validation-for="@product.NotpayedUserid" class="text-danger"></span>
@@ -171,7 +167,7 @@
                                 {
                                     <div class="col  ">
                                         <select value="HospitalOroprationtypId" name="HospitalOroprationtypId" class="form-select glass-select same-width HospitalOroprationtypId" asp-items="@ViewBag.HospitalOroprationtypLists"
-                                                aria-required="true" data-placeholder="Select CategoryId" style="z-index: 1;">
+                                                aria-required="true" data-placeholder="  اختار نوع العميل" style="z-index: 1;">
                                             <option value="">نوع العميل </option>
                                         </select>
                                         <span asp-validation-for="@product.HospitalOroprationtypId" class="text-danger"></span>
@@ -192,28 +188,88 @@
             }
         </div>
     </div>
-@*     <button id="printButton">printButton</button>
- *@<nav aria-label="Page navigation example">
-    <ul class="pagination">
-        <li class="page-item @(Model.PageNumber == 1 ? "disabled" : "")">
-            <a class="page-link" asp-area="Admin" asp-action="GetProductbytyp" asp-route-CustomerType="@ViewBag.CustomerTypec" asp-route-page="1" aria-label="Previous">
-                <span aria-hidden="true">&laquo;</span>
-            </a>
-        </li>
-        @for (int i = 1; i <= Model.PageCount; i++)
-        {
-            <li class="page-item @(i == Model.PageNumber ? "active" : "")">
-                <a class="page-link" asp-action="GetProductbytyp" asp-route-CustomerType="@ViewBag.CustomerType" asp-route-page="@i">@i</a>
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            <!-- Adjust classes based on your styling framework -->
+            <li class="page-item @(Model.PageNumber == 1 ? "disabled" : "")">
+                <a class="page-link" asp-area="Admin" asp-action="GetProductbytyp" asp-route-CustomerType="@ViewBag.CustomerType" asp-route-productId="@ViewBag.productId" asp-route-page="1" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
             </li>
+            @for (int i = 1; i <= Model.PageCount; i++)
+            {
+                <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                    <a class="page-link" asp-action="GetProductbytyp" asp-route-CustomerType="@ViewBag.CustomerType" asp-route-productId="@ViewBag.productId" asp-route-page="@i">@i</a>
+                </li>
+            }
+            <li class="page-item @(Model.PageNumber == Model.PageCount ? "disabled" : "")">
+                <a class="page-link" asp-action="GetProductbytyp" asp-route-page="@Model.PageCount" asp-route-CustomerType="@ViewBag.CustomerType" asp-route-productId="@ViewBag.productId" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+
+    <style>
+        .pagination {
+            background-color: #fff; /* White background */
+            border-radius: 4px; /* Rounded corners */
+            padding: 8px; /* Padding around the pagination */
         }
-        <li class="page-item @(Model.PageNumber == Model.PageCount ? "disabled" : "")">
-            <a class="page-link" asp-action="GetProductbytyp" asp-route-page="@Model.PageCount" asp-route-CustomerType="@ViewBag.CustomerType" aria-label="Next">
-                <span aria-hidden="true">&raquo;</span>
-            </a>
-        </li>
-    </ul>
-</nav>
-</div>
+
+        .page-item {
+            margin-right: 5px; /* Adjust spacing between pagination items */
+        }
+
+        .page-link {
+            color: #007bff; /* Blue color for links */
+            background-color: #fff; /* White background for links */
+            border: 1px solid #dee2e6; /* Light border */
+            padding: 6px 12px; /* Padding inside the link */
+        }
+
+            .page-link:hover {
+                background-color: #f8f9fa; /* Light gray background on hover */
+            }
+
+        .page-item.active .page-link {
+            z-index: 3;
+            color: #fff;
+            background-color: #007bff; /* Blue background for active page */
+            border-color: #007bff;
+        }
+
+        .page-item.disabled .page-link {
+            color: #6c757d; /* Gray color for disabled links */
+            pointer-events: none; /* Disable pointer events */
+        }
+
+    </style>
+@*       <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                <li class="page-item @(Model.PageNumber == 1 ? "disabled" : "")">
+                    <a class="page-link" asp-area="Admin" asp-action="GetProductbytyp" asp-route-CustomerType="@ViewBag.CustomerType" asp-route-productId="@ViewBag.productId" asp-route-page="1" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                @for (int i = 1; i <= Model.PageCount; i++)
+                {
+                    <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                        <a class="page-link" asp-action="GetProductbytyp" asp-route-CustomerType="@ViewBag.CustomerType" asp-route-productId="@ViewBag.productId" asp-route-page="@i">@i</a>
+                    </li>
+                }
+                <li class="page-item @(Model.PageNumber == Model.PageCount ? "disabled" : "")">
+                    <a class="page-link" asp-action="GetProductbytyp" asp-route-page="@Model.PageCount" asp-route-CustomerType="@ViewBag.CustomerType" asp-route-productId="@ViewBag.productId" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav> *@
+ 
+ 
+
+ </div>
  
  
 <!-- Modal HTML -->

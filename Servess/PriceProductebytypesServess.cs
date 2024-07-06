@@ -112,11 +112,11 @@ namespace Servess
         {
             var query = _context.PriceProductebytypes
                  .Include(i => i.Product)
-                   .ThenInclude(i => i.ProductAttachment)
+                   
                .Where(product =>
                    (product.CustomerType == searchCriteria.CustomerType) &&
                    (searchCriteria.Catid == 0 || product.Product.CategoryTyPe == (int)searchCriteria.Catid) &&
-                   (searchCriteria.ProductName == null || product.Product.ProductName.Contains(searchCriteria.ProductName)))
+                   (searchCriteria.ProductName == null || product.Product.ProductName.Contains(searchCriteria.ProductName )))
                .Select(i => new PriceProductebytypesVM
                {
                    ProductName = i.Product.ProductName??"",
@@ -559,6 +559,7 @@ namespace Servess
 
                         // Update related NotPayedmoneys entry
                         item.NotPayedmoneys.TotalPayedAmount = item.NotPayedmoneys.TotalNotpayedAmount;
+                        item.NotPayedmoneys.TotalNotpayedAmount = 0;
                         item.NotPayedmoneys.PaymentStatus = (int)PaymentStatus.Paid;
                     }
 

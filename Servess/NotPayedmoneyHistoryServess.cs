@@ -339,18 +339,18 @@ namespace Servess
                     // Update the quantity
 
                     // Find the associated FinancialUserCash record
-                    var financialUserCash = _context.NotPayedmoney.Find(criteria.NotPayedmoneyId);
-                    if (financialUserCash == null)
+                    var NotPayedmoney = _context.NotPayedmoney.Find(criteria.NotPayedmoneyId);
+                    if (NotPayedmoney == null)
                     {
                         throw new Exception("FinancialUserCash not found");
                     }
 
                     // Adjust the PayedTotalAmount
-                    financialUserCash. TotalNotpayedAmount -= updated.NotpayedAmount;
+                    NotPayedmoney. TotalNotpayedAmount -= updated.NotpayedAmount;
                     var newTotalPrice = criteria.Qantity * criteria.Pricforonproduct;
-                    updated.NotpayedAmount = newTotalPrice;  
-                   
-                    financialUserCash.TotalNotpayedAmount += newTotalPrice;
+                    updated.NotpayedAmount = newTotalPrice;
+
+                    NotPayedmoney.TotalNotpayedAmount += newTotalPrice;
 
                     // Find the associated product
                     var product = _context.products.Find(criteria.Productid);

@@ -52,8 +52,10 @@ namespace Caffiee.Areas.Admin.Controllers
          public IActionResult GetProductbytyp(PriceProductebytypesVM Entity, int? page)
         {
             ViewBag.CustomerType = Entity.CustomerType;
+            ViewBag.productId = Entity.Id;
+            Entity.ProductName = Entity.ProductName.Replace(" ", ""); // Remove spaces from ProductName
             ViewBag.UsersLists = _unitOfWork._Ilookup.Users(Entity.CustomerType);
-            ViewBag.HospitalOroprationtypLists = _unitOfWork._Ilookup.HospitalOroprationtyp( );
+            ViewBag.HospitalOroprationtypLists = _unitOfWork._Ilookup.HospitalOroprationtyp();
             Entity.PageNumber = page ?? 1;
             var Entitys = _unitOfWork._PriceProductebytypes.SearchForTypes(Entity);
             return View(Entitys);

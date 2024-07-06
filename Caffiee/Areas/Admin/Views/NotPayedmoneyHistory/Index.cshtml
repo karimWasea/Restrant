@@ -78,15 +78,15 @@
             <tr>
 
                 <td>
-                    @item.UserNotPayedmoneyName
-               @*      @if (string.IsNullOrEmpty(item.UserNotPayedmoneyName))
+                    @if (string.IsNullOrEmpty(item.UserNotPayedmoneyName))
                     {
-                        @item.UserNotPayedmoneyName
+                        @:المستشفى
                     }
                     else
                     {
-                        @:المستشفى
-                    } *@
+                        @item.UserNotPayedmoneyName
+
+                    }
                 </td>
 
                  <td>@item.TotalNotpayedAmount</td>

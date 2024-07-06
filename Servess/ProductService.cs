@@ -131,7 +131,7 @@ namespace Servess
                     CategoryTyPe = (Enumes.CategoryType)i.CategoryTyPe,
                     Price = i.Price ?? 0.0m,
                     Qantity = i.Qantity ?? 0.0m,
-
+ 
                     //, CategoryName= i.Category.CategoryName,
 
                 })

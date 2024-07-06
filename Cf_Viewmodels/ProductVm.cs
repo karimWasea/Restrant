@@ -30,7 +30,7 @@ namespace Cf_Viewmodels
 
         [Range(1, int.MaxValue, ErrorMessage = "ادخل قيمه مختلفه")]
         public decimal Qantity { get; set; }
-        [Required(ErrorMessage = "هذا الحقل مطلوب")]
+         [Required(ErrorMessage = "هذا الحقل مطلوب")]
 
         public CategoryType CategoryTyPe { get; set; }
 

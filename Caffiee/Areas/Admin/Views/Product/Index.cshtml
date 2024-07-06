@@ -92,7 +92,8 @@
         <tr>
             <th>اسم المنتج</th>
             <th>السعر</th>
-            <th>الكميه</th>
+            <th> الكميه بعد البيع</th>
+            <th> الكميه قبل البيع</th>
             <th>الوصف</th>
             <th>نوع المنتج</th>
             <th>خيارات</th>
@@ -106,6 +107,7 @@
                 <td>@Html.DisplayFor(modelItem => item.ProductName)</td>
                 <td>@Html.DisplayFor(modelItem => item.Price)</td>
                 <td>@Html.DisplayFor(modelItem => item.Qantity)</td>
+                <td>@Html.DisplayFor(modelItem => item.Discount)</td>
                 <td>@Html.DisplayFor(modelItem => item.Description)</td>
                 <td>@Servess.DescriptionEnum.GetDescription(item.CategoryTyPe)</td>
                 <td>
@@ -121,7 +123,7 @@
         }
     </tbody>
 </table>
-
+<br />
 <partial name="_AlertMessage" />
 <partial name="_PaginationPartial" model="Model" />
 

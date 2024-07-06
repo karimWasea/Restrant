@@ -11,8 +11,9 @@ namespace Servess
         public IPagedList<T> GetPagedData<T>(IQueryable<T> data, int pageNumber = 1)
         {
             //pageNumber = 1;
-            int pageSize = 10; // Set the page size to 10
-            int totalItemCount = data.Count();
+            int pageSize =30; // Set the page size to 10
+            int totalItemCount =
+                data.Count();
             int totalPages = (int)Math.Ceiling(totalItemCount / (double)pageSize);
 
             pageNumber = Math.Max(1, Math.Min(totalPages, pageNumber));
@@ -22,7 +23,7 @@ namespace Servess
 
             var pagedData = data.Skip(startIndex).Take(pageSize).ToList();
 
-            return new StaticPagedList<T>(pagedData, pageNumber, pageSize, totalItemCount);
+            return new StaticPagedList<T>(pagedData, pageNumber, pageSize, 260);
 
 
         }
