@@ -135,37 +135,81 @@ namespace Servess
             
         }
 
+        //public IPagedList<FinancialUserCashHistoryVM> SearchFinancialUserCashH(FinancialUserCashHistoryVM criteria)
+        //{  
+
+        //    var queryable = _context.FinancialUserCash
+        //        .Where(i =>
+        //           ( i.PayedTotalAmount == criteria.payedAmount || criteria.payedAmount == 0 || criteria.payedAmount == null)
+
+        //          &&(criteria.CreationTime=={ 1 / 1 / 0001 12:00:00 AM}|| i.CreationTime == DateTime.Now.Date)
+        //        )
+        //        .Select(i => new FinancialUserCashHistoryVM
+        //        {
+        //            Id = i.Id,
+        //            HospitalaoOrprationtyp = _context.FinancialUserCashHistories
+        //                .Where(p => p.FinancialUserCashId == i.Id)
+        //                .Select(p => (Enumes.HospitalOroprationtyp?)p.HospitalOroprationtyp)
+        //                .FirstOrDefault() ?? default(Enumes.HospitalOroprationtyp),
+        //            CreationTime = i.CreationTime,
+        //            PaymentStatus = (Enumes.PaymentStatus)i.PaymentStatus,
+        //            PayedTotalAmount = i.PayedTotalAmount
+        //        })
+        //        .OrderBy(g => g.CreationTime);
+
+        //    // Provide a default value for PageNumber if it's null
+        //    int pageNumber = criteria.PageNumber ?? 1;
+
+        //    var pagedList = GetPagedData(queryable, pageNumber);
+
+        //    return pagedList;
+
+
+
+
+
+        //}
+
+
+
+
+
+
+
+
+
         public IPagedList<FinancialUserCashHistoryVM> SearchFinancialUserCashH(FinancialUserCashHistoryVM criteria)
         {
             var queryable = _context.FinancialUserCash
-                .Where(i =>
-                    i.PayedTotalAmount == criteria.payedAmount || criteria.payedAmount == 0 || criteria.payedAmount == null
-                )
-                .Select(i => new FinancialUserCashHistoryVM
-                {
-                    Id = i.Id,
-                    HospitalaoOrprationtyp = _context.FinancialUserCashHistories
-                        .Where(p => p.FinancialUserCashId == i.Id)
-                        .Select(p => (Enumes.HospitalOroprationtyp?)p.HospitalOroprationtyp)
-                        .FirstOrDefault() ?? default(Enumes.HospitalOroprationtyp),
-                    CreationTime = i.CreationTime,
-                    PaymentStatus = (Enumes.PaymentStatus)i.PaymentStatus,
-                    PayedTotalAmount = i.PayedTotalAmount
-                })
-                .OrderBy(g => g.Id);
-
+    .Where(i =>
+        (i.PayedTotalAmount == criteria.payedAmount || criteria.payedAmount == 0 || criteria.payedAmount == null)
+        && (criteria.CreationTime == new DateTime(1, 1, 1) || i.CreationTime.Date == criteria.CreationTime)
+    )
+    .Select(i => new FinancialUserCashHistoryVM
+    {
+        Id = i.Id,
+        HospitalaoOrprationtyp = _context.FinancialUserCashHistories
+            .Where(p => p.FinancialUserCashId == i.Id)
+            .Select(p => (Enumes.HospitalOroprationtyp?)p.HospitalOroprationtyp)
+            .FirstOrDefault() ?? default(Enumes.HospitalOroprationtyp),
+        CreationTime = i.CreationTime,
+        PaymentStatus = (Enumes.PaymentStatus)i.PaymentStatus,
+        PayedTotalAmount = i.PayedTotalAmount
+    })
+    .OrderBy(g => g.CreationTime);
             // Provide a default value for PageNumber if it's null
             int pageNumber = criteria.PageNumber ?? 1;
 
             var pagedList = GetPagedData(queryable, pageNumber);
 
             return pagedList;
-        
 
-          
+
+
 
 
         }
+
 
         public bool DeleteFinancialUserCashHistories(int id, int payedTotalAmount, int frercahid, int productid)
         {

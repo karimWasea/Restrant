@@ -163,38 +163,136 @@ namespace Servess
         }
 
 
+        //public IPagedList<NotPayedmoneyHistoryVM> SearchNotPayedmoney2(NotPayedmoneyHistoryVM criteria)
+        //{
+        //    var queryable = _context.NotPayedmoney
+        //        .Include(i => i.NotPayedmoneyHistory)
+        //            .ThenInclude(nph => nph.UserNotPayedmoney)
+        //        .Where(i =>
+        //            (criteria.PaymentStatus == 0 || i.PaymentStatus == (int)criteria.PaymentStatus)
+        //        &&
+        //        (i.NotPayedmoneyHistory.FirstOrDefault().HospitalaoOrprationtyp == (int)criteria.HospitalaoOrprationtyp || criteria.HospitalaoOrprationtyp == 0) &&
+        //        (criteria.UserNotPayedmoneyName == null || criteria.UserNotPayedmoneyName == string.Empty || i.NotPayedmoneyHistory.Any(nph => nph.UserNotPayedmoney.FullCustumName.Contains(criteria.UserNotPayedmoneyName)))
+        //        )
+        //        .Select(i => new NotPayedmoneyHistoryVM
+        //        {
+        //            Id = i.Id,
+        //            HospitalaoOrprationtyp = (Enumes.HospitalOroprationtyp)(i.NotPayedmoneyHistory.FirstOrDefault().HospitalaoOrprationtyp),
+        //            UserNotPayedmoneyName = i.NotPayedmoneyHistory.FirstOrDefault().UserNotPayedmoney.FullCustumName ?? "",
+        //            CreationTime = i.CreationTime,
+        //            TotalNotpayedAmount = i.TotalNotpayedAmount,
+        //            ChangedByUserId = i.ChangedByUserId,
+        //            TotalPayedAmount = i.TotalPayedAmount,
+        //            PaymentStatus = (Enumes.PaymentStatus)i.PaymentStatus,
+        //            UserNotPayedmoneyId = i.NotPayedmoneyHistory.FirstOrDefault().UserNotPayedmoney.Id ?? ""
+        //        })
+        //        .OrderBy(g => g.Id);
+
+        //    // Provide a default value for PageNumber if it's null
+        //    int pageNumber = criteria.PageNumber ?? 1;
+
+        //    var pagedList = GetPagedData(queryable, pageNumber);
+
+        //    return pagedList;
+        //}
+
+
+
+
+
         public IPagedList<NotPayedmoneyHistoryVM> SearchNotPayedmoney(NotPayedmoneyHistoryVM criteria)
         {
-            var queryable = _context.NotPayedmoney
-                .Include(i => i.NotPayedmoneyHistory)
-                    .ThenInclude(nph => nph.UserNotPayedmoney)
-                .Where(i =>
-                    (criteria.PaymentStatus == 0 || i.PaymentStatus == (int)criteria.PaymentStatus)
-                &&
-                (i.NotPayedmoneyHistory.FirstOrDefault().HospitalaoOrprationtyp == (int)criteria.HospitalaoOrprationtyp || criteria.HospitalaoOrprationtyp == 0) &&
-                (criteria.UserNotPayedmoneyName == null || criteria.UserNotPayedmoneyName == string.Empty || i.NotPayedmoneyHistory.Any(nph => nph.UserNotPayedmoney.FullCustumName.Contains(criteria.UserNotPayedmoneyName)))
-                )
-                .Select(i => new NotPayedmoneyHistoryVM
-                {
-                    Id = i.Id,
-                    HospitalaoOrprationtyp = (Enumes.HospitalOroprationtyp)(i.NotPayedmoneyHistory.FirstOrDefault().HospitalaoOrprationtyp  ),
-                    UserNotPayedmoneyName = i.NotPayedmoneyHistory.FirstOrDefault().UserNotPayedmoney.FullCustumName ?? "",
-                    CreationTime = i.CreationTime,
-                    TotalNotpayedAmount = i.TotalNotpayedAmount,
-                    ChangedByUserId = i.ChangedByUserId,
-                    TotalPayedAmount = i.TotalPayedAmount,
-                    PaymentStatus = (Enumes.PaymentStatus)i.PaymentStatus,
-                    UserNotPayedmoneyId = i.NotPayedmoneyHistory.FirstOrDefault().UserNotPayedmoney.Id ?? ""
-                })
-                .OrderBy(g => g.Id);
+            var queryable = from notPayed in _context.NotPayedmoney
+                            join history in _context.NotPayedmoneyHistory on notPayed.Id equals history.NotPayedmoneyId
+                            join userNotPayed in _context.Users on history.UserNotPayedmoneyId equals userNotPayed.Id
+                              into userNotPayed2
+                            from userNotPayed in userNotPayed2.DefaultIfEmpty()
+                            where
+                            (criteria.PaymentStatus == 0 || notPayed.PaymentStatus == (int)criteria.PaymentStatus)
+                            &&
+                                  (string.IsNullOrEmpty(criteria.UserNotPayedmoneyName) || userNotPayed.FullCustumName.Contains(criteria.UserNotPayedmoneyName))
+                                  &&
+                                  (criteria.HospitalaoOrprationtyp == 0 || history.HospitalaoOrprationtyp == (int)criteria.HospitalaoOrprationtyp)
+                            select new NotPayedmoneyHistoryVM
+                            {
+                                Id = notPayed.Id,
+                                HospitalaoOrprationtyp = (Enumes.HospitalOroprationtyp)history.HospitalaoOrprationtyp,
+                                UserNotPayedmoneyName = userNotPayed.FullCustumName ?? "",
+                                CreationTime = notPayed.CreationTime,
+                                TotalNotpayedAmount = notPayed.TotalNotpayedAmount,
+                                ChangedByUserId = notPayed.ChangedByUserId,
+                                TotalPayedAmount = notPayed.TotalPayedAmount,
+                                PaymentStatus = (Enumes.PaymentStatus)notPayed.PaymentStatus,
+                                UserNotPayedmoneyId = userNotPayed.Id ?? ""
+                            };
 
-            // Provide a default value for PageNumber if it's null
+            // Apply ordering
+            queryable = queryable.OrderBy(g => g.Id);
+
+            // Get the page number from criteria, default to 1 if not provided
             int pageNumber = criteria.PageNumber ?? 1;
 
+            // Get paginated data
             var pagedList = GetPagedData(queryable, pageNumber);
 
             return pagedList;
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //public IPagedList<NotPayedmoneyHistoryVM> SearchNotPayedmoney(NotPayedmoneyHistoryVM criteria)
+        //{
+        //    var queryable = from userNotPayed in _context.Users
+        //                    join history in _context.NotPayedmoneyHistory on userNotPayed.Id equals history.UserNotPayedmoneyId into userHistory
+        //                    from history in userHistory.DefaultIfEmpty()
+        //                    join notPayed in _context.NotPayedmoney on history.NotPayedmoneyId equals notPayed.Id into notPayedHistory
+        //                    from notPayed in notPayedHistory.DefaultIfEmpty()
+        //                    where
+        //                        (criteria.PaymentStatus == 0 || notPayed.PaymentStatus == (int)criteria.PaymentStatus) &&
+        //                        (string.IsNullOrEmpty(criteria.UserNotPayedmoneyName) || userNotPayed.FullCustumName.Contains(criteria.UserNotPayedmoneyName)) &&
+        //                        (criteria.HospitalaoOrprationtyp == 0 || history.HospitalaoOrprationtyp == (int)criteria.HospitalaoOrprationtyp)
+        //                    select new NotPayedmoneyHistoryVM
+        //                    {
+        //                        Id = notPayed != null ? notPayed.Id : 0,
+        //                        HospitalaoOrprationtyp = history != null ? (Enumes.HospitalOroprationtyp)history.HospitalaoOrprationtyp : default,
+        //                        UserNotPayedmoneyName = userNotPayed.FullCustumName ?? "",
+        //                        CreationTime = notPayed != null ? notPayed.CreationTime : DateTime.MinValue,
+        //                        TotalNotpayedAmount = notPayed != null ? notPayed.TotalNotpayedAmount : 0.0m,
+        //                        ChangedByUserId = notPayed != null ? notPayed.ChangedByUserId : "",
+        //                        TotalPayedAmount = notPayed != null ? notPayed.TotalPayedAmount : 0.0m,
+        //                        PaymentStatus = notPayed != null ? (Enumes.PaymentStatus)notPayed.PaymentStatus : default,
+        //                        UserNotPayedmoneyId = userNotPayed.Id
+        //                    };
+
+        //    // Apply ordering
+        //    queryable = queryable.OrderBy(g => g.Id);
+
+        //    // Get the page number from criteria, default to 1 if not provided
+        //    int pageNumber = criteria.PageNumber ?? 1;
+
+        //    // Get paginated data
+        //    var pagedList = GetPagedData(queryable, pageNumber);
+
+        //    return pagedList;
+        //}
+
+
+        // Method to get paginated data
+
 
 
 

@@ -33,7 +33,7 @@ namespace Caffiee.Areas.Admin.Controllers
         [HttpGet]
 
         public IActionResult Index(NotPayedmoneyHistoryVM Entity, int? page )
-        {
+         {
 
             Entity.PageNumber = page ?? 1;
             ViewBag.AllUsers = _unitOfWork._Ilookup.Users();

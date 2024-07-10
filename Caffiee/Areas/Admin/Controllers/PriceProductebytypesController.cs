@@ -380,6 +380,8 @@ namespace Caffiee.Areas.Admin.Controllers
  
          public IActionResult FreeFinancialUserCash(CustomerType CustomerType  )
         {
+            ViewBag.UsersLists = _unitOfWork._Ilookup.Users(CustomerType.OtherPeople);
+
             var Entity = new PriceProductebytypesVM();
 
             if (!_unitOfWork._PriceProductebytypes.checkedifShopingCaterCashHistoryHavedata())
@@ -400,6 +402,8 @@ namespace Caffiee.Areas.Admin.Controllers
 
         public IActionResult FreeShopingCaterCashHistoryToNotpayed(CustomerType CustomerType )
         {
+            ViewBag.UsersLists = _unitOfWork._Ilookup.Users(CustomerType.OtherPeople);
+
             var Entity = new PriceProductebytypesVM();
 
             if (!_unitOfWork._PriceProductebytypes.checkedifhopingCaterNotpayedHavedata())
