@@ -52,8 +52,10 @@ namespace Servess
                 return false;
 
             }
-            queryable.TotalNotpayedAmount -= criteria.payedAmount;
-            queryable.TotalPayedAmount += criteria.payedAmount;
+                var Decpayed = queryable.TotalNotpayedAmount - criteria.payedAmount;
+            queryable.TotalNotpayedAmount = Decpayed;
+            var incPayed = queryable.TotalPayedAmount + criteria.payedAmount;
+            queryable.TotalPayedAmount = incPayed;
             if (queryable.TotalNotpayedAmount == 0)
             {
                 queryable.PaymentStatus = (int)Enumes.PaymentStatus.Paid;
@@ -204,15 +206,20 @@ namespace Servess
         {
             var queryable = from notPayed in _context.NotPayedmoney
                             join history in _context.NotPayedmoneyHistory on notPayed.Id equals history.NotPayedmoneyId
-                            join userNotPayed in _context.Users on history.UserNotPayedmoneyId equals userNotPayed.Id
-                              into userNotPayed2
-                            from userNotPayed in userNotPayed2.DefaultIfEmpty()
+
+
+                            //join userNotPayed in _context.Users on history.UserNotPayedmoneyId equals userNotPayed.Id
+                            //  into userNotPayed2
+                            //from userNotPayed in userNotPayed2.DefaultIfEmpty()
+                             let userNotPayed = _context.Users.FirstOrDefault(I=>I.Id== history.UserNotPayedmoneyId )
                             where
                             (criteria.PaymentStatus == 0 || notPayed.PaymentStatus == (int)criteria.PaymentStatus)
                             &&
-                                  (string.IsNullOrEmpty(criteria.UserNotPayedmoneyName) || userNotPayed.FullCustumName.Contains(criteria.UserNotPayedmoneyName))
+                                  (history.UserNotPayedmoneyId == criteria.UserNotPayedmoneyId || criteria.UserNotPayedmoneyId==null)
                                   &&
                                   (criteria.HospitalaoOrprationtyp == 0 || history.HospitalaoOrprationtyp == (int)criteria.HospitalaoOrprationtyp)
+                                          && (criteria.CreationTime == new DateTime(1, 1, 1) || notPayed.CreationTime.Date == criteria.CreationTime)
+
                             select new NotPayedmoneyHistoryVM
                             {
                                 Id = notPayed.Id,
@@ -227,7 +234,7 @@ namespace Servess
                             };
 
             // Apply ordering
-            queryable = queryable.OrderBy(g => g.Id);
+            queryable = queryable.OrderBy(g => g.CreationTime.Day).Distinct();
 
             // Get the page number from criteria, default to 1 if not provided
             int pageNumber = criteria.PageNumber ?? 1;
@@ -238,6 +245,64 @@ namespace Servess
             return pagedList;
         }
 
+
+
+        public IPagedList<NotPayedmoneyHistoryVM> SearchNotPayedmoneyOneUser(NotPayedmoneyHistoryVM criteria)
+        {
+
+
+
+
+            if (criteria.PaymentStatus == 0)
+                criteria.PaymentStatus =Enumes.PaymentStatus.NotPaid;
+
+              var queryable =  
+                            from history in _context.NotPayedmoneyHistory
+
+                                //join userNotPayed in _context.Users on history.UserNotPayedmoneyId equals userNotPayed.Id
+                            let notpayed = _context.NotPayedmoney.FirstOrDefault(i => i.Id == history.NotPayedmoneyId) 
+                            
+                            let userNotPayed = _context.Users.FirstOrDefault(i => i.Id == history.UserNotPayedmoneyId)
+                            where
+                            (criteria.PaymentStatus == 0 || notpayed.PaymentStatus == (int)criteria.PaymentStatus)
+                            &&
+                                  (history.UserNotPayedmoneyId == criteria.UserNotPayedmoneyId)
+
+                            //&& (criteria.CreationTime == new DateTime(1, 1, 1) || history.CreationTime.Date == criteria.CreationTime)
+
+                            select new NotPayedmoneyHistoryVM
+                            {
+                                 HospitalaoOrprationtyp = (Enumes.HospitalOroprationtyp)history.HospitalaoOrprationtyp,
+                                UserNotPayedmoneyName = userNotPayed.FullCustumName ?? "",
+                                CreationTime = history.CreationTime,
+                                PaymentStatus = (Enumes.PaymentStatus)notpayed.PaymentStatus,
+                                UserNotPayedmoneyId = userNotPayed.Id ?? "",
+                                Qantity = history.Qantity,
+                                totalpricforanyproduct = (_context.NotPayedmoneyHistoryPriceProductebytypes
+                                .Where(pp => pp.NotPayedmoneyHistoryid == history.Id)
+                                .Select(pp => (decimal?)pp.PriceProductebytypes.price)
+                                .FirstOrDefault() ?? 0) * history.Qantity,
+                                TotalNotpayedAmount = notpayed.TotalNotpayedAmount,
+                                TotalPayedAmount = notpayed.TotalPayedAmount,
+
+                                productName = _context.NotPayedmoneyHistoryPriceProductebytypes
+                                .Where(pp => pp.NotPayedmoneyHistoryid == history.Id)
+                                .Select(pp =>
+                                pp.PriceProductebytypes.Product.ProductName)
+                                .FirstOrDefault() ?? "",
+                            };
+
+            // Apply ordering
+            //queryable = queryable.OrderBy(g => g.CreationTime.Day).Distinct();
+
+            // Get the page number from criteria, default to 1 if not provided
+            int pageNumber = criteria.PageNumber ?? 1;
+
+            // Get paginated data
+            var pagedList = GetPagedData(queryable, pageNumber);
+
+            return pagedList;
+        }
 
 
 
@@ -317,8 +382,7 @@ namespace Servess
                             NotPayedmoneyId = i.NotPayedmoneyId,
                             Qantity = i.Qantity,
                              payedAmount= i.payedAmount,
-                              TotalNotpayedAmount=i.NotPayedmoneys.TotalNotpayedAmount,
-
+                                TotalNotpayedAmount=i.NotPayedmoneys.TotalNotpayedAmount,
                              productName = _context.NotPayedmoneyHistoryPriceProductebytypes
                 .Where(pp => pp.NotPayedmoneyHistoryid == i.Id)
                 .Select(pp =>

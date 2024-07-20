@@ -354,13 +354,29 @@
         <div>
 
             <div class="form-group col-md-4">
+                <label for="CreationTime">تاريخ الإنشاء</label>
+                <input type="date" class="form-control" name="CreationTime" id="CreationTime" />
+            </div>
+
+
+
+
+
+
+@* 
+            <div class="form-group col-md-4">
                 <label for="UserNotPayedmoneyName">بحث</label>
                 <input type="text" class="form-control" name="UserNotPayedmoneyName" placeholder="Search..." aria-label="Search" id="UserNotPayedmoneyName">
             </div>
-           
+            *@
 
 
             <div class="form-group col-md-4">
+                <label for="UserNotPayedmoneyId"> اسم العميل    </label>
+                <select name="UserNotPayedmoneyId" class="form-select" asp-items="@ViewBag.AllUsers" aria-required="true">
+                    <option value="">  الاسم</option>
+                </select>
+            </div>   <div class="form-group col-md-4">
                 <label for="HospitalaoOrprationtyp">ابحث   المستشفى</label>
                 <select name="HospitalaoOrprationtyp" class="form-select" asp-items="@ViewBag.HospitalOroprationtyp" aria-required="true">
                     <option value=""> بحث المستشفى</option>

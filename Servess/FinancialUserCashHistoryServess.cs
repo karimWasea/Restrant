@@ -196,7 +196,7 @@ namespace Servess
         PaymentStatus = (Enumes.PaymentStatus)i.PaymentStatus,
         PayedTotalAmount = i.PayedTotalAmount
     })
-    .OrderBy(g => g.CreationTime);
+    .OrderBy(g => g.CreationTime.Day);
             // Provide a default value for PageNumber if it's null
             int pageNumber = criteria.PageNumber ?? 1;
 

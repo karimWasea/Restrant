@@ -23,9 +23,19 @@
 
             <div class="form-row justify-content-center">
                 <div class="col-md-4">
-                    <button class="btn btn-primary w-100" type="submit" style="font-size: 1.2rem;">عرض</button>
+                    <button class="btn btn-primary w-100" type="submit" style="font-size: 1.2rem;">عرض</button>   
+                    <a asp-action="SearchNotPayedmoneyOneUser" asp-controller="NotPayedmoneyHistory" asp-area="Admin" asp-route-UserNotPayedmoneyId="NotpayedUserid" class="btn btn-primary  " style="font-size: 1.4rem; width:420PX;"> تفاصيل الفاتوره</a>
+ 
                 </div>
+
             </div>
+ 
+
+
+
+
+
+
         </form>
         <img src="~/Images/WhatsApp Image 2024-06-23 at 18.02.40_35881d78.jpg" class="circular-img" width="100" style="margin-right:500px;" />
 
@@ -57,10 +67,11 @@
                 </div>
             </div>
         </div>
-
+        <br />
         <div class="form-row justify-content-center mt-4">
             <div class="col-md-4">
-                <a asp-action="EnDDebiteForHospital" asp-controller="PriceProductebytypes" asp-area="Admin" class="btn btn-primary w-100" style="font-size: 1.2rem;">انهاء الفواتير غير المدفوعه المستشفى</a>
+                
+                <a asp-action="SearchNotPayedmoneyOneUser" asp-controller="NotPayedmoneyHistory" asp-area="Admin" class="btn btn-primary w-100" style="font-size: 1.2rem;">انهاء الفواتير غير المدفوعه المستشفى</a>
             </div>
         </div>
     </div>
@@ -138,6 +149,37 @@
                 showAlert("حدث خطأ أثناء إنهاء الدين.");
             });
     }
+
+
+
+
+
+
+    function Details() {
+        const userId = document.getElementById('NotpayedUserid').value;
+
+        fetch(`/Admin/NotPayedmoneyHistory/SearchNotPayedmoneyOneUser?UserNotPayedmoneyId=${userId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                // Handle the received data here
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+
+
+
+
+
+
+
+
 
     function closeConfirmationDialog() {
         var confirmationDialog = document.querySelector('.centered-confirm');

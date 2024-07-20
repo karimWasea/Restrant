@@ -85,6 +85,7 @@
                                 <div class="dropdown-menu" aria-labelledby="settingsDropdown">
                                     <a class="dropdown-item" asp-area="Admin" asp-controller="PriceProductebytypes" asp-action="Index">اعدادات الاسعار</a>
                                     <a class="dropdown-item" asp-area="Admin" asp-controller="Product" asp-action="Index">اعدادات المنتجات</a>
+                                    <a class="dropdown-item" asp-area="Admin" asp-controller="NotPayedmoneyHistory" asp-action="SearchNotPayedmoneyOneUser">   تفاصيل الدين على العميل</a>
                                 </div>
                             </li>
                             if (User.IsInRole(C_Utilities.ConstsntValuse.SuperAdmin))

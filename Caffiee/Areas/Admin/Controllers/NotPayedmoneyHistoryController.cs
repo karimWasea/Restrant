@@ -42,6 +42,29 @@ namespace Caffiee.Areas.Admin.Controllers
             var products = _unitOfWork._NotPayedmoneyHistoryServess.SearchNotPayedmoney(Entity);
             return View(products);
         }
+
+
+
+ 
+        [HttpGet]
+        public IActionResult SearchNotPayedmoneyOneUser(NotPayedmoneyHistoryVM Entity, int? page)
+        {
+            Entity.PageNumber = page ?? 1;
+            ViewBag.AllUsers = _unitOfWork._Ilookup.Users();
+            ViewBag.GetPaymentStatus = _unitOfWork._Ilookup.GetPaymentStatus();
+            ViewBag.HospitalOroprationtyp = _unitOfWork._Ilookup.HospitalOroprationtyp();
+            var products = _unitOfWork._NotPayedmoneyHistoryServess.SearchNotPayedmoneyOneUser(Entity);
+             return View(  products);  // Return a new view with the result
+        }
+
+
+
+
+
+
+
+
+
         [HttpGet]
         public IActionResult PrintHospital(NotPayedmoneyHistoryVM Entity, int? page )
         {

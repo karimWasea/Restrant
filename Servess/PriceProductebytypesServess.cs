@@ -586,10 +586,28 @@ namespace Servess
             {
                   if(!string.IsNullOrEmpty(entity.NotpayedUserid))
                 {
-                    entity.totalDibte = _context.NotPayedmoneyHistory
-                                   .Where(u => (u.UserNotPayedmoneyId == entity.NotpayedUserid || entity.NotpayedUserid == null)
-                                               && (u.NotPayedmoneys.PaymentStatus == (int)PaymentStatus.NotPaid  ))
-                                   .Sum(i => (decimal?)i.NotpayedAmount) ?? 0;
+                    //entity.totalDibte = _context.NotPayedmoneyHistory
+                    //               .Where(u => (u.UserNotPayedmoneyId == entity.NotpayedUserid || entity.NotpayedUserid == null)
+                    //                           && (u.NotPayedmoneys.PaymentStatus == (int)PaymentStatus.NotPaid  ))
+                    //               .Sum(i => (decimal?)i.NotpayedAmount) ?? 0;
+                    // Define a meaningful variable name for the context
+                    var notPayedMoneyHistory = _context.NotPayedmoneyHistory;
+
+                    // Filter the records based on the condition
+                    var filteredRecords = notPayedMoneyHistory
+                        .Where(u => (u.UserNotPayedmoneyId == entity.NotpayedUserid || entity.NotpayedUserid == null)
+                                    && u.NotPayedmoneys.PaymentStatus == (int)PaymentStatus.NotPaid);
+
+                    // Select the relevant information
+                    var selectedNotPayedMoneys = filteredRecords.Select(i => i.NotPayedmoneys);
+
+                    // Sum the total not payed amount, handling null values
+                    entity.totalDibte = selectedNotPayedMoneys.Sum(i => (decimal?)i.TotalNotpayedAmount) ?? 0;
+
+
+
+
+
                     entity.NotpayedUserName = _user.Users.FirstOrDefault(p => p.Id == entity.NotpayedUserid).FullCustumName ?? "";
                     return entity;
 

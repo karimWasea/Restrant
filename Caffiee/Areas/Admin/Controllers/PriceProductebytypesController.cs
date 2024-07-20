@@ -53,8 +53,7 @@ namespace Caffiee.Areas.Admin.Controllers
         {
             ViewBag.CustomerType = Entity.CustomerType;
             ViewBag.productId = Entity.Id;
-            Entity.ProductName = Entity.ProductName.Replace(" ", ""); // Remove spaces from ProductName
-            ViewBag.UsersLists = _unitOfWork._Ilookup.Users(Entity.CustomerType);
+             ViewBag.UsersLists = _unitOfWork._Ilookup.Users(Entity.CustomerType);
             ViewBag.HospitalOroprationtypLists = _unitOfWork._Ilookup.HospitalOroprationtyp();
             Entity.PageNumber = page ?? 1;
             var Entitys = _unitOfWork._PriceProductebytypes.SearchForTypes(Entity);
