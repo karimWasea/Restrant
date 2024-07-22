@@ -12,7 +12,7 @@ namespace Servess
         {
 
 
-            int pageSize = 100; // Set the page size to 10
+            int pageSize = 700; // Set the page size to 10
             int totalItemCount = data.Count();
             int totalPages = (int)Math.Ceiling(totalItemCount / (double)pageSize);
 
