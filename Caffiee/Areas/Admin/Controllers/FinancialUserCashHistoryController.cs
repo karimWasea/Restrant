@@ -17,7 +17,7 @@ namespace Caffiee.Areas.Admin.Controllers
     [Area(ConstsntValuse.Admin)]
     //[Authorize(Roles = ConstsntValuse.SuperAdmin)]
     [Authorize(Roles = $"{ConstsntValuse.SuperAdmin},{ConstsntValuse.SalessManger}")]
-
+     
     public class FinancialUserCashHistoryController :  BaseController
     {
         Imgoperation Imgoperation;
@@ -28,7 +28,7 @@ namespace Caffiee.Areas.Admin.Controllers
         {
             Imgoperation=imgoperation;
         }
-
+         
         // GET: Products
         [HttpGet]
 
@@ -36,7 +36,7 @@ namespace Caffiee.Areas.Admin.Controllers
         {
 
             Entity.PageNumber = page ?? 1;
-         
+            ViewBag.totalldaycash = _unitOfWork._iFinancialUserCashHistoryServess.CalCCashByDay();
             var products = _unitOfWork._iFinancialUserCashHistoryServess.SearchFinancialUserCashH(Entity);
             return View(products);
         }

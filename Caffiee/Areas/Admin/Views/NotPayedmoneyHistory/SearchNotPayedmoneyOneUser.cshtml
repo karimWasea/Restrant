@@ -52,10 +52,11 @@
             <th>   اسم المنتج</th>
 
             <th>الكميه</th>
-             <th>    اجمالى الفاتوره</th>
-             <th>   المدفوع  </th>
-             <th>   المتبقى  </th>
-            <th> تم الدفع </th>
+             <th>   الحاله</th>
+            <th>    اجمالى الفاتوره</th>
+
+           @*   <th>   المتبقى  </th>
+            <th> تم الدفع </th> *@
             <th>  التاريخ</th>
 
         </tr>
@@ -74,22 +75,30 @@
                     @item.productName
                  </td>
                 <td>@item.Qantity</td>
-                <td>@item.totalpricforanyproduct</td>
-                <td>@item.TotalPayedAmount</td>
-                <td>@item.TotalNotpayedAmount</td>
+              @*   <td>@item.TotalPayedAmount</td>
+                <td>@item.TotalNotpayedAmount</td> *@
                 <td>@Servess.DescriptionEnum.GetDescription(item.PaymentStatus)</td>
+                <td>@item.totalpricforanyproduct</td>
+
                 <td>@item.CreationTime</td>
          
             </tr>
         }
+
     <tfoot>
         <tr>
-            <td colspan="5">الإجمالي:</td>
-            <td>@(Model?.Sum(i => i.TotalNotpayedAmount) ?? 0) جنيه</td>
+            <td colspan="4">المدفوع:</td>
+            <td>@ViewBag.TotalPayedAmount جنيه</td>
+            <td colspan="2"></td>
+        </tr>
+        <tr>
+            <td colspan="4">الإجمالي:</td>
+            <td>@ViewBag.TotalNotpayedAmount   جنيه</td>
             <td colspan="2"></td>
         </tr>
     </tfoot>
-    </tbody>
+
+      </tbody>
 </table>
 
 <div id="buttonprint" class="text-center mt-4">

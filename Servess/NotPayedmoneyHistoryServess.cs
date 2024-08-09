@@ -253,8 +253,7 @@ namespace Servess
 
 
 
-            if (criteria.PaymentStatus == 0)
-                criteria.PaymentStatus =Enumes.PaymentStatus.NotPaid;
+        
 
               var queryable =  
                             from history in _context.NotPayedmoneyHistory
@@ -282,8 +281,8 @@ namespace Servess
                                 .Where(pp => pp.NotPayedmoneyHistoryid == history.Id)
                                 .Select(pp => (decimal?)pp.PriceProductebytypes.price)
                                 .FirstOrDefault() ?? 0) * history.Qantity,
-                                TotalNotpayedAmount = notpayed.TotalNotpayedAmount,
-                                TotalPayedAmount = notpayed.TotalPayedAmount,
+                                TotalNotpayedAmount = _context.NotPayedmoney.Where(i => i.Id == history.NotPayedmoneyId) .Sum(i=>i. TotalNotpayedAmount)??0,
+                                TotalPayedAmount = _context.NotPayedmoney.Where(i => i.Id == history.NotPayedmoneyId).Sum(i => i.TotalPayedAmount)??0,
 
                                 productName = _context.NotPayedmoneyHistoryPriceProductebytypes
                                 .Where(pp => pp.NotPayedmoneyHistoryid == history.Id)

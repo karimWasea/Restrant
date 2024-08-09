@@ -379,6 +379,15 @@ namespace Servess
             }
         }
 
+        public decimal ?CalCCashByDay()
+        {
+            var totalPayment = _context.FinancialUserCash
+                .Where(i => i.CreationTime.Date == DateTime.Today)
+                .Sum(i => i.PayedTotalAmount); // Assuming 'PaymentTotal' is the field you want to sum up
+
+            // Assuming you want to return true if there is any payment total calculated
+            return totalPayment;
+        }
 
     }
 }

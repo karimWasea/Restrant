@@ -39,6 +39,7 @@ namespace Interfaces
 
          bool DeleteFinancialUserCash(int id);
         public bool Salesreturns(int id);
+        public decimal? CalCCashByDay();
 
         IPagedList<FinancialUserCashHistoryVM> SearchFinancialUserCashH(FinancialUserCashHistoryVM criteria);
 

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.CodeAnalysis;
+using Microsoft.EntityFrameworkCore;
 
 using Servess;
 
@@ -53,6 +54,22 @@ namespace Caffiee.Areas.Admin.Controllers
             ViewBag.AllUsers = _unitOfWork._Ilookup.Users();
             ViewBag.GetPaymentStatus = _unitOfWork._Ilookup.GetPaymentStatus();
             ViewBag.HospitalOroprationtyp = _unitOfWork._Ilookup.HospitalOroprationtyp();
+            ViewBag.HospitalOroprationtyp = _unitOfWork._Ilookup.HospitalOroprationtyp();
+            ViewBag.HospitalOroprationtyp = _unitOfWork._Ilookup.HospitalOroprationtyp();
+            var notPayedMoneyIds = _unitOfWork._context.NotPayedmoneyHistory
+         .Where(i => i.UserNotPayedmoneyId == Entity.UserNotPayedmoneyId)
+         .Select(i => i.NotPayedmoneyId)
+         .Distinct(); // Ensure no duplicate IDs
+            if (Entity.PaymentStatus == 0)
+                Entity.PaymentStatus = Enumes.PaymentStatus.NotPaid;
+            var notPayedMoney = _unitOfWork._context.NotPayedmoney
+                .Where(i => notPayedMoneyIds.Contains(i.Id) &&
+                           (Entity.PaymentStatus == 0 || i.PaymentStatus == (int)Entity.PaymentStatus));
+
+            ViewBag.TotalNotpayedAmount = notPayedMoney.Sum(i => i.TotalNotpayedAmount) ?? 0;
+            ViewBag.TotalPayedAmount = notPayedMoney.Sum(i => i.TotalPayedAmount) ?? 0;
+
+
             var products = _unitOfWork._NotPayedmoneyHistoryServess.SearchNotPayedmoneyOneUser(Entity);
              return View(  products);  // Return a new view with the result
         }
