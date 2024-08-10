@@ -389,5 +389,22 @@ namespace Servess
             return totalPayment;
         }
 
+
+
+
+        public (decimal? TotalPayment, decimal? TotalNotPayed) GetPaymentTotalForDay(DateTime specificDate)
+        {
+            var totalPayment = _context.FinancialUserCash
+                .Where(i => i.CreationTime.Date == specificDate.Date)
+                .Sum(i => (decimal?)i.PayedTotalAmount) ?? 0;
+
+            var totalPaymentNotpayed = _context.NotPayedmoney
+                .Where(i => i.CreationTime.Date == specificDate.Date)
+                .Sum(i => (decimal?)i.TotalNotpayedAmount) ?? 0;
+
+            return (totalPayment, totalPaymentNotpayed);
+        }
+
+
     }
 }

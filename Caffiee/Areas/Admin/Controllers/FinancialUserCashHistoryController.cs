@@ -41,6 +41,39 @@ namespace Caffiee.Areas.Admin.Controllers
             return View(products);
         }
 
+
+
+
+        [HttpGet]
+        public IActionResult SearchedByDay(DateTime? dayDate)
+        {
+            var model = new PaymentTotalandNotpayMoyPaymentTotalByDay();
+
+            // If dayDate is null, default it to today's date
+            if (dayDate == null || !dayDate.HasValue)
+            {
+                dayDate = DateTime.Today;
+            }
+
+            // Proceed with the logic since dayDate now has a value
+            var result = _unitOfWork._iFinancialUserCashHistoryServess.GetPaymentTotalForDay(dayDate.Value);
+            model.totalcash = result.TotalPayment;
+            model.totalNotpayed = result.TotalNotPayed;
+            model.Sumforday = (result.TotalPayment ?? 0) + (result.TotalNotPayed ?? 0);
+            model.Seacheday = dayDate; // Assign the date to the SearchedDate property
+
+            return View(model);
+        }
+
+
+
+
+
+
+
+
+
+
         [HttpGet]
         public IActionResult Salesreturns(int id)
         {

@@ -40,6 +40,7 @@ namespace Interfaces
          bool DeleteFinancialUserCash(int id);
         public bool Salesreturns(int id);
         public decimal? CalCCashByDay();
+        public (decimal? TotalPayment, decimal? TotalNotPayed) GetPaymentTotalForDay(DateTime specificDate);
 
         IPagedList<FinancialUserCashHistoryVM> SearchFinancialUserCashH(FinancialUserCashHistoryVM criteria);
 

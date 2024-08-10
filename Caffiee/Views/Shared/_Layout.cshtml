@@ -108,6 +108,9 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="Admin" asp-controller="NotPayedmoneyHistory" asp-action="PrintHospital">الفاتوره اليوميه للمستشفى</a>
+                            </li>  
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="Admin" asp-controller="FinancialUserCashHistory" asp-action="SearchedByDay"> حسابات الاجل والكاش</a>
                             </li>
                         }
                         @if (User.IsInRole(C_Utilities.ConstsntValuse.SuperAdmin) || User.IsInRole(C_Utilities.ConstsntValuse.SalessManger) || User.IsInRole(C_Utilities.ConstsntValuse.SalesMan))

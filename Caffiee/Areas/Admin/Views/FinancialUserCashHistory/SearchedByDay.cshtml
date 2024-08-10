@@ -1,0 +1,63 @@
+﻿@model Cf_Viewmodels.PaymentTotalandNotpayMoyPaymentTotalByDay
+
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "حسابات الاجل والكاش بالتاريخ";
+}
+
+<h2 class="text-center my-4">@ViewData["Title"]</h2>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="search-form card p-4 shadow-sm">
+                <form asp-action="SearchedByDay" method="get">
+                    <div class="form-group">
+                        <label for="dayDate">التاريخ:</label>
+                        <input type="date" id="dayDate" name="dayDate" class="form-control"
+                               value="@Model.Seacheday?.ToString("yyyy-MM-dd")" required />
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 mt-3">بحث اليوم</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    @if (Model.Seacheday.HasValue)
+    {
+        <div class="result-section mt-5">
+            <div class="card shadow-sm">
+                <div class="card-header text-white bg-primary">
+                    <h3>التاريخ :@Model.Seacheday?.ToString("yyyy-MM-dd")</h3>
+                </div>
+                <div class="card-body">
+                    <p><strong>مجموع الكاش :</strong> @(Model.totalcash.HasValue ? Model.totalcash.Value.ToString("N2") + " جنيه" : " ") </p>
+                    <p><strong>مجموع الاجل:</strong> @(Model.totalNotpayed.HasValue ? Model.totalNotpayed.Value.ToString("N2") + " جنيه" : " ")</p>
+                    <p><strong>المجموع الكلى :</strong> @(Model.Sumforday.HasValue ? Model.Sumforday.Value.ToString("N2") + " جنيه" : " ")</p>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    /* Custom styles for better UX */
+    .search-form {
+        z-index: 10;
+        background-color: #8B4513; /* Brown color */
+        border-radius: 8px;
+    }
+
+    .card-body {
+        background-color: #ad8313 !important; /* Brownish color for card body */
+    }
+
+    .card-header {
+        z-index: 20;
+    }
+
+    .card {
+        margin-top: 20px;
+        z-index: 1;
+    }
+</style>
