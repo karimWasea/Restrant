@@ -594,6 +594,25 @@ namespace Servess
 
         }
 
+        public bool DeleteAllNotPayedmoney(List<int> allIds)
+        {
+            // Retrieve the list of entities corresponding to the given IDs
+            var notPayedMoneyRecords = _context.NotPayedmoneyHistory
+                .Where(record => allIds.Contains(record.Id))
+                .ToList();
 
+            // Remove the retrieved entities from the context
+            _context.NotPayedmoneyHistory.RemoveRange(notPayedMoneyRecords);
+
+            // Save changes to the database
+            _context.SaveChanges();
+
+            return true;
+        }
+
+        public bool DeletLLNotPayedmoney(List<int> Allides)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

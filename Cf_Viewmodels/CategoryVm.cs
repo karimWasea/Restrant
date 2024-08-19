@@ -16,6 +16,12 @@ namespace Cf_Viewmodels
 
 
     }
+    public class SelectedIdsModel
+    {
+        public IEnumerable<int> Allides { get; set; }
+    }
+
+
     public class CategoryVm
     {
         public int? PageNumber { get; set; }

@@ -3,341 +3,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-  @model IEnumerable<Cf_Viewmodels.NotPayedmoneyHistoryVM>
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-
-@{
-    Layout = "_Layout";
-    ViewData["Title"] = "Not Paid Money History";
-}
- 
-<h1 class="centered-text" id="siting">
- عرض الاجل</h1>
-<img src="~/Images/WhatsApp Image 2024-06-23 at 18.02.40_35881d78.jpg" class="circular-img" width="100" style="margin-right:600px;" />
-
-<form method="get" asp-controller="NotPayedmoneyHistory" asp-action="Index" asp-area="Admin" class="mt-4">
-    <div class="form-row justify-content-center">
-        <div>
-            <div class="form-group col-md-4">
-                <label for="UserNotPayedmoneyName">بحث</label>
-                <input type="text" class="form-control" name="UserNotPayedmoneyName" placeholder="Search..." aria-label="Search" id="UserNotPayedmoneyName">
-            </div>
-            <div class="form-group col-md-4">
-                <label for="PaymentStatus">ابحث ب تم الدفع</label>
-                <select name="PaymentStatus" class="form-select" asp-items="@ViewBag.GetPaymentStatus" aria-required="true">
-                    <option value="">الدفع</option>
-                </select>
-            </div>
-            <div class="form-group col-md-4">
-                <label for="HospitalaoOrprationtyp"> المستشفى  </label>
-                <select name="HospitalaoOrprationtyp" class="form-select" asp-items="@ViewBag.HospitalOroprationtyp" aria-required="true">
-                    <option value="">اختر</option>
-                </select>
-            </div>
-        </div>
-    
-        <br />
-        <div class="form-group col-md-4 align-self-end">
-            <button class="btn btn-primary w-100" type="submit">بحث</button>
-        </div>
-    </div>
-</form>
-<br />
- 
-@if (User.IsInRole(C_Utilities.ConstsntValuse.SuperAdmin))
-{
-
-
-<a asp-action="GetDibts" asp-controller="PriceProductebytypes" asp-area="Admin" class="btn btn-primary w-100">
-    عرض مجموع الفواتير</a>}
-
-<table class="table table-striped table-bordered w-100 mx-auto mt-4" style="background-color: #ad8313 !important;">
-    <thead class="thead-dark">
-        <tr>
-            <th>اسم العميل</th>
-             <th>الدين</th>
-            <th>المدفوع</th>
-            <th>الدفع</th>
-            <th>وقت عمل الفاتوره</th>
-            <th class="Save">تعديل الكميه</th>
-            <th class="Save">الحذف من الفاتوره</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-
-                <td>
-                    @if (string.IsNullOrEmpty(item.UserNotPayedmoneyName))
-                    {
-                        @:المستشفى
-                    }
-                    else
-                    {
-                        @item.UserNotPayedmoneyName
-
-                    }
-                </td>
-
-                 <td>@item.TotalNotpayedAmount</td>
-                <td>@item.TotalPayedAmount</td>
-                <td>@Servess.DescriptionEnum.GetDescription(item.PaymentStatus)</td>
-                <td>@item.CreationTime</td>
-                <td class="Save">
-                    @if (item.TotalNotpayedAmount != 0)
-                    {
-                        @if (item.TotalNotpayedAmount != item.TotalPayedAmount)
-                        {
-                            <form method="post" asp-controller="NotPayedmoneyHistory" asp-action="Save" asp-area="Admin" class="form-inline">
-                                <input type="hidden" name="NotpayedAmount" value="@item.NotpayedAmount" />
-                            <input type="hidden" name="Id" value="@item.Id" />
-                                 <input type="number" min="1" class="form-control mr-2" name="payedAmount" placeholder="ادخل الدين" style="width:100px;" />
-                                <button class="btn btn-success" type="submit">تعديل</button>
-                         </form>
-                    }}
-                </td>
-                <td class="Save">
-                    @if (User.IsInRole(C_Utilities.ConstsntValuse.SuperAdmin))
-                    {
-                        <a class="btn btn-danger ml-1" asp-area="Admin" asp-controller="NotPayedmoneyHistory" asp-action="Delete" asp-route-id="@item.Id">حذف</a>
-                    }
-
-                    @if (item.TotalNotpayedAmount != 0)
-                    {
-                        <a class="btn btn-danger ml-1" asp-area="Admin" asp-controller="NotPayedmoneyHistory" asp-action="Salesreturns" asp-route-id="@item.Id">مرتجع</a>
-                    }
-                    <a class="btn btn-info ml-1" asp-area="Admin" asp-controller="NotPayedmoneyHistory" asp-action="SearchNotPayedmoneyHistoryDetails" asp-route-id="@item.Id">تفاصيل</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
-
-<div id="buttonprint" class="text-center mt-4">
-    <button id="printButton" class="btn btn-primary" style="display: none;">طباعة الفاتوره</button>
-</div>
-<partial name="_AlertMessage" />
-
-<partial name="_PaginationPartial" model="Model" />
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        document.getElementById('UserNotPayedmoneyName').addEventListener('keyup', function () {
-            var searchText = this.value.toLowerCase();
-            document.querySelectorAll('.product-card').forEach(function (card) {
-                var titleText = card.querySelector('.card-title').textContent.toLowerCase();
-                card.style.display = titleText.includes(searchText) ? '' : 'none';
-            });
-        });
-        $(document).ready(function () {
-            // Set up the AJAX request to include the anti-forgery token
-            $.ajaxSetup({
-                headers: {
-                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
-                }
-            });
-
-            // Handle the click event for the delete link
-            $('.delete-link').click(function (event) {
-                event.preventDefault(); // Prevent the default link behavior
-
-                var id = $(this).data('id'); // Get the id from the data-id attribute
-                var url = '@Url.Action("Delete", "NotPayedmoneyHistory", new { area = "Admin" })'; // URL to the Delete action
-
-                // Confirm before deleting
-                if (confirm("Are you sure you want to delete this item?")) {
-                    $.ajax({
-                        url: url,
-                        type: 'POST',
-                        data: { id: id },
-                        success: function (response) {
-                            if (response.success) {
-                                alert(response.message);
-                                location.reload(); // Reload the page or remove the item from the DOM
-                            } else {
-                             }
-                        },
-                        error: function (xhr, status, error) {
-                         }
-                    });
-                }
-            });
-        }); $(document).ready(function () {
-            // Set up the AJAX request to include the anti-forgery token
-            $.ajaxSetup({
-                headers: {
-                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
-                }
-            });
-
-            // Handle the click event for the delete link
-            $('.delete-link').click(function (event) {
-                event.preventDefault(); // Prevent the default link behavior
-
-                var id = $(this).data('id'); // Get the id from the data-id attribute
-                var url = '@Url.Action("Salesreturns", "NotPayedmoneyHistory", new { area = "Admin" })'; // URL to the Delete action
-
-                // Confirm before deleting
-                if (confirm("Are you sure you want to delete this item?")) {
-                    $.ajax({
-                        url: url,
-                        type: 'POST',
-                        data: { id: id },
-                        success: function (response) {
-                            if (response.success) {
-                                alert(response.message);
-                                location.reload(); // Reload the page or remove the item from the DOM
-                            } else {
-                                alert(response.message);
-                            }
-                        },
-                        error: function (xhr, status, error) {
-                            alert("An error occurred: " + xhr.responseText);
-                        }
-                    });
-                }
-            });
-        });
-
-
-
-
-
-
-
-
-
-
-
-
-        $(document).ready(function () {
-            // Set up the AJAX request to include the anti-forgery token
-            $.ajaxSetup({
-                headers: {
-                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
-                }
-            });
-
-            // Handle the click event for the delete link
-            $('.delete-link').click(function (event) {
-                event.preventDefault(); // Prevent the default link behavior
-
-                var id = $(this).data('id'); // Get the id from the data-id attribute
-                var url = '@Url.Action("Delete", "NotPayedmoneyHistory", new { area = "Admin" })'; // URL to the Delete action
-
-                // Confirm before deleting
-                if (confirm("Are you sure you want to delete this item?")) {
-                    $.ajax({
-                        url: url,
-                        type: 'POST',
-                        data: { id: id },
-                        success: function (response) {
-                            if (response.success) {
-                                alert(response.message);
-                                location.reload(); // Reload the page or remove the item from the DOM
-                            } else {
-                                alert(response.message);
-                            }
-                        },
-                        error: function (xhr, status, error) {
-                            alert("An error occurred: " + xhr.responseText);
-                        }
-                    });
-                }
-            });
-        });
-    });
-</script>
-
-<style>
-    .form-inline {
-        display: flex;
-        flex-flow: row wrap;
-        align-items: center;
-    }
-
-        .form-inline .form-group {
-            margin-right: 10px;
-        }
-
-    .input-group {
-        width: 100%;
-    }
-
-    .table {
-        width: 100%;
-    }
-
-        .table thead {
-            background-color: #343a40;
-            color: white;
-        }
-
-        .table td, .table th {
-            background-color: #ad8313 !important;
-            text-align: center;
-            vertical-align: middle;
-        }
-</style>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  *@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             @model IEnumerable<Cf_Viewmodels.NotPayedmoneyHistoryVM>
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
@@ -359,16 +24,7 @@
             </div>
 
 
-
-
-
-
-@* 
-            <div class="form-group col-md-4">
-                <label for="UserNotPayedmoneyName">بحث</label>
-                <input type="text" class="form-control" name="UserNotPayedmoneyName" placeholder="Search..." aria-label="Search" id="UserNotPayedmoneyName">
-            </div>
-            *@
+ 
 
 
             <div class="form-group col-md-4">
@@ -457,6 +113,12 @@
                     }
                     <a class="btn btn-info ml-1" asp-area="Admin" asp-controller="NotPayedmoneyHistory" asp-action="SearchNotPayedmoneyHistoryDetails" asp-route-id="@item.Id">تفاصيل</a>
                 </td>
+
+                 <td>
+                     ggg
+                    <input type="checkbox" class="form-control mr-2" name="selectedIds" value="@item.Id" />
+
+                 </td>
             </tr>
         }
     </tbody>
@@ -494,7 +156,7 @@
 
     .form-inline .form-group {
         margin-right: 10px;
-    }
+    } 
 
     .input-group {
         width: 100%;
@@ -503,7 +165,7 @@
     .table {
         width: 100%;
     }
-
+     
     .table thead {
         background-color: #343a40;
         color: white;
@@ -516,3 +178,334 @@
         vertical-align: middle;
     }
 </style>
+ *@
+
+
+
+
+
+
+
+
+
+
+
+ @model IEnumerable<Cf_Viewmodels.NotPayedmoneyHistoryVM>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Not Paid Money History";
+}
+
+<h1 class="centered-text" id="siting">عرض الاجل</h1>
+<img src="~/Images/WhatsApp Image 2024-06-23 at 18.02.40_35881d78.jpg" class="circular-img" width="100" style="margin-right:600px;" />
+
+<form method="get" asp-controller="NotPayedmoneyHistory" asp-action="Index" asp-area="Admin" class="mt-4">
+    <div class="form-row justify-content-center">
+        <div>
+            <!-- Form fields -->
+            <div class="form-group col-md-4">
+                <label for="CreationTime">تاريخ الإنشاء</label>
+                <input type="date" class="form-control" name="CreationTime" id="CreationTime" />
+            </div>
+            <div class="form-group col-md-4">
+                <label for="UserNotPayedmoneyId">اسم العميل</label>
+                <select name="UserNotPayedmoneyId" class="form-select" asp-items="@ViewBag.AllUsers" aria-required="true">
+                    <option value="">الاسم</option>
+                </select>
+            </div>
+            <div class="form-group col-md-4">
+                <label for="HospitalaoOrprationtyp">ابحث المستشفى</label>
+                <select name="HospitalaoOrprationtyp" class="form-select" asp-items="@ViewBag.HospitalOroprationtyp" aria-required="true">
+                    <option value="">بحث المستشفى</option>
+                </select>
+            </div>
+            <div class="form-group col-md-4">
+                <label for="PaymentStatus">ابحث ب تم الدفع</label>
+                <select name="PaymentStatus" class="form-select" asp-items="@ViewBag.GetPaymentStatus" aria-required="true">
+                    <option value="">الدفع</option>
+                </select>
+            </div>
+        </div>
+        <br />
+        <div class="form-group col-md-4 align-self-end">
+            <button class="btn btn-primary w-100" type="submit">بحث</button>
+        </div>
+    </div>
+</form>
+
+<br />
+
+@if (User.IsInRole(C_Utilities.ConstsntValuse.SuperAdmin))
+{
+    <a asp-action="GetDibts" asp-controller="PriceProductebytypes" asp-area="Admin" class="btn btn-primary w-100">عرض مجموع الفواتير</a>
+}
+<br />
+<!-- Button to toggle all checkboxes -->
+  @if(User.IsInRole(C_Utilities.ConstsntValuse.SuperAdmin))
+                    {
+<div>
+    <br />
+
+    <button type="button" id="deleteSelectedButton" class="btn btn-danger mt-3">حذف المحدد</button>
+</div>
+
+                    }
+<table class="table table-striped table-bordered w-100 mx-auto mt-4" style="background-color: #ad8313 !important;">
+    <thead class="thead-dark">
+        <tr>
+            <th>اسم العميل</th>
+            <th>الدين</th>
+            <th>المدفوع</th>
+            <th>الدفع</th>
+            <th>وقت عمل الفاتوره</th>
+            <th class="Save">تعديل الكميه</th>
+            <th class="Save">الحذف من الفاتوره</th>
+            <th>
+                <button type="button" id="toggleAllCheckboxes" class="btn btn-secondary mb-3">تحديد  الكل</button>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @if (string.IsNullOrEmpty(item.UserNotPayedmoneyName))
+                    {
+                        @:المستشفى
+                    }
+                    else
+                    {
+                        @item.UserNotPayedmoneyName
+                    }
+                </td>
+                <td>@item.TotalNotpayedAmount</td>
+                <td>@item.TotalPayedAmount</td>
+                <td>@Servess.DescriptionEnum.GetDescription(item.PaymentStatus)</td>
+                <td>@item.CreationTime</td>
+                <td class="Save">
+                    @if (item.TotalNotpayedAmount != 0 && item.TotalNotpayedAmount != item.TotalPayedAmount)
+                    {
+                        <form method="post" asp-controller="NotPayedmoneyHistory" asp-action="Save" asp-area="Admin" class="form-inline">
+                            <input type="hidden" name="NotpayedAmount" value="@item.NotpayedAmount" />
+                            <input type="hidden" name="Id" value="@item.Id" />
+                            <input type="number" min="1" class="form-control mr-2" name="payedAmount" placeholder="ادخل الدين" style="width:100px;" />
+                            <button class="btn btn-success" type="submit">تعديل</button>
+                        </form>
+                    }
+                </td>
+                <td class="Save">
+                    @if (User.IsInRole(C_Utilities.ConstsntValuse.SuperAdmin))
+                    {
+                        <a class="btn btn-danger ml-1" asp-area="Admin" asp-controller="NotPayedmoneyHistory" asp-action="Delete" asp-route-id="@item.Id">حذف</a>
+                    }
+
+                    @if (item.TotalNotpayedAmount != 0)
+                    {
+                        <a class="btn btn-danger ml-1" asp-area="Admin" asp-controller="NotPayedmoneyHistory" asp-action="Salesreturns" asp-route-id="@item.Id">مرتجع</a>
+                    }
+                    <a class="btn btn-info ml-1" asp-area="Admin" asp-controller="NotPayedmoneyHistory" asp-action="SearchNotPayedmoneyHistoryDetails" asp-route-id="@item.Id">تفاصيل</a>
+                </td>
+                <td>
+                    <input type="checkbox" name="selectedIds" value="@item.Id">
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div id="buttonprint" class="text-center mt-4">
+    <button id="printButton" class="btn btn-primary" style="display: none;">طباعة الفاتوره</button>
+</div>
+
+<partial name="_AlertMessage" />
+<partial name="_PaginationPartial" model="Model" />
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Toggle all checkboxes
+            document.getElementById('toggleAllCheckboxes').addEventListener('click', function () {
+                var checkboxes = document.querySelectorAll('input[name="selectedIds"]');
+                var allChecked = Array.from(checkboxes).every(checkbox => checkbox.checked);
+                checkboxes.forEach(function (checkbox) {
+                    checkbox.checked = !allChecked;
+                });
+            });
+
+            // Handle delete selected button click
+            document.getElementById('deleteSelectedButton').addEventListener('click', function () {
+                var selectedIds = [];
+                document.querySelectorAll('input[name="selectedIds"]:checked').forEach(function (checkbox) {
+                    selectedIds.push(checkbox.value);
+                });
+
+                if (selectedIds.length > 0) {
+                    fetch('/Admin/NotPayedmoneyHistory/DelectSelectedPayments', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                        },
+                        body: JSON.stringify({ Allides: selectedIds })
+                    })
+                        .then(response => {
+                            if (response.ok) {
+                                return response.text(); // Get the HTML content of the full view
+                            } else {
+                                throw new Error('Failed to delete selected items.');
+                            }
+                        })
+                        .then(html => {
+                            // Replace the entire page content with the updated view
+                            document.open();
+                            document.write(html);
+                            document.close();
+                        })
+                        .catch(error => console.error('Error:', error));
+                } else {
+                    alert('Please select at least one item to delete.');
+                }
+            });
+
+            // Optional: Add search functionality if needed
+            document.getElementById('UserNotPayedmoneyName').addEventListener('keyup', function () {
+                var searchText = this.value.toLowerCase();
+                document.querySelectorAll('tbody tr').forEach(function (row) {
+                    var userName = row.querySelector('td:first-child').textContent.trim().toLowerCase();
+                    if (userName.includes(searchText)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+}
+
+@* 
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Toggle all checkboxes
+            document.getElementById('toggleAllCheckboxes').addEventListener('click', function () {
+                var checkboxes = document.querySelectorAll('input[name="selectedIds"]');
+                var allChecked = Array.from(checkboxes).every(checkbox => checkbox.checked);
+                checkboxes.forEach(function (checkbox) {
+                    checkbox.checked = !allChecked;
+                });
+            });
+
+            // Handle delete selected button click
+            document.getElementById('deleteSelectedButton').addEventListener('click', function () {
+                var selectedIds = [];
+                document.querySelectorAll('input[name="selectedIds"]:checked').forEach(function (checkbox) {
+                    selectedIds.push(checkbox.value);
+                });
+
+                if (selectedIds.length > 0) {
+                    fetch('/Admin/NotPayedmoneyHistory/DelectSelectedPayments', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                        },
+                        body: JSON.stringify({ Allides: selectedIds })
+                    })
+                        .then(response => {
+                            if (response.ok) {
+                                return response.text(); // Assuming you return HTML for partial view
+                            } else {
+                                throw new Error('Failed to delete selected items.');
+                            }
+                        })
+                        .then(html => {
+                            // Replace the table body with the updated content
+                            document.querySelector('tbody').innerHTML = html;
+                        })
+                        .catch(error => console.error('Error:', error));
+                } else {
+                    alert('Please select at least one item to delete.');
+                }
+            });
+
+            // Optional: Add search functionality if needed
+            document.getElementById('UserNotPayedmoneyName').addEventListener('keyup', function () {
+                var searchText = this.value.toLowerCase();
+                document.querySelectorAll('tbody tr').forEach(function (row) {
+                    var userName = row.querySelector('td:first-child').textContent.trim().toLowerCase();
+                    if (userName.includes(searchText)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+} *@
+
+<style>
+    /* Custom styles for improved UI */
+    .Save {
+        text-align: center;
+    }
+
+    .circular-img {
+        border-radius: 50%;
+    }
+
+     .form-inline {
+        display: flex;
+        flex-flow: row wrap;
+        align-items: center;
+    }
+
+    .form-inline .form-group {
+        margin-right: 10px;
+    }
+
+    .input-group {
+        width: 100%;
+    }
+
+    .table {
+        width: 100%;
+    }
+
+        .table thead {
+            background-color: #343a40;
+            color: white;
+        }
+
+        .table td,
+        .table th {
+            background-color: #ad8313 !important;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+    .btn-danger {
+        margin-left: 5px;
+    }
+
+    111
+    .centered-text {
+        text-align: center;
+    }
+
+    .circular-img {
+        border-radius: 50%;
+    }
+
+    #buttonprint {
+        margin-top: 20px;
+    }
+
+    #toggleAllCheckboxes {
+        margin-bottom: 20px;
+    }
+</style>
+

@@ -44,9 +44,26 @@ namespace Caffiee.Areas.Admin.Controllers
             return View(products);
         }
 
+        [HttpPost]
+        public IActionResult DelectSelectedPayments([FromBody] SelectedIdsModel selectedIds)
+        {
+            if (selectedIds.Allides != null && selectedIds.Allides.Any())
+            {
+                // Perform deletion logic
+                foreach (var id in selectedIds.Allides)
+                {
+                    // Call your service to delete the item by id
+                    _unitOfWork._NotPayedmoneyHistoryServess.DeleteNotPayedmoney(id);
+                }
+                var product = _unitOfWork._NotPayedmoneyHistoryServess.SearchNotPayedmoney(new NotPayedmoneyHistoryVM());
+                return View("Index", product);
+            }
+
+            var model = _unitOfWork._NotPayedmoneyHistoryServess.SearchNotPayedmoneyOneUser(new NotPayedmoneyHistoryVM());
+            return View("Index", model);
+        }
 
 
- 
         [HttpGet]
         public IActionResult SearchNotPayedmoneyOneUser(NotPayedmoneyHistoryVM Entity, int? page)
         {
@@ -71,7 +88,7 @@ namespace Caffiee.Areas.Admin.Controllers
 
 
             var products = _unitOfWork._NotPayedmoneyHistoryServess.SearchNotPayedmoneyOneUser(Entity);
-             return View(  products);  // Return a new view with the result
+          model:    return View(  products);  // Return a new view with the result
         }
 
 
