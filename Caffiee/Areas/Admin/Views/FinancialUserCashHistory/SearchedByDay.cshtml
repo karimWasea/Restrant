@@ -1,4 +1,5 @@
 ﻿@model Cf_Viewmodels.PaymentTotalandNotpayMoyPaymentTotalByDay
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @{
     Layout = "_Layout";
@@ -34,6 +35,13 @@
                     <p><strong>مجموع الكاش :</strong> @(Model.totalcash.HasValue ? Model.totalcash.Value.ToString("N2") + " جنيه" : " ") </p>
                     <p><strong>مجموع الاجل:</strong> @(Model.totalNotpayed.HasValue ? Model.totalNotpayed.Value.ToString("N2") + " جنيه" : " ")</p>
                     <p><strong>المجموع الكلى :</strong> @(Model.Sumforday.HasValue ? Model.Sumforday.Value.ToString("N2") + " جنيه" : " ")</p>
+                    <p><strong>    مدفوعات الاجل اليوم :</strong>
+                        @(Model.totalpayedNotpayedForday.HasValue ? Model.totalpayedNotpayedForday.Value.ToString("N2") + " جنيه" : " ")
+                        <a asp-area="Admin"
+                           asp-controller="NotPayedmoneyHistory" asp-action="PaymentRecordIncrentday" class="btn btn-primary"> التفاصيل </a>
+
+                    
+                    </p>
                 </div>
             </div>
         </div>

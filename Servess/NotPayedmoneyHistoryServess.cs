@@ -16,9 +16,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
+
 using X.PagedList;
 
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+
+using PaymentRecord = DataAcessLayers.PaymentRecord;
+
+
 
 namespace Servess
 {
@@ -36,83 +42,271 @@ namespace Servess
         }
 
        
+ 
+public bool SaveNotPayedmoney(NotPayedmoneyHistoryVM criteria)
+    {
+        // Initialize a flag to track if the payment is successful
+        var ispayed = false;
 
-        public bool SaveNotPayedmoney(NotPayedmoneyHistoryVM criteria)
+        // Using a TransactionScope to ensure that all database operations are treated as a single unit of work
+        using (var transaction = new TransactionScope())
         {
-            var ispayed = false;
-
-            var queryable = _context.NotPayedmoney.FirstOrDefault(i=>i.Id==criteria.Id); 
-             if(queryable.TotalNotpayedAmount == queryable.TotalPayedAmount)
+            try
             {
-                return  true; 
+                // Retrieve the unpaid money record from the database by its ID
+                var queryable = _context.NotPayedmoney.FirstOrDefault(i => i.Id == criteria.Id);
 
-            }
-              if(criteria.payedAmount> queryable.TotalNotpayedAmount)
-            {
-                return false;
+                // Check if the total unpaid amount matches the total paid amount (full payment completed)
+                if (queryable.TotalNotpayedAmount == queryable.TotalPayedAmount)
+                {
+                    // If payment is already done, return true indicating no further action is needed
+                    return true;
+                }
 
-            }
+                // Check if the payment amount exceeds the remaining unpaid amount
+                if (criteria.payedAmount > queryable.TotalNotpayedAmount)
+                {
+                    // If trying to pay more than what's unpaid, return false indicating an error
+                    return false;
+                }
+
+                // Calculate the new unpaid amount after subtracting the payment amount
                 var Decpayed = queryable.TotalNotpayedAmount - criteria.payedAmount;
-            queryable.TotalNotpayedAmount = Decpayed;
-            var incPayed = queryable.TotalPayedAmount + criteria.payedAmount;
-            queryable.TotalPayedAmount = incPayed;
-            if (queryable.TotalNotpayedAmount == 0)
-            {
-                queryable.PaymentStatus = (int)Enumes.PaymentStatus.Paid;
-                ispayed = true;
+                queryable.TotalNotpayedAmount = Decpayed;
 
+                // Calculate the new total paid amount after adding the payment amount
+                var incPayed = queryable.TotalPayedAmount + criteria.payedAmount;
+                queryable.TotalPayedAmount = incPayed;
 
+                // Update the payment status based on whether the entire amount has been paid
+                if (queryable.TotalNotpayedAmount == 0)
+                {
+                    // Mark the payment status as 'Paid' if everything is paid off
+                    queryable.PaymentStatus = (int)Enumes.PaymentStatus.Paid;
+                    ispayed = true;
+                }
+                else
+                {
+                    // Otherwise, mark it as 'Not Paid'
+                    queryable.PaymentStatus = (int)Enumes.PaymentStatus.NotPaid;
+                    ispayed = true;
+                }
+
+                // Update the unpaid money record in the database
+                _context.Update(queryable);
+
+                // Add a new payment record to track this transaction
+                _context.PaymentRecords.Add(new PaymentRecord()
+                {
+                    UnpaidMoneyId = criteria.Id,
+                    TotalPaidAmount = incPayed,
+                    TotalUnpaidAmount = Decpayed,
+                    UserId = criteria.UserNotPayedmoneyId
+                });
+
+                // Save changes to the database
+                _context.SaveChanges();
+
+                // Complete the transaction, committing all changes to the database
+                transaction.Complete();
             }
-            else
+            catch (Exception ex)
             {
-                queryable.PaymentStatus = (int)Enumes.PaymentStatus.NotPaid;
-                ispayed=true;
+                // Log or handle the exception if needed
+                // The transaction will be automatically rolled back if an exception occurs
+                throw;
             }
-            _context.Update(queryable);
-            _context.SaveChanges();
-            return ispayed;    
-
-
         }
+
+        // Return whether the payment was fully completed
+        return ispayed;
+    }
+
+        //public bool SaveNotPayedmoney(NotPayedmoneyHistoryVM criteria)
+        //{
+        //     var ispayed = false;
+
+        //    var queryable = _context.NotPayedmoney.FirstOrDefault(i=>i.Id==criteria.Id); 
+        //     if(queryable.TotalNotpayedAmount == queryable.TotalPayedAmount)
+        //    {
+        //        return  true; 
+
+        //    }
+        //      if(criteria.payedAmount> queryable.TotalNotpayedAmount)
+        //    {
+        //        return false;
+
+        //    }
+        //        var Decpayed = queryable.TotalNotpayedAmount - criteria.payedAmount;
+        //    queryable.TotalNotpayedAmount = Decpayed;
+        //    var incPayed = queryable.TotalPayedAmount + criteria.payedAmount;
+        //    queryable.TotalPayedAmount = incPayed;
+        //    if (queryable.TotalNotpayedAmount == 0)
+        //    {
+        //        queryable.PaymentStatus = (int)Enumes.PaymentStatus.Paid;
+        //        ispayed = true;
+
+
+        //    }
+        //    else
+        //    {
+        //        queryable.PaymentStatus = (int)Enumes.PaymentStatus.NotPaid;
+        //        ispayed=true;
+        //    }
+        //    _context.Update(queryable);
+        //     _context.PaymentRecords.Add(new PaymentRecord()
+        //    {
+        //         UnpaidMoneyId = criteria.Id,
+        //           TotalPaidAmount= incPayed,
+        //            TotalUnpaidAmount= Decpayed,
+        //             UserId= criteria.UserNotPayedmoneyId
+
+
+
+        //     });
+        //    _context.SaveChanges();
+        //    return ispayed;    
+
+
+        //}
+        //public bool DeleteNotPayedmoney(int id)
+        //    {
+        //        // Find the NotPayedmoney entity by id
+        //        var notPayedmoney = _context.NotPayedmoney.Find(id);
+        //        if (notPayedmoney == null)
+        //        {
+        //            return false; // or throw an exception
+        //        }
+
+        //        // Find the associated NotPayedmoneyHistory entities
+        //        var notPayedmoneyHistoryItems = _context.NotPayedmoneyHistory
+        //            .Where(i => i.NotPayedmoneyId == id)
+        //            .ToList();
+
+        //        // Find the associated NotPayedmoneyHistoryPriceProductebytypes entities
+        //        var notPayedmoneyHistoryPriceProductebytypesItems = _context.NotPayedmoneyHistoryPriceProductebytypes
+        //            .Where(i => notPayedmoneyHistoryItems.Select(h => h.Id).Contains(i.NotPayedmoneyHistoryid))
+        //            .ToList();
+
+        //        // Remove associated NotPayedmoneyHistoryPriceProductebytypes entities
+        //        if (notPayedmoneyHistoryPriceProductebytypesItems.Any())
+        //        {
+        //            _context.NotPayedmoneyHistoryPriceProductebytypes.RemoveRange(notPayedmoneyHistoryPriceProductebytypesItems);
+        //        }
+
+        //        // Remove associated NotPayedmoneyHistory entities
+        //        if (notPayedmoneyHistoryItems.Any())
+        //        {
+        //            _context.NotPayedmoneyHistory.RemoveRange(notPayedmoneyHistoryItems);
+        //        }
+
+        //         var PaymentRecords = _context.PaymentRecords
+        //            .Where(i => notPayedmoneyHistoryItems.Select(h => h.Id).Contains(i.UnpaidMoneyId))
+        //            .ToList();
+
+
+
+        //         if (PaymentRecords.Any())
+        //        {
+        //            _context.PaymentRecords.RemoveRange(PaymentRecords);
+        //        }
+
+
+
+
+
+
+
+
+        //        // Remove the NotPayedmoney entity
+        //        _context.NotPayedmoney.Remove(notPayedmoney);
+
+        //        // Save all changes
+        //        _context.SaveChanges();
+
+        //        return true;
+        //    }
+
+
+
+
+
         public bool DeleteNotPayedmoney(int id)
         {
-            // Find the NotPayedmoney entity by id
-            var notPayedmoney = _context.NotPayedmoney.Find(id);
-            if (notPayedmoney == null)
+            // Begin a transaction
+            using (var transaction = _context.Database.BeginTransaction())
             {
-                return false; // or throw an exception
+                try
+                {
+                    // Find the NotPayedmoney entity by id
+                    var notPayedmoney = _context.NotPayedmoney.Find(id);
+                    if (notPayedmoney == null)
+                    {
+                        return false; // or throw an exception
+                    }
+
+                    // Find the associated NotPayedmoneyHistory entities
+                    var notPayedmoneyHistoryItems = _context.NotPayedmoneyHistory
+                        .Where(i => i.NotPayedmoneyId == id)
+                        .ToList();
+
+                    // Find the associated NotPayedmoneyHistoryPriceProductebytypes entities
+                    var notPayedmoneyHistoryPriceProductebytypesItems = _context.NotPayedmoneyHistoryPriceProductebytypes
+                        .Where(i => notPayedmoneyHistoryItems.Select(h => h.Id).Contains(i.NotPayedmoneyHistoryid))
+                        .ToList();
+
+                    // Remove associated NotPayedmoneyHistoryPriceProductebytypes entities
+                    if (notPayedmoneyHistoryPriceProductebytypesItems.Any())
+                    {
+                        _context.NotPayedmoneyHistoryPriceProductebytypes.RemoveRange(notPayedmoneyHistoryPriceProductebytypesItems);
+                    }
+
+                    // Remove associated NotPayedmoneyHistory entities
+                    if (notPayedmoneyHistoryItems.Any())
+                    {
+                        _context.NotPayedmoneyHistory.RemoveRange(notPayedmoneyHistoryItems);
+                    }
+
+                    // Find and remove associated PaymentRecords entities
+                    var paymentRecords = _context.PaymentRecords
+                        .Where(i => notPayedmoneyHistoryItems.Select(h => h.Id).Contains(i.UnpaidMoneyId))
+                        .ToList();
+
+                    if (paymentRecords.Any())
+                    {
+                        _context.PaymentRecords.RemoveRange(paymentRecords);
+                    }
+
+                    // Remove the NotPayedmoney entity
+                    _context.NotPayedmoney.Remove(notPayedmoney);
+
+                    // Save all changes
+                    _context.SaveChanges();
+
+                    // Commit the transaction
+                    transaction.Commit();
+
+                    return true;
+                }
+                catch (Exception)
+                {
+                    // Rollback the transaction if any error occurs
+                    transaction.Rollback();
+                    throw;
+                }
             }
-
-            // Find the associated NotPayedmoneyHistory entities
-            var notPayedmoneyHistoryItems = _context.NotPayedmoneyHistory
-                .Where(i => i.NotPayedmoneyId == id)
-                .ToList();
-
-            // Find the associated NotPayedmoneyHistoryPriceProductebytypes entities
-            var notPayedmoneyHistoryPriceProductebytypesItems = _context.NotPayedmoneyHistoryPriceProductebytypes
-                .Where(i => notPayedmoneyHistoryItems.Select(h => h.Id).Contains(i.NotPayedmoneyHistoryid))
-                .ToList();
-
-            // Remove associated NotPayedmoneyHistoryPriceProductebytypes entities
-            if (notPayedmoneyHistoryPriceProductebytypesItems.Any())
-            {
-                _context.NotPayedmoneyHistoryPriceProductebytypes.RemoveRange(notPayedmoneyHistoryPriceProductebytypesItems);
-            }
-
-            // Remove associated NotPayedmoneyHistory entities
-            if (notPayedmoneyHistoryItems.Any())
-            {
-                _context.NotPayedmoneyHistory.RemoveRange(notPayedmoneyHistoryItems);
-            }
-
-            // Remove the NotPayedmoney entity
-            _context.NotPayedmoney.Remove(notPayedmoney);
-
-            // Save all changes
-            _context.SaveChanges();
-
-            return true;
         }
+
+
+
+
+
+
+
+
+
+
+
         public bool Salesreturns(int id)
         {
             // Find the NotPayedmoney entity by id
@@ -610,9 +804,47 @@ namespace Servess
             return true;
         }
 
-        public bool DeletLLNotPayedmoney(List<int> Allides)
+      
+        public decimal SumOfPaidInDay()
         {
-            throw new NotImplementedException();
+            // Use the provided date or default to today's date
+ 
+            // Calculate the sum of payments for the target date
+            decimal totalPaidAmount = _context.PaymentRecords
+                                              .Where(c => c.CreationTime.Date == DateTime.Today)
+                                              .Sum(i => (decimal?)i.TotalPaidAmount) ?? 0m;
+
+            return totalPaidAmount;
         }
+
+        public IPagedList<PaymentRecordViewmodel> PaymentRecordIncrentday(PaymentRecordViewmodel criteria)
+        {
+            // Default to today's date if no CreationTime is provided
+            //DateTime searchDate = criteria.CreationTime ?? DateTime.Today;
+
+            var queryable = _context.PaymentRecords
+                .Where(c =>
+                    (criteria.CreationTime == null || c.CreationTime.Date == criteria.CreationTime) &&
+                    (criteria.UserId == null || c.UserId == criteria.UserId)
+                )
+                .Select(c => new PaymentRecordViewmodel
+                {
+                    CreationTime = c.CreationTime,
+                    Id = c.Id,
+                    TotalUnpaidAmount = c.TotalUnpaidAmount,
+                    TotalPaidAmount = c.TotalPaidAmount,
+                    UserId = c.UserId,
+                    UserName = _context.Users.FirstOrDefault(i => i.Id == c.UserId).FullCustumName
+                })
+                .OrderBy(g => g.Id);
+
+            // Provide a default value for PageNumber if it's null
+            int pageNum = criteria.PageNumber ?? 1;
+
+            var pagedList = GetPagedData(queryable, pageNum);
+
+            return pagedList;
+        }
+
     }
 }

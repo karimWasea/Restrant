@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
 
 using Servess;
 
@@ -43,6 +44,19 @@ namespace Caffiee.Areas.Admin.Controllers
             var products = _unitOfWork._NotPayedmoneyHistoryServess.SearchNotPayedmoney(Entity);
             return View(products);
         }
+        [HttpGet] 
+        public IActionResult PaymentRecordIncrentday(PaymentRecordViewmodel criteria, int? page)
+        {
+            // If CreationTime is null, default it to today's date
+          
+
+            criteria.PageNumber = page ?? 1;
+            ViewBag.AllUsers = _unitOfWork._Ilookup.Users();
+ 
+            var model = _unitOfWork._NotPayedmoneyHistoryServess.PaymentRecordIncrentday(criteria);
+            return View(model);
+        }
+
 
         [HttpPost]
         public IActionResult DelectSelectedPayments([FromBody] SelectedIdsModel selectedIds)

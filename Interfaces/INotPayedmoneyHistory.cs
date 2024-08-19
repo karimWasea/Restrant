@@ -21,10 +21,12 @@ namespace Interfaces
         public IPagedList<NotPayedmoneyHistoryVM> SearchNotPayedmoneyOneUser(NotPayedmoneyHistoryVM criteria);
         public bool Salesreturns(int id);
 
+        public IPagedList<PaymentRecordViewmodel> PaymentRecordIncrentday(PaymentRecordViewmodel criteria);
         public IPagedList<NotPayedmoneyHistoryVM> SearchNotPayedmoneyHistoryDetails(int id, int? pageNuber);
         public bool DeleteFinancialUserCashHistories(int id, int payedTotalAmount, int NotPayedmoneyid, int productid);
         public IPagedList<NotPayedmoneyHistoryVM> PrintforHospitallDay(NotPayedmoneyHistoryVM criteria);  
             bool SaveNotPayedmoneyHistory(NotPayedmoneyHistoryVM criteria);
+        public decimal SumOfPaidInDay();
 
         bool CheckIfExisitNotPayedmoneyDetails(int id);
 

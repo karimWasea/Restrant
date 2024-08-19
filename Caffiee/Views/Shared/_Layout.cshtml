@@ -100,7 +100,21 @@
                                     </div>
                                 </li>
                             }
-                            <li class="nav-item">
+                            <!-- Dropdown Menu in Navigation -->
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    الحسابات
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <li><a class="dropdown-item" asp-area="Admin" asp-controller="NotPayedmoneyHistory" asp-action="Index">الاجل</a></li>
+                                    <li><a class="dropdown-item" asp-area="Admin" asp-controller="FinancialUserCashHistory" asp-action="Index">الكاش</a></li>
+                                    <li><a class="dropdown-item" asp-area="Admin" asp-controller="NotPayedmoneyHistory" asp-action="PrintHospital">الفاتوره اليوميه للمستشفى</a></li>
+                                    <li><a class="dropdown-item" asp-area="Admin" asp-controller="FinancialUserCashHistory" asp-action="SearchedByDay">حسابات الاجل والكاش</a></li>
+                                    <li><a class="dropdown-item" asp-area="Admin" asp-controller="NotPayedmoneyHistory" asp-action="PaymentRecordIncrentday">حسابات الاجل</a></li>
+                                </ul>
+                            </li>
+
+                      @*       <li class="nav-item">
                                 <a class="nav-link" asp-area="Admin" asp-controller="NotPayedmoneyHistory" asp-action="Index">الاجل</a>
                             </li>
                             <li class="nav-item">
@@ -112,6 +126,9 @@
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="Admin" asp-controller="FinancialUserCashHistory" asp-action="SearchedByDay"> حسابات الاجل والكاش</a>
                             </li>
+                            <li class="nav-item">
+                                 <a class="nav-link" asp-area="Admin" asp-controller="NotPayedmoneyHistory" asp-action="PaymentRecordIncrentday"> حسابات الاجل  </a>
+                            </li> *@
                         }
                         @if (User.IsInRole(C_Utilities.ConstsntValuse.SuperAdmin) || User.IsInRole(C_Utilities.ConstsntValuse.SalessManger) || User.IsInRole(C_Utilities.ConstsntValuse.SalesMan))
                         {

@@ -291,6 +291,7 @@
                         <form method="post" asp-controller="NotPayedmoneyHistory" asp-action="Save" asp-area="Admin" class="form-inline">
                             <input type="hidden" name="NotpayedAmount" value="@item.NotpayedAmount" />
                             <input type="hidden" name="Id" value="@item.Id" />
+                            <input type="hidden" name="UserNotPayedmoneyId" value="@item.UserNotPayedmoneyId" />
                             <input type="number" min="1" class="form-control mr-2" name="payedAmount" placeholder="ادخل الدين" style="width:100px;" />
                             <button class="btn btn-success" type="submit">تعديل</button>
                         </form>

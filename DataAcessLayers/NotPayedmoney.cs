@@ -12,7 +12,7 @@ namespace DataAcessLayers
         public int Id { get; set; }
 
         public DateTime CreationTime { get; set; } = DateTime.Now;
-         public decimal? TotalPayedAmount { get; set; }
+         public decimal? TotalPayedAmount { get; set; } 
         public decimal? TotalNotpayedAmount { get; set; }
         public string? ChangedByUserId { get; set; }
  

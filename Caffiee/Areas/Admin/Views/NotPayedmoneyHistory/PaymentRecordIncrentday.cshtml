@@ -1,0 +1,118 @@
+﻿@model IEnumerable<Cf_Viewmodels.PaymentRecordViewmodel>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Not Paid Money History";
+}
+
+<h1 class="centered-text">عرض تفاصيل المدفوع</h1>
+<img src="~/Images/WhatsApp Image 2024-06-23 at 18.02.40_35881d78.jpg" class="circular-img" width="100" style="display: block; margin: 0 auto;" />
+
+<form method="get" asp-controller="NotPayedmoneyHistory" asp-action="PaymentRecordIncrentday" asp-area="Admin" class="mt-4">
+    <div class="form-row justify-content-center">
+        <div class="form-group col-md-4">
+            <label for="CreationTime">التاريخ</label>
+            <input type="date" class="form-control" name="CreationTime" id="CreationTime" />
+        </div>
+        <div class="form-group col-md-4">
+            <label for="UserId">اسم العميل</label>
+            <select name="UserId" class="form-select" asp-items="@ViewBag.AllUsers" aria-required="true">
+                <option value="">الاسم</option>
+            </select>
+        </div>
+        <div class="form-group col-md-4 align-self-end">
+            <button class="btn btn-primary w-100" type="submit">بحث</button>
+        </div>
+    </div>
+</form>
+
+<br />
+
+<div class="text-center mt-4 border-box">
+    مدفوعات اليوم: @Model.Sum(i => i.TotalPaidAmount)
+</div>
+
+<table class="table table-striped table-bordered w-100 mx-auto mt-4" style="background-color: #ad8313;">
+    <thead style="background-color: #ad8313;">
+        <tr>
+            <th>اسم العميل</th>
+            <th>المدفوع</th>
+            <th>الباقى من الفاتوره</th>
+            <th>تاريخ الدفع</th>
+        </tr>
+    </thead>
+    <tbody style="background-color: #ad8313;">
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.UserName</td>
+                <td>@item.TotalPaidAmount</td>
+                <td>@item.TotalUnpaidAmount</td>
+                <td>@item.CreationTime</td>
+            </tr>
+        }
+    </tbody>
+    <tfoot style="background-color: #ad8313;">
+        <tr>
+            <td colspan="2">باقى الدين:</td>
+            <td>@(Model?.Sum(i => i.TotalUnpaidAmount) ?? 0) جنيه</td>
+            <td colspan="2"></td>
+        </tr>
+    </tfoot>
+</table>
+
+<partial name="_AlertMessage" />
+<partial name="_PaginationPartial" model="Model" />
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var printButton = document.getElementById('printButton');
+            if (printButton) {
+                printButton.addEventListener('click', function () {
+                    window.print();
+                });
+            }
+        });
+    </script>
+}
+
+<style>
+    /* Custom styles for improved UI */
+    .circular-img {
+        border-radius: 50%;
+    }
+
+    .centered-text {
+        text-align: center;
+    }
+
+    .form-row {
+        margin-bottom: 1rem;
+    }
+
+    .table td,
+    .table th {
+        text-align: center;
+        vertical-align: middle;
+        background-color: inherit; /* Inherit the background color from parent */
+    }
+
+    .btn-primary {
+        margin-top: 1rem;
+    }
+
+    #buttonprint {
+        margin-top: 20px;
+    }
+
+    .border-box {
+        border: 2px solid #343a40; /* Dark border color */
+        padding: 10px; /* Add some padding inside the border */
+        border-radius: 5px; /* Optional: rounded corners */
+        background-color: #ad8313; /* Apply the custom background color */
+        display: inline-block; /* Ensure the border only wraps around the content */
+        margin: 0 auto; /* Center the box horizontally */
+    }
+</style>
