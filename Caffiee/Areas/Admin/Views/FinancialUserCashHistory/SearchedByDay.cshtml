@@ -38,9 +38,9 @@
                     <p><strong>    مدفوعات الاجل اليوم :</strong>
                         @(Model.totalpayedNotpayedForday.HasValue ? Model.totalpayedNotpayedForday.Value.ToString("N2") + " جنيه" : " ")
                         <a asp-area="Admin"
-                           asp-controller="NotPayedmoneyHistory" asp-action="PaymentRecordIncrentday" class="btn btn-primary"> التفاصيل </a>
+                           asp-controller="NotPayedmoneyHistory" asp-action="PaymentRecordIncrentday"    asp-route-CreationTime="@DateTime.Today" class="btn btn-primary"> التفاصيل </a>
+ 
 
-                    
                     </p>
                 </div>
             </div>
