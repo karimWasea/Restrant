@@ -12,6 +12,8 @@ using Microsoft.CodeAnalysis;
 
 using Servess;
 
+using System;
+
 namespace Caffiee.Areas.Admin.Controllers
 {
     [Area(ConstsntValuse.Admin)]
@@ -60,7 +62,7 @@ namespace Caffiee.Areas.Admin.Controllers
             model.totalcash = result.TotalPayment;
             model.totalNotpayed = result.TotalNotPayed;
             model.Sumforday = (result.TotalPayment ?? 0) + (result.TotalNotPayed ?? 0);
-            model.totalpayedNotpayedForday =  _unitOfWork._NotPayedmoneyHistoryServess.SumOfPaidInDay();
+            model.totalpayedNotpayedForday =  _unitOfWork._NotPayedmoneyHistoryServess.SumOfPaidInDay((DateTime)dayDate);
             model.Seacheday = dayDate; // Assign the date to the SearchedDate property
 
             return View(model);

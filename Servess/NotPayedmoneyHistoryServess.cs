@@ -805,17 +805,19 @@ public bool SaveNotPayedmoney(NotPayedmoneyHistoryVM criteria)
         }
 
       
-        public decimal SumOfPaidInDay()
-        {
-            // Use the provided date or default to today's date
- 
-            // Calculate the sum of payments for the target date
-            decimal totalPaidAmount = _context.PaymentRecords
-                                              .Where(c => c.CreationTime.Date == DateTime.Today)
-                                              .Sum(i => (decimal?)i.TotalPaidAmount) ?? 0m;
+      public decimal SumOfPaidInDay(DateTime dateTime )
+{
+         if(   dateTime==null)
+                dateTime = DateTime.Today;
+    // Filter records by the target date and calculate the sum of payments
+    decimal totalPaidAmount = _context.PaymentRecords
+                                      .Where(c => c.CreationTime.Date == dateTime)
+                                      .Sum(i => (decimal?)i.TotalPaidAmount) ?? 0m;
 
-            return totalPaidAmount;
-        }
+    // Return the calculated total
+    return totalPaidAmount;
+}
+
 
         public IPagedList<PaymentRecordViewmodel> PaymentRecordIncrentday(PaymentRecordViewmodel criteria)
         {

@@ -26,7 +26,7 @@ namespace Interfaces
         public bool DeleteFinancialUserCashHistories(int id, int payedTotalAmount, int NotPayedmoneyid, int productid);
         public IPagedList<NotPayedmoneyHistoryVM> PrintforHospitallDay(NotPayedmoneyHistoryVM criteria);  
             bool SaveNotPayedmoneyHistory(NotPayedmoneyHistoryVM criteria);
-        public decimal SumOfPaidInDay();
+        public decimal SumOfPaidInDay(DateTime dateTime);
 
         bool CheckIfExisitNotPayedmoneyDetails(int id);
 
